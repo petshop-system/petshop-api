@@ -31,3 +31,11 @@ func (router Router) AddGroupHandlerHealthCheck(ah *handler.Generic) func(r chi.
 		})
 	}
 }
+
+func (router Router) AddGroupHandlerCliente(ah *handler.Cliente) func(r chi.Router) {
+	return func(r chi.Router) {
+		r.Route("/cliente", func(r chi.Router) {
+			r.Post("/cadastrar", ah.Create)
+		})
+	}
+}

@@ -1,6 +1,11 @@
 package handler
 
-import "net/http"
+import (
+	"bytes"
+	"encoding/json"
+	"net/http"
+	"time"
+)
 
 func responseReturn(w http.ResponseWriter, statusCode int, body []byte) {
 	w.Header().Add("Content-Type", "application/json")
@@ -8,4 +13,21 @@ func responseReturn(w http.ResponseWriter, statusCode int, body []byte) {
 	if len(body) != 0 {
 		w.Write(body)
 	}
+}
+
+func objectResponse(obj any, message string) *bytes.Buffer {
+
+	response := struct {
+		Message string    `json:"message,omitempty"`
+		Result  any       `json:"result,omitempty"`
+		Date    time.Time `json:"date,omitempty"`
+	}{
+		Message: message,
+		Result:  obj,
+		Date:    time.Now(),
+	}
+
+	body := new(bytes.Buffer)
+	json.NewEncoder(body).Encode(response)
+	return body
 }
