@@ -28,7 +28,7 @@ TEST*.xml
 # vendor/
 
 # Go workspace file
-go.work
+# go.work
 
 # Large media files
 *.mp4
