@@ -8,7 +8,6 @@ type ClienteDomain struct {
 	ID           int64
 	Nome         string
 	DataCadastro time.Time
-	Endereco     EnderecoDomain
 }
 
 type TelefoneDomain struct {
@@ -16,7 +15,6 @@ type TelefoneDomain struct {
 	Numero       string
 	DDD          string
 	TipoTelefone string
-	Cliente      ClienteDomain
 }
 
 type EnderecoDomain struct {
@@ -25,13 +23,12 @@ type EnderecoDomain struct {
 	Numero     string
 }
 
-type Especie struct {
+type EspecieDomain struct {
 	ID   int64
 	Nome string
 }
 
-type Raca struct {
-	ID      int64
-	Nome    string
-	Especie Especie
+type RacaDomain struct {
+	ID   int64
+	Nome string
 }
