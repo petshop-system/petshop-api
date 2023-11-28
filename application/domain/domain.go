@@ -1,11 +1,34 @@
 package domain
 
-import "time"
+import (
+	"time"
+)
 
 type ClienteDomain struct {
 	ID           int64
 	Nome         string
-	Telefone     map[string]string // key: tipo telefone, val: telefone
-	Endereco     string
 	DataCadastro time.Time
+}
+
+type TelefoneDomain struct {
+	ID           int64
+	Numero       string
+	DDD          string
+	TipoTelefone string
+}
+
+type EnderecoDomain struct {
+	ID         int64
+	Logradouro string
+	Numero     string
+}
+
+type EspecieDomain struct {
+	ID   int64
+	Nome string
+}
+
+type RacaDomain struct {
+	ID   int64
+	Nome string
 }
