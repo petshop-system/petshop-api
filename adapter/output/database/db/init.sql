@@ -1,17 +1,17 @@
 create schema petshop_api
 
 -- auto-generated definition
-    create table endereco
+    create table address
     (
         id         serial       not null
-            constraint petshop_api_endereco_pkey primary key,
+            constraint petshop_api_address_pkey primary key,
         logradouro varchar(255) not null,
         numero     varchar(255) not null
     )
 
     create
-        unique index petshop_api_endereco_id_uindex
-        on endereco (id)
+        unique index petshop_api_address_id_uindex
+        on address (id)
 
     create table pessoa
     (
@@ -32,9 +32,9 @@ create schema petshop_api
         nome           varchar(255) not null,
         email          varchar(255) not null,
         data_cadastro  timestamp default timezone('BRT'::text, now()),
-        fk_id_endereco int          not null,
+        fk_id_address int          not null,
         fk_id_pessoa   int          not null,
-        FOREIGN KEY (fk_id_endereco) references endereco (id),
+        FOREIGN KEY (fk_id_address) references address (id),
         FOREIGN KEY (fk_id_pessoa) references pessoa (id)
     )
 
@@ -101,13 +101,13 @@ create schema petshop_api
 
 -- Create default clientes inserts
 
-INSERT INTO petshop_api.endereco (logradouro, numero)
+INSERT INTO petshop_api.address (logradouro, numero)
 VALUES ('Rua Jose Bonifácio', 1432);
 
 INSERT INTO petshop_api.pessoa (id)
 VALUES ('Rua Jose Bonifácio', 1432);
 
-INSERT INTO petshop_api.cliente (nome, fk_id_endereco, email, data_cadastro, fk_id_pessoa)
+INSERT INTO petshop_api.cliente (nome, fk_id_address, email, data_cadastro, fk_id_pessoa)
 VALUES ('siclano', 1, 'siclano@gmail.com', now(), 1);
 
 INSERT INTO petshop_api.telefone (numero, ddd, tipo_telefone, fk_id_pessoa)

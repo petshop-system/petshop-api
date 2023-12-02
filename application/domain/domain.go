@@ -1,8 +1,6 @@
 package domain
 
-import (
-	"time"
-)
+import "time"
 
 type ClienteDomain struct {
 	ID           int64
@@ -17,12 +15,6 @@ type TelefoneDomain struct {
 	TipoTelefone string
 }
 
-type EnderecoDomain struct {
-	ID         int64
-	Logradouro string
-	Numero     string
-}
-
 type EspecieDomain struct {
 	ID   int64
 	Nome string
@@ -31,4 +23,10 @@ type EspecieDomain struct {
 type RacaDomain struct {
 	ID   int64
 	Nome string
+}
+
+type AddressDomain struct {
+	ID         int64
+	Logradouro string
+	Numero     string
 }
