@@ -9,3 +9,9 @@ type ClienteDomain struct {
 	Endereco     string
 	DataCadastro time.Time
 }
+
+type AddressDomain struct {
+	ID         int64
+	Logradouro string
+	Numero     string
+}
