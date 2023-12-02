@@ -12,6 +12,10 @@ type AddressPostgresDB struct {
 	LoggerSugar *zap.SugaredLogger
 }
 
+const (
+	saveDBError = "error to save into postgres"
+)
+
 func NewAddressPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) AddressPostgresDB {
 	return AddressPostgresDB{
 		DB:          gormDB,
@@ -49,7 +53,7 @@ func (cp AddressPostgresDB) Save(contextControl domain.ContextControl, addressDo
 
 	if err := cp.DB.WithContext(contextControl.Context).
 		Create(&addressDB).Error; err != nil {
-		cp.LoggerSugar.Errorw("error to save into postgres",
+		cp.LoggerSugar.Errorw(saveDBError,
 			"error", err.Error())
 		return domain.AddressDomain{}, err
 	}
