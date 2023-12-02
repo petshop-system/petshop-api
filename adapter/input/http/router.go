@@ -39,3 +39,11 @@ func (router Router) AddGroupHandlerCliente(ah *handler.Cliente) func(r chi.Rout
 		})
 	}
 }
+
+func (router Router) AddGroupHandlerAddress(ah *handler.Address) func(r chi.Router) {
+	return func(r chi.Router) {
+		r.Route("/endereco", func(r chi.Router) {
+			r.Post("/cadastrar", ah.Create)
+		})
+	}
+}

@@ -16,7 +16,7 @@ type ClienteService struct {
 	CustomerDomainCacheRepository    output.ICustomerDomainCacheRepository
 }
 
-var CacheTTL = 10 * time.Minute
+var ClientCacheTTL = 10 * time.Minute
 
 const (
 	ClienteCacheKeyTypeID = "ID"
@@ -41,7 +41,7 @@ func (service ClienteService) Create(contextControl domain.ContextControl, clien
 	hash, _ := json.Marshal(save)
 	if err = service.CustomerDomainCacheRepository.Set(contextControl,
 		service.getCacheKey(ClienteCacheKeyTypeID, strconv.FormatInt(save.ID, 10)),
-		string(hash), CacheTTL); err != nil {
+		string(hash), ClientCacheTTL); err != nil {
 		service.LoggerSugar.Infow(ClienteErrorToSaveInCache, "cliente_id", save.ID)
 	}
 

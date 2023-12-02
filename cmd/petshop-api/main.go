@@ -47,6 +47,7 @@ func main() {
 		environment.Setting.Postgres.DBName, environment.Setting.Postgres.DBHost, environment.Setting.Postgres.DBPort, loggerSugar)
 
 	clientePostgresDB := database.NewClientePostgresDB(postgresConnectionDB, loggerSugar)
+	addressPostgresDB := database.NewAddressPostgresDB(postgresConnectionDB, loggerSugar)
 
 	genericHandler := &handler.Generic{
 		LoggerSugar: loggerSugar,
@@ -63,12 +64,24 @@ func main() {
 		LoggerSugar:     loggerSugar,
 	}
 
+	addressService := service.AddressService{
+		LoggerSugar:                     loggerSugar,
+		AddressDomainDataBaseRepository: &addressPostgresDB,
+		AddressDomainCacheRepository:    &redisCache,
+	}
+
+	addressHandler := &handler.Address{
+		AddressService: addressService,
+		LoggerSugar:    loggerSugar,
+	}
+
 	contextPath := environment.Setting.Server.Context
 	newRouter := adpterHttpInput.GetNewRouter(loggerSugar)
 	newRouter.GetChiRouter().Route(fmt.Sprintf("/%s", contextPath), func(r chi.Router) {
 		r.NotFound(genericHandler.NotFound)
 		r.Group(newRouter.AddGroupHandlerHealthCheck(genericHandler))
 		r.Group(newRouter.AddGroupHandlerCliente(clienteHandler))
+		r.Group(newRouter.AddGroupHandlerAddress(addressHandler))
 	})
 
 	serverHttp := &http.Server{
