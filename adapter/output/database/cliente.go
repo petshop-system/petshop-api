@@ -41,8 +41,6 @@ func (c ClienteDB) CopyToClienteDomain() domain.ClienteDomain {
 	return domain.ClienteDomain{
 		ID:           c.ID,
 		Nome:         c.Nome,
-		Telefone:     c.Telefone,
-		Endereco:     c.Endereco,
 		DataCadastro: c.DataCadastro,
 	}
 }

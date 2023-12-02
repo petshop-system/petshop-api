@@ -50,21 +50,13 @@ func TestCustomerService_Create(t *testing.T) {
 		{
 			Name: "sucesso ao salvar cliente",
 			Cliente: domain.ClienteDomain{
-				Telefone: map[string]string{
-					"celular": "5572983332244",
-				},
-				Nome:     "Fulano",
-				Endereco: "rua 5, casa 3",
+				Nome: "Fulano",
 			},
 			CustomerDomainDataBaseRepository: output.CustomerDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, cliente domain.ClienteDomain) (domain.ClienteDomain, error) {
 					return domain.ClienteDomain{
-						ID: 1,
-						Telefone: map[string]string{
-							"celular": "5572983332244",
-						},
-						Nome:     "Fulano",
-						Endereco: "rua 5, casa 3",
+						ID:   1,
+						Nome: "Fulano",
 					}, nil
 				},
 			},
@@ -74,12 +66,8 @@ func TestCustomerService_Create(t *testing.T) {
 				},
 			},
 			ExpectedResult: domain.ClienteDomain{
-				ID: 1,
-				Telefone: map[string]string{
-					"celular": "5572983332244",
-				},
-				Nome:     "Fulano",
-				Endereco: "rua 5, casa 3",
+				ID:   1,
+				Nome: "Fulano",
 			},
 			ExpectedError: nil,
 		},
