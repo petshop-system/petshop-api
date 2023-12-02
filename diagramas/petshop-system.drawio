@@ -1,6 +1,47 @@
-<mxfile host="app.diagrams.net" modified="2023-12-02T00:54:34.748Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15" etag="952kqsYi9tF70xhrUixf" version="22.1.4" type="github" pages="2">
+<mxfile host="app.diagrams.net" modified="2023-12-02T01:28:39.795Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15" etag="cy31F8AujebTK1hzAIjn" version="22.1.4" type="github" pages="2">
+  <diagram id="_cVhBlhUEnOhUb4zh8Qf" name="petshop-message-api">
+    <mxGraphModel dx="804" dy="606" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="gnj8m_Z2THe55kGM6T4t-8" target="gnj8m_Z2THe55kGM6T4t-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-8" value="" style="shape=message;html=1;html=1;outlineConnect=0;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="394" y="243.75" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-9" value="Kafka" style="shape=datastore;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="233.75" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="gnj8m_Z2THe55kGM6T4t-11" target="gnj8m_Z2THe55kGM6T4t-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-11" value="petshop-message-api" style="shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=1;aspect=fixed;image=img/clipart/Gear_128x128.png" vertex="1" parent="1">
+          <mxGeometry x="394" y="91.78999999999999" width="66" height="77.42" as="geometry" />
+        </mxCell>
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="gnj8m_Z2THe55kGM6T4t-13" target="gnj8m_Z2THe55kGM6T4t-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-13" value="Internet" style="shape=cloud;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="90.5" width="100" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-16" value="Client" style="html=1;dashed=0;whiteSpace=wrap;shape=mxgraph.dfd.start" vertex="1" parent="1">
+          <mxGeometry x="200" y="240" width="95" height="47.5" as="geometry" />
+        </mxCell>
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.55;entryY=0.95;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="gnj8m_Z2THe55kGM6T4t-16" target="gnj8m_Z2THe55kGM6T4t-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="gnj8m_Z2THe55kGM6T4t-18" target="gnj8m_Z2THe55kGM6T4t-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gnj8m_Z2THe55kGM6T4t-18" value="petshop" style="shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=1;aspect=fixed;image=img/clipart/Gear_128x128.png" vertex="1" parent="1">
+          <mxGeometry x="560" y="90.5" width="66" height="77.42" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
   <diagram name="Usuario" id="MdCg0GDHvMsd0DE7V6tG">
-    <mxGraphModel dx="-23" dy="606" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -223,44 +264,6 @@
         </mxCell>
         <mxCell id="mKvPmJ074jqRb_vuWh6Q-112" value="Cache (Redis)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" parent="1" vertex="1">
           <mxGeometry x="1315" y="880" width="120" height="40" as="geometry" />
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
-  <diagram id="oktH2O2HCwPA8V2CcfnX" name="Página-2">
-    <mxGraphModel dx="804" dy="606" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-        <mxCell id="u9lXlxD_U9Z32iOvLzBJ-1" value="client/front" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
-          <mxGeometry x="70" y="140" width="100" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="u9lXlxD_U9Z32iOvLzBJ-2" value="petshop-api" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
-          <mxGeometry x="240" y="140" width="100" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="u9lXlxD_U9Z32iOvLzBJ-3" value="petshot-autenticacao-api" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
-          <mxGeometry x="400" y="140" width="100" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="u9lXlxD_U9Z32iOvLzBJ-4" value="Postgre DB" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
-          <mxGeometry x="550" y="140" width="100" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="u9lXlxD_U9Z32iOvLzBJ-5" value="Redis Cache" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
-          <mxGeometry x="700" y="140" width="100" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="u9lXlxD_U9Z32iOvLzBJ-6" value="cliente" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
-          <mxGeometry x="80" y="585" width="100" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="u9lXlxD_U9Z32iOvLzBJ-7" value="http - handler" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
-          <mxGeometry x="240" y="585" width="100" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="u9lXlxD_U9Z32iOvLzBJ-8" value="userCase (Regra de Neg)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
-          <mxGeometry x="400" y="585" width="100" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="u9lXlxD_U9Z32iOvLzBJ-9" value="port" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
-          <mxGeometry x="550" y="585" width="100" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="u9lXlxD_U9Z32iOvLzBJ-10" value="Adapter - input&lt;br&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="240" y="518" width="100" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
