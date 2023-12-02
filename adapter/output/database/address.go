@@ -13,7 +13,7 @@ type AddressPostgresDB struct {
 }
 
 const (
-	AddressSaveDBError = "error to save the address into postgres"
+	AddressSaveDBError = "error to save the address into postgres "
 )
 
 func NewAddressPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) AddressPostgresDB {
