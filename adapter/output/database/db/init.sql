@@ -13,17 +13,17 @@ create schema petshop_api
         unique index petshop_api_address_id_uindex
         on address (id)
 
-    create table pessoa
+    create table person
     (
         id serial not null
-            constraint petshop_api_pessoa_pkey primary key,
+            constraint petshop_api_person_pkey primary key,
         cpf_cnpj varchar(255) not null,
         tipo_pessoa varchar(255) not null
     )
 
     create
-        unique index petshop_api_pessoa_id_uindex
-        on pessoa (id)
+        unique index petshop_api_person_id_uindex
+        on person (id)
 
     create table cliente
     (
@@ -35,7 +35,7 @@ create schema petshop_api
         fk_id_address int          not null,
         fk_id_pessoa   int          not null,
         FOREIGN KEY (fk_id_address) references address (id),
-        FOREIGN KEY (fk_id_pessoa) references pessoa (id)
+        FOREIGN KEY (fk_id_pessoa) references person (id)
     )
 
     create
@@ -50,7 +50,7 @@ create schema petshop_api
         ddd           varchar(255) not null,
         tipo_telefone varchar(255) not null,
         fk_id_pessoa  int          not null,
-        FOREIGN KEY (fk_id_pessoa) references pessoa (id)
+        FOREIGN KEY (fk_id_pessoa) references person (id)
     )
 
     create
@@ -104,7 +104,7 @@ create schema petshop_api
 INSERT INTO petshop_api.address (logradouro, numero)
 VALUES ('Rua Jose Bonifácio', 1432);
 
-INSERT INTO petshop_api.pessoa (id)
+INSERT INTO petshop_api.person (id)
 VALUES ('Rua Jose Bonifácio', 1432);
 
 INSERT INTO petshop_api.cliente (nome, fk_id_address, email, data_cadastro, fk_id_pessoa)
