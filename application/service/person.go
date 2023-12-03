@@ -23,7 +23,7 @@ const (
 )
 
 const (
-	PersonErrorToSaveInCache = "error to save person in cache."
+	PersonErrorToSaveInCache = "error to save person in cache"
 )
 
 func (service PersonService) getCacheKey(cacheKeyType string, value string) string {
