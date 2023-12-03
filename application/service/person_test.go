@@ -15,6 +15,10 @@ import (
 	"time"
 )
 
+const (
+	PersonErrorToSaveInDataBase = "error saving to the database"
+)
+
 var personLoggerSugar *zap.SugaredLogger
 
 func init() {
@@ -83,11 +87,11 @@ func TestPersonService_Create(t *testing.T) {
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
-					return domain.PersonDomain{}, fmt.Errorf("error saving to the database")
+					return domain.PersonDomain{}, fmt.Errorf(PersonErrorToSaveInDataBase)
 				},
 			},
 			ExpectedResult: domain.PersonDomain{},
-			ExpectedError:  fmt.Errorf("error saving to the database"),
+			ExpectedError:  fmt.Errorf(PersonErrorToSaveInDataBase),
 		},
 	}
 
