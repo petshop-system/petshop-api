@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-var loggerSugar *zap.SugaredLogger
+var clientLoggerSugar *zap.SugaredLogger
 
 func init() {
 
@@ -32,12 +32,12 @@ func init() {
 	//logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
 	logger := zap.New(core, zap.AddCaller())
 	defer logger.Sync() // flushes buffer, if any
-	loggerSugar = logger.Sugar()
-	loggerSugar.Infow("testing")
+	clientLoggerSugar = logger.Sugar()
+	clientLoggerSugar.Infow("testing client services")
 
 }
 
-func TestCustomerService_Create(t *testing.T) {
+func TestCustomerServices(t *testing.T) {
 
 	tests := []struct {
 		Name                             string
@@ -78,7 +78,7 @@ func TestCustomerService_Create(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 
 			clienteService := ClienteService{
-				LoggerSugar:                      loggerSugar,
+				LoggerSugar:                      clientLoggerSugar,
 				CustomerDomainCacheRepository:    test.CustomerDomainCacheRepository,
 				CustomerDomainDataBaseRepository: test.CustomerDomainDataBaseRepository,
 			}
