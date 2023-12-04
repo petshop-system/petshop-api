@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/petshop-system/petshop-api/adapter/output/database"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/output"
 	"github.com/petshop-system/petshop-api/configuration/environment"
@@ -13,10 +14,6 @@ import (
 	"os"
 	"testing"
 	"time"
-)
-
-const (
-	PersonErrorToSaveInDataBase = "error saving to the database"
 )
 
 var personLoggerSugar *zap.SugaredLogger
@@ -39,7 +36,6 @@ func init() {
 	defer logger.Sync() // flushes buffer, if any
 	personLoggerSugar = logger.Sugar()
 	personLoggerSugar.Infow("testing")
-
 }
 
 func TestPersonService_Create(t *testing.T) {
@@ -56,14 +52,14 @@ func TestPersonService_Create(t *testing.T) {
 			Name: "success saving person",
 			Person: domain.PersonDomain{
 				Cpf_cnpj:    "076.000.000-06",
-				Tipo_pessoa: "cpf",
+				Tipo_pessoa: TypePersonLegal,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
 					return domain.PersonDomain{
 						ID:          1,
 						Cpf_cnpj:    "076.000.000-06",
-						Tipo_pessoa: "cpf",
+						Tipo_pessoa: TypePersonLegal,
 					}, nil
 				},
 			},
@@ -75,7 +71,7 @@ func TestPersonService_Create(t *testing.T) {
 			ExpectedResult: domain.PersonDomain{
 				ID:          1,
 				Cpf_cnpj:    "076.000.000-06",
-				Tipo_pessoa: "cpf",
+				Tipo_pessoa: TypePersonLegal,
 			},
 			ExpectedError: nil,
 		},
@@ -83,15 +79,15 @@ func TestPersonService_Create(t *testing.T) {
 			Name: "error saving person",
 			Person: domain.PersonDomain{
 				Cpf_cnpj:    "076.000.000-06",
-				Tipo_pessoa: "cpf",
+				Tipo_pessoa: TypePersonLegal,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
-					return domain.PersonDomain{}, fmt.Errorf(PersonErrorToSaveInDataBase)
+					return domain.PersonDomain{}, fmt.Errorf(database.PersonSaveDBError)
 				},
 			},
 			ExpectedResult: domain.PersonDomain{},
-			ExpectedError:  fmt.Errorf(PersonErrorToSaveInDataBase),
+			ExpectedError:  fmt.Errorf(database.PersonSaveDBError),
 		},
 	}
 

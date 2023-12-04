@@ -20,6 +20,8 @@ var PersonCacheTTL = 10 * time.Minute
 
 const (
 	PersonCacheKeyTypeID = "ID"
+	TypePersonLegal      = "pessoa_juridica"
+	TypePersonIndividual = "pessoa_fisica"
 )
 
 const (
