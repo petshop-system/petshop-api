@@ -20,10 +20,12 @@ var PersonCacheTTL = 10 * time.Minute
 
 const (
 	PersonCacheKeyTypeID = "ID"
+	TypePersonLegal      = "pessoa_juridica"
+	TypePersonIndividual = "pessoa_fisica"
 )
 
 const (
-	PersonErrorToSaveInCache = "error to save person in cache."
+	PersonErrorToSaveInCache = "error to save person in cache"
 )
 
 func (service PersonService) getCacheKey(cacheKeyType string, value string) string {

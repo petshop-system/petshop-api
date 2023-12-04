@@ -13,7 +13,7 @@ type PersonPostgresDB struct {
 }
 
 const (
-	PersonSaveDBError = "error to save the person into postgres "
+	PersonSaveDBError = "error to save the person into postgres"
 )
 
 func NewPersonPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) PersonPostgresDB {
