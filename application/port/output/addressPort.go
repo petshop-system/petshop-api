@@ -7,7 +7,7 @@ import (
 
 type IAddressDomainDataBaseRepository interface {
 	Save(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error)
-	GetByID(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, error)
+	GetByID(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error)
 }
 
 type IAddressDomainCacheRepository interface {
