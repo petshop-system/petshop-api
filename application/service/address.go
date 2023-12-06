@@ -23,7 +23,8 @@ const (
 )
 
 const (
-	AddressErrorToSaveInCache = "error to save address in cache."
+	AddressErrorToSaveInCache    = "error to save address in cache."
+	AddressErrorToGetByIDInCache = "error to save and address in cache"
 )
 
 func (service AddressService) getCacheKey(cacheKeyType string, value string) string {
@@ -45,4 +46,23 @@ func (service AddressService) Create(contextControl domain.ContextControl, addre
 	}
 
 	return save, nil
+}
+
+func (service AddressService) GetByID(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
+	address, exists, err := service.AddressDomainDataBaseRepository.GetByID(contextControl, ID)
+	if err != nil {
+		return domain.AddressDomain{}, exists, err
+	}
+
+	if !exists {
+		return domain.AddressDomain{}, exists, nil
+	}
+	hash, _ := json.Marshal(address)
+	if err = service.AddressDomainCacheRepository.Set(contextControl,
+		service.getCacheKey(AddressCacheKeyTypeID, strconv.FormatInt(address.ID, 10)),
+		string(hash), AddressCacheTTL); err != nil {
+		service.LoggerSugar.Infow(AddressErrorToGetByIDInCache, "address_id", address.ID)
+	}
+
+	return address, exists, nil
 }
