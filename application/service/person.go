@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/output"
+	"github.com/petshop-system/petshop-api/application/utils"
 	"go.uber.org/zap"
 	"strconv"
 	"time"
@@ -33,8 +34,26 @@ func (service PersonService) getCacheKey(cacheKeyType string, value string) stri
 }
 
 func (service PersonService) Create(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
+	personCopy := person
+	typePerson := personCopy.Tipo_pessoa
 
-	save, err := service.PersonDomainDataBaseRepository.Save(contextControl, person)
+	if typePerson == TypePersonIndividual {
+		err := utils.ValidateCpf(person.Cpf_cnpj)
+		if err != nil {
+			return domain.PersonDomain{}, err
+		}
+		personCopy.Cpf_cnpj = utils.CleanCpf(person.Cpf_cnpj)
+	}
+
+	/*	if typePerson == TypePersonIndividual {
+		err := utils.ValidateCNPJ(typePerson)
+		if err != nil {
+			return domain.PersonDomain{}, err
+		}
+		personCopy.Cpf_cnpj = utils.CleanCpf(person.Cpf_cnpj)
+	}*/
+
+	save, err := service.PersonDomainDataBaseRepository.Save(contextControl, personCopy)
 	if err != nil {
 		return domain.PersonDomain{}, err
 	}

@@ -31,11 +31,12 @@ func init() {
 	core := zapcore.NewTee(
 		zapcore.NewCore(jsonEncoder, zapcore.AddSync(os.Stdout), zapcore.DebugLevel),
 	)
-
+	//logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
 	logger := zap.New(core, zap.AddCaller())
 	defer logger.Sync() // flushes buffer, if any
-	personLoggerSugar = logger.Sugar()
-	personLoggerSugar.Infow("testing")
+	loggerSugar = logger.Sugar()
+	loggerSugar.Infow("testing")
+
 }
 
 func TestPersonService_Create(t *testing.T) {
@@ -51,15 +52,15 @@ func TestPersonService_Create(t *testing.T) {
 		{
 			Name: "success saving person",
 			Person: domain.PersonDomain{
-				Cpf_cnpj:    "076.000.000-06",
-				Tipo_pessoa: TypePersonLegal,
+				Cpf_cnpj:    "076.164.346-06",
+				Tipo_pessoa: TypePersonIndividual,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
 					return domain.PersonDomain{
 						ID:          1,
-						Cpf_cnpj:    "076.000.000-06",
-						Tipo_pessoa: TypePersonLegal,
+						Cpf_cnpj:    "076.164.346-06",
+						Tipo_pessoa: TypePersonIndividual,
 					}, nil
 				},
 			},
@@ -70,16 +71,16 @@ func TestPersonService_Create(t *testing.T) {
 			},
 			ExpectedResult: domain.PersonDomain{
 				ID:          1,
-				Cpf_cnpj:    "076.000.000-06",
-				Tipo_pessoa: TypePersonLegal,
+				Cpf_cnpj:    "076.164.346-06",
+				Tipo_pessoa: TypePersonIndividual,
 			},
 			ExpectedError: nil,
 		},
 		{
 			Name: "error saving person",
 			Person: domain.PersonDomain{
-				Cpf_cnpj:    "076.000.000-06",
-				Tipo_pessoa: TypePersonLegal,
+				Cpf_cnpj:    "076.164.346-06",
+				Tipo_pessoa: TypePersonIndividual,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
