@@ -16,8 +16,6 @@ import (
 	"time"
 )
 
-var personLoggerSugar *zap.SugaredLogger
-
 func init() {
 
 	err := envconfig.Process("setting", &environment.Setting)
@@ -97,7 +95,7 @@ func TestPersonService_Create(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 
 			personService := PersonService{
-				LoggerSugar:                    personLoggerSugar,
+				LoggerSugar:                    loggerSugar,
 				PersonDomainCacheRepository:    test.PersonDomainCacheRepository,
 				PersonDomainDataBaseRepository: test.PersonDomainDataBaseRepository,
 			}
