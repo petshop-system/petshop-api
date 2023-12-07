@@ -35,7 +35,7 @@ func init() {
 	logger := zap.New(core, zap.AddCaller())
 	defer logger.Sync() // flushes buffer, if any
 	loggerSugar = logger.Sugar()
-	loggerSugar.Infow("testing")
+	loggerSugar.Infow("testing person services")
 
 }
 
