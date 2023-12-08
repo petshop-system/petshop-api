@@ -2,25 +2,24 @@ package utils
 
 import (
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 )
 
 const (
-	ErrorInvalidCpfFormat         = "invalid CPF format"
-	ErrorAllDigitsEqual           = "invalid CPF because all digits are equal"
-	ErrorFirstVerification        = "error in the first verification of the CPF"
-	ErrorSecondVerification       = "error in the second verification of the CPF"
-	ErrorConvertingCharacterToNum = "error converting character to number: %v"
+	ErrorInvalidCPFLength             = "invalid CPF length error"
+	ErrorAllDigitsEqual               = "invalid CPF because all digits are equal"
+	ErrorFirstVerification            = "error in the first verification of the CPF"
+	ErrorSecondVerification           = "error in the second verification of the CPF"
+	ErrorIncorrectCharacterConversion = "invalid CPF with incorrect character conversion"
 )
 
 func ValidateCpf(cpf string) error {
-	if !isValidCpfFormat(cpf) {
-		return fmt.Errorf(ErrorInvalidCpfFormat)
-	}
+	cleanedCpf := RemoveNonNumericCharacters(cpf)
 
-	cleanedCpf := CleanCpf(cpf)
+	if len(cleanedCpf) != 11 {
+		return fmt.Errorf(ErrorInvalidCPFLength)
+	}
 
 	characters := strings.Split(cleanedCpf, "")
 	firstVerification, _ := strconv.Atoi(characters[9])
@@ -37,7 +36,7 @@ func ValidateCpf(cpf string) error {
 	for i := 0; i < 9; i++ {
 		num, err := strconv.Atoi(characters[i])
 		if err != nil {
-			return fmt.Errorf(ErrorConvertingCharacterToNum, err)
+			return fmt.Errorf(ErrorIncorrectCharacterConversion)
 		}
 		status1 += num * (10 - i)
 	}
@@ -54,7 +53,7 @@ func ValidateCpf(cpf string) error {
 	for i := 0; i < 10; i++ {
 		num, err := strconv.Atoi(characters[i])
 		if err != nil {
-			return fmt.Errorf(ErrorConvertingCharacterToNum, err)
+			return fmt.Errorf(ErrorIncorrectCharacterConversion)
 		}
 
 		status2 += num * (11 - i)
@@ -67,13 +66,11 @@ func ValidateCpf(cpf string) error {
 	return nil
 }
 
-func isValidCpfFormat(cpf string) bool {
-	patternCpf := regexp.MustCompile(`^\d{3}\.\d{3}\.\d{3}-\d{2}$|^\d{11}$`)
-	return patternCpf.MatchString(cpf)
-}
-
-func CleanCpf(cpf string) string {
-	return strings.ReplaceAll(strings.ReplaceAll(cpf, ".", ""), "-", "")
+func RemoveNonNumericCharacters(documentNumber string) string {
+	documentNumber = strings.ReplaceAll(documentNumber, ".", "")
+	documentNumber = strings.ReplaceAll(documentNumber, "-", "")
+	documentNumber = strings.ReplaceAll(documentNumber, "/", "")
+	return documentNumber
 }
 
 /*func ValidateCnpj(cnpj string) error {

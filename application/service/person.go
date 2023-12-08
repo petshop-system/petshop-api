@@ -34,26 +34,21 @@ func (service PersonService) getCacheKey(cacheKeyType string, value string) stri
 }
 
 func (service PersonService) Create(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
-	personCopy := person
-	typePerson := personCopy.Tipo_pessoa
 
-	if typePerson == TypePersonIndividual {
-		err := utils.ValidateCpf(person.Cpf_cnpj)
-		if err != nil {
+	if person.Tipo_pessoa == TypePersonIndividual {
+		if err := utils.ValidateCpf(person.Cpf_cnpj); err != nil {
 			return domain.PersonDomain{}, err
 		}
-		personCopy.Cpf_cnpj = utils.CleanCpf(person.Cpf_cnpj)
+		person.Cpf_cnpj = utils.RemoveNonNumericCharacters(person.Cpf_cnpj)
 	}
 
-	/*	if typePerson == TypePersonIndividual {
-		err := utils.ValidateCNPJ(typePerson)
-		if err != nil {
+	/*if person.Tipo_pessoa == TypePersonLegal {
+		if err := utils.ValidateCnpj(person.Cpf_cnpj); err != nil {
 			return domain.PersonDomain{}, err
 		}
-		personCopy.Cpf_cnpj = utils.CleanCpf(person.Cpf_cnpj)
 	}*/
 
-	save, err := service.PersonDomainDataBaseRepository.Save(contextControl, personCopy)
+	save, err := service.PersonDomainDataBaseRepository.Save(contextControl, person)
 	if err != nil {
 		return domain.PersonDomain{}, err
 	}
