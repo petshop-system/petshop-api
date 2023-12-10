@@ -31,8 +31,8 @@ func (cp PersonPostgresDB) GetByID(contextControl domain.ContextControl, ID int6
 
 type PersonDB struct {
 	ID          int64  `gorm:"primaryKey, column:id"`
-	Cpf_cnpj    string `gorm:"column:cpf_cnpj"`
-	Tipo_pessoa string `gorm:"column:tipo_pessoa"`
+	Document    string `gorm:"column:document"`
+	Person_type string `gorm:"column:person_type"`
 }
 
 func (PersonDB) TableName() string {
@@ -42,8 +42,8 @@ func (PersonDB) TableName() string {
 func (c PersonDB) CopyToPersonDomain() domain.PersonDomain {
 	return domain.PersonDomain{
 		ID:          c.ID,
-		Cpf_cnpj:    c.Cpf_cnpj,
-		Tipo_pessoa: c.Tipo_pessoa,
+		Document:    c.Document,
+		Person_type: c.Person_type,
 	}
 }
 
@@ -51,7 +51,7 @@ func (cp PersonPostgresDB) Save(contextControl domain.ContextControl, personDoma
 
 	var personDB PersonDB
 	copier.Copy(&personDB, &personDomain)
-	personDB.Cpf_cnpj = utils.RemoveNonNumericCharacters(personDB.Cpf_cnpj)
+	personDB.Document = utils.RemoveNonNumericCharacters(personDB.Document)
 
 	if err := cp.DB.WithContext(contextControl.Context).
 		Create(&personDB).Error; err != nil {

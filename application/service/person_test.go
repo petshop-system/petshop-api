@@ -50,15 +50,15 @@ func TestPersonService_Create(t *testing.T) {
 		{
 			Name: "success saving person",
 			Person: domain.PersonDomain{
-				Cpf_cnpj:    "076.164.346-06",
-				Tipo_pessoa: TypePersonIndividual,
+				Document:    "076.164.346-06",
+				Person_type: TypePersonIndividual,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
 					return domain.PersonDomain{
 						ID:          1,
-						Cpf_cnpj:    "076.164.346-06",
-						Tipo_pessoa: TypePersonIndividual,
+						Document:    "076.164.346-06",
+						Person_type: TypePersonIndividual,
 					}, nil
 				},
 			},
@@ -69,16 +69,16 @@ func TestPersonService_Create(t *testing.T) {
 			},
 			ExpectedResult: domain.PersonDomain{
 				ID:          1,
-				Cpf_cnpj:    "076.164.346-06",
-				Tipo_pessoa: TypePersonIndividual,
+				Document:    "076.164.346-06",
+				Person_type: TypePersonIndividual,
 			},
 			ExpectedError: nil,
 		},
 		{
 			Name: "error saving person",
 			Person: domain.PersonDomain{
-				Cpf_cnpj:    "076.164.346-06",
-				Tipo_pessoa: TypePersonIndividual,
+				Document:    "076.164.346-06",
+				Person_type: TypePersonIndividual,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
