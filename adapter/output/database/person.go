@@ -3,6 +3,7 @@ package database
 import (
 	"github.com/jinzhu/copier"
 	"github.com/petshop-system/petshop-api/application/domain"
+	"github.com/petshop-system/petshop-api/application/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -50,6 +51,7 @@ func (cp PersonPostgresDB) Save(contextControl domain.ContextControl, personDoma
 
 	var personDB PersonDB
 	copier.Copy(&personDB, &personDomain)
+	personDB.Cpf_cnpj = utils.RemoveNonNumericCharacters(personDB.Cpf_cnpj)
 
 	if err := cp.DB.WithContext(contextControl.Context).
 		Create(&personDB).Error; err != nil {

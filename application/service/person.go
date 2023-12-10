@@ -39,7 +39,6 @@ func (service PersonService) Create(contextControl domain.ContextControl, person
 		if err := utils.ValidateCpf(person.Cpf_cnpj); err != nil {
 			return domain.PersonDomain{}, err
 		}
-		person.Cpf_cnpj = utils.RemoveNonNumericCharacters(person.Cpf_cnpj)
 	}
 
 	/*if person.Tipo_pessoa == TypePersonLegal {
