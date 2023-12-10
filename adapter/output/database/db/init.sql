@@ -1,6 +1,7 @@
 create schema petshop_api
 
 -- auto-generated definition
+
     create table address
     (
         id         serial       not null
@@ -25,6 +26,23 @@ create schema petshop_api
         unique index petshop_api_person_id_uindex
         on person (id)
 
+    create table contract
+    (
+        id             serial       not null
+            constraint petshop_api_customer_pkey primary key,
+        name           varchar(255) not null,
+        email          varchar(255) not null unique ,
+        date_created  timestamp default timezone('BRT'::text, now()),
+        fk_id_address int          not null unique ,
+        fk_id_person   int          not null unique ,
+        FOREIGN KEY (fk_id_address) references address (id),
+        FOREIGN KEY (fk_id_person) references person (id)
+    )
+
+    create
+        unique index petshop_api_contract_id_uindex
+        on contract (id)
+
     create table customer
     (
         id             serial       not null
@@ -34,6 +52,8 @@ create schema petshop_api
         date_created  timestamp default timezone('BRT'::text, now()),
         fk_id_address int          not null unique ,
         fk_id_person   int          not null unique ,
+        fk_id_contract   int          not null ,
+        FOREIGN KEY (fk_id_contract) references contract (id),
         FOREIGN KEY (fk_id_address) references address (id),
         FOREIGN KEY (fk_id_person) references person (id)
     )
@@ -90,6 +110,8 @@ create schema petshop_api
         date_birthday date      default timezone('BRT'::text, null),
         fk_id_customer   int          not null,
         fk_id_breed      int          not null,
+        fk_id_contract   int          not null ,
+        FOREIGN KEY (fk_id_contract) references contract (id),
         FOREIGN KEY (fk_id_customer) references customer (id),
         FOREIGN KEY (fk_id_breed) references breed (id)
     )
@@ -97,6 +119,15 @@ create schema petshop_api
     create
         unique index petshop_api_pet_id_uindex
         on pet (id);
+
+--     create table schedule (
+--                               id              serial       not null
+--                                   constraint petshop_api_schedule_pkey primary key,
+--     )
+--
+--     create
+--         unique index petshop_api_schedule_id_uindex
+--         on schedule (id);
 
 
 -- Create default clientes inserts
