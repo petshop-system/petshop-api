@@ -38,7 +38,7 @@ func ValidateCpf(cpf string) error {
 		charVerification: the value of before last char position or last char position
 		errorMessageVerification: message to error char verification
 	*/
-	verification := func(positionVerification int, lenCharacters int, charVerification int, errorMessageVerification string) error {
+	verification := func(positionVerification, lenCharacters, charVerification int, errorMessageVerification string) error {
 
 		var status int
 		constValidation := 10
