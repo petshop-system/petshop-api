@@ -17,52 +17,61 @@ const (
 func ValidateCpf(cpf string) error {
 	cleanedCpf := RemoveNonNumericCharacters(cpf)
 
-	if len(cleanedCpf) != 11 {
+	cpfLen := 11
+	if len(cleanedCpf) != cpfLen {
 		return fmt.Errorf(ErrorInvalidCPFLength)
 	}
 
-	characters := strings.Split(cleanedCpf, "")
-	firstVerification, _ := strconv.Atoi(characters[9])
-	secondVerification, _ := strconv.Atoi(characters[10])
-
-	allDigitsEqual := strings.Count(cleanedCpf, string(cleanedCpf[0])) == 11
-
-	if allDigitsEqual {
+	if allDigitsEqual := strings.Count(cleanedCpf, string(cleanedCpf[0])) == cpfLen; allDigitsEqual {
 		return fmt.Errorf(ErrorAllDigitsEqualCPF)
 	}
 
-	var status1, status2 int
+	characters := strings.Split(cleanedCpf, "")
+	beforeLastPosition := len(cleanedCpf) - 2
+	beforeLastValue, _ := strconv.Atoi(characters[beforeLastPosition])
+	lastPosition := len(cleanedCpf) - 1
+	lastValue, _ := strconv.Atoi(characters[lastPosition])
 
-	for i := 0; i < 9; i++ {
-		num, err := strconv.Atoi(characters[i])
-		if err != nil {
-			return fmt.Errorf(ErrorIncorrectCharacterConversionCPF)
+	/*
+		positionVerification: the number of before last char position or last char position
+		lenCharacters: size of characters in the cpf
+		charVerification: the value of before last char position or last char position
+		errorMessageVerification: message to error char verification
+	*/
+	verification := func(positionVerification int, lenCharacters int, charVerification int, errorMessageVerification string) error {
+
+		var status int
+		constValidation := 10
+
+		for i := 0; i < positionVerification; i++ {
+			num, err := strconv.Atoi(characters[i])
+			if err != nil {
+				return fmt.Errorf(ErrorIncorrectCharacterConversionCPF)
+			}
+			status += num * ((positionVerification + 1) - i)
 		}
-		status1 += num * (10 - i)
-	}
-	test1 := (status1 * 10) % 11
 
-	if test1 == 10 {
-		test1 = 0
-	}
+		checkCharacter := (status * constValidation) % lenCharacters
 
-	if test1 != firstVerification {
-		return fmt.Errorf(ErrorFirstVerificationCPF)
-	}
-
-	for i := 0; i < 10; i++ {
-		num, err := strconv.Atoi(characters[i])
-		if err != nil {
-			return fmt.Errorf(ErrorIncorrectCharacterConversionCPF)
+		if checkCharacter == constValidation {
+			checkCharacter = 0
 		}
 
-		status2 += num * (11 - i)
-	}
-	test2 := (status2 * 10) % 11
+		if checkCharacter != charVerification {
+			return fmt.Errorf(errorMessageVerification)
+		}
 
-	if test2 != secondVerification {
-		return fmt.Errorf(ErrorSecondVerificationCPF)
+		return nil
 	}
+
+	if err := verification(beforeLastPosition, cpfLen, beforeLastValue, ErrorFirstVerificationCPF); err != nil {
+		return err
+	}
+
+	if err := verification(lastPosition, cpfLen, lastValue, ErrorSecondVerificationCPF); err != nil {
+		return err
+	}
+
 	return nil
 }
 
