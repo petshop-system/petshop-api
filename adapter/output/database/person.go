@@ -14,7 +14,9 @@ type PersonPostgresDB struct {
 }
 
 const (
-	PersonSaveDBError = "error to save the person into postgres"
+	PersonSaveDBError    = "error to save the person into postgres"
+	PersonGetByIdDBError = "error to get a person by id"
+	PersonNotFound       = "person not found"
 )
 
 func NewPersonPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) PersonPostgresDB {
@@ -22,11 +24,6 @@ func NewPersonPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) Person
 		DB:          gormDB,
 		LoggerSugar: loggerSugar,
 	}
-}
-
-func (cp PersonPostgresDB) GetByID(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, error) {
-	//TODO implement me
-	panic("implement me")
 }
 
 type PersonDB struct {
@@ -53,12 +50,20 @@ func (cp PersonPostgresDB) Save(contextControl domain.ContextControl, personDoma
 	copier.Copy(&personDB, &personDomain)
 	personDB.Document = utils.RemoveNonNumericCharacters(personDB.Document)
 
-	if err := cp.DB.WithContext(contextControl.Context).
-		Create(&personDB).Error; err != nil {
-		cp.LoggerSugar.Errorw(PersonSaveDBError,
-			"error", err.Error())
+	if err := cp.DB.WithContext(contextControl.Context).Create(&personDB).Error; err != nil {
+		cp.LoggerSugar.Errorw(PersonSaveDBError, "error", err.Error())
 		return domain.PersonDomain{}, err
 	}
-
 	return personDB.CopyToPersonDomain(), nil
+}
+
+func (cp PersonPostgresDB) GetByID(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, bool, error) {
+	var personDB PersonDB
+
+	result := cp.DB.WithContext(contextControl.Context).First(&personDB, ID)
+	if result.RowsAffected == 0 {
+		cp.LoggerSugar.Errorw(PersonNotFound)
+		return domain.PersonDomain{}, false, nil
+	}
+	return personDB.CopyToPersonDomain(), true, nil
 }

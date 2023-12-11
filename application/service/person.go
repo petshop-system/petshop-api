@@ -26,7 +26,8 @@ const (
 )
 
 const (
-	PersonErrorToSaveInCache = "error to save person in cache"
+	PersonErrorToSaveInCache    = "error to save person in cache"
+	PersonErrorToGetByIDInCache = "error to save person in cache"
 )
 
 func (service PersonService) getCacheKey(cacheKeyType string, value string) string {
@@ -57,6 +58,23 @@ func (service PersonService) Create(contextControl domain.ContextControl, person
 		string(hash), PersonCacheTTL); err != nil {
 		service.LoggerSugar.Infow(PersonErrorToSaveInCache, "person_id", save.ID)
 	}
-
 	return save, nil
+}
+
+func (service PersonService) GetByID(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, bool, error) {
+	person, exists, err := service.PersonDomainDataBaseRepository.GetByID(contextControl, ID)
+	if err != nil {
+		return domain.PersonDomain{}, exists, err
+	}
+
+	if !exists {
+		return domain.PersonDomain{}, exists, nil
+	}
+	hash, _ := json.Marshal(person)
+	if err = service.PersonDomainCacheRepository.Set(contextControl,
+		service.getCacheKey(AddressCacheKeyTypeID, strconv.FormatInt(person.ID, 10)),
+		string(hash), AddressCacheTTL); err != nil {
+		service.LoggerSugar.Infow(PersonErrorToGetByIDInCache, "address_id", person.ID)
+	}
+	return person, exists, nil
 }

@@ -52,6 +52,7 @@ func (router Router) AddGroupHandlerPerson(ah *handler.Person) func(r chi.Router
 	return func(r chi.Router) {
 		r.Route("/pessoa", func(r chi.Router) {
 			r.Post("/cadastrar", ah.Create)
+			r.Get("/consultar/{id}", ah.GetByID)
 		})
 	}
 }
