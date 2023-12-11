@@ -101,19 +101,16 @@ func ValidateCnpj(cnpj string) error {
 	}
 
 	characters := strings.Split(cleanedCnpj, "")
-	beforeLastPosition := len(cleanedCnpj) - 2 //14 - 2 = 12 (posicao: 0 a 13) -> penultimo Nª para (firstVerification)
+	beforeLastPosition := len(cleanedCnpj) - 2
 	beforeLastValue, _ := strconv.Atoi(characters[beforeLastPosition])
-	lastPosition := len(cleanedCnpj) - 1 //14 - 1 = 13 -> (0 a 13) último numero
+	lastPosition := len(cleanedCnpj) - 1
 	lastValue, _ := strconv.Atoi(characters[lastPosition])
-	/*	firstVerification, _ := strconv.Atoi(characters[12]) // 	firstVerification, _ := strconv.Atoi(characters[12])
-		secondVerification, _ := strconv.Atoi(characters[13])*/
 
-	multipliers1 := []int{5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2}    // Array for the first step of CNPJ calculation.
-	multipliers2 := []int{6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2} // Array for the second step of CNPJ calculation.
+	multipliers1 := []int{5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2}    // Calculation Rule for CNPJ. Array for the first step of CNPJ calculation.
+	multipliers2 := []int{6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2} //Calculation Rule for CNPJ. Array for the second step of CNPJ calculation.
 
 	verification := func(positionVerification int, multipliers []int, charVerification int, errorMessageVerification string) error {
 		var status int
-		//var status2 int
 
 		for i := 0; i < positionVerification; i++ {
 			num, err := strconv.Atoi(characters[i])
@@ -123,16 +120,20 @@ func ValidateCnpj(cnpj string) error {
 			status += num * multipliers[i]
 		}
 
-		checkCharacter := status % 11 //11: Constant for CPF and CNPJ Calculation.
+		const cnpjCalculationFactor = 11
+		minValueVerification := 2
+		maxValueVerification := 10
 
-		if checkCharacter == 0 || checkCharacter == 1 { //If the remainder of the division is 0 or 1, the penultimate digit should be 0.
+		checkCharacter := status % cnpjCalculationFactor
+
+		if checkCharacter == 0 || checkCharacter == 1 { //Calculation Rule for CNPJ. If the remainder of the division is 0 or 1, the penultimate digit should be 0.
 			if charVerification != 0 {
 				return fmt.Errorf(errorMessageVerification)
 			}
 		}
 
-		if checkCharacter >= 2 && checkCharacter <= 10 { //from 2 to 10: Constant for CNPJ Calculation.
-			if charVerification != 11-checkCharacter {
+		if checkCharacter >= minValueVerification && checkCharacter <= maxValueVerification { //from min to max: Calculation Rule for CNPJ
+			if charVerification != cnpjCalculationFactor-checkCharacter {
 				return fmt.Errorf(errorMessageVerification)
 			}
 		}
