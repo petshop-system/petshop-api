@@ -35,17 +35,16 @@ func (service PersonService) getCacheKey(cacheKeyType string, value string) stri
 
 func (service PersonService) Create(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
 
-	if person.Person_type == TypePersonIndividual {
+	switch person.Person_type {
+	case TypePersonLegal:
+		if err := utils.ValidateCnpj(person.Document); err != nil {
+			return domain.PersonDomain{}, err
+		}
+	case TypePersonIndividual:
 		if err := utils.ValidateCpf(person.Document); err != nil {
 			return domain.PersonDomain{}, err
 		}
 	}
-
-	/*if person.Person_type == TypePersonLegal {
-		if err := utils.ValidateCnpj(person.Document); err != nil {
-			return domain.PersonDomain{}, err
-		}
-	}*/
 
 	save, err := service.PersonDomainDataBaseRepository.Save(contextControl, person)
 	if err != nil {

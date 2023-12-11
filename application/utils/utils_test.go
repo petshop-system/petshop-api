@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -63,6 +64,52 @@ func TestValidateCpf(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			err := ValidateCpf(test.InputCpf)
+			assert.Equal(t, err, test.ExpectedError)
+		})
+	}
+}
+
+func TestValidateCnpj(t *testing.T) {
+	tests := []struct {
+		Name          string
+		InputCnpj     string
+		ExpectedError error
+	}{
+		{
+			Name:          "valid CNPJ format",
+			InputCnpj:     "33.649.575/0001-99",
+			ExpectedError: nil,
+		},
+		{
+			Name:          "invalid CNPJ format",
+			InputCnpj:     "123-456-789",
+			ExpectedError: fmt.Errorf(ErrorInvalidCNPJLength),
+		},
+		{
+			Name:          "invalid CNPJ with all digits equal",
+			InputCnpj:     "11.111.111/1111-11",
+			ExpectedError: fmt.Errorf(ErrorAllDigitsEqualCNPJ),
+		},
+		{
+			Name:          "invalid CNPJ with incorrect first verification digit",
+			InputCnpj:     "89.898.662/0001-14",
+			ExpectedError: fmt.Errorf(ErrorFirstVerificationCNPJ),
+		},
+		{
+			Name:          "invalid CNPJ with incorrect second verification digits",
+			InputCnpj:     "89.898.662/0001-32",
+			ExpectedError: fmt.Errorf(ErrorSecondVerificationCNPJ),
+		},
+		{
+			Name:          "invalid CNPJ with incorrect character conversion",
+			InputCnpj:     "89.89C.662/0001-34",
+			ExpectedError: fmt.Errorf(ErrorIncorrectCharacterConversionCNPJ),
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.Name, func(t *testing.T) {
+			err := ValidateCnpj(test.InputCnpj)
 			assert.Equal(t, err, test.ExpectedError)
 		})
 	}
