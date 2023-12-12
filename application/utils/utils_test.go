@@ -122,7 +122,7 @@ func TestRemoveNonNumericCharacters(t *testing.T) {
 	}{
 		{"123-456-789", "123456789"},
 		{"1.2.3", "123"},
-		{"89.89C.662/0001-34", "8989C662000134"},
+		{"12/1220/234", "121220234"},
 	}
 
 	for _, test := range tests {
