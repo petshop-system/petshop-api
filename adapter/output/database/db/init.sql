@@ -122,42 +122,84 @@ create schema petshop_api
 
     create table service
     (
-        id    serial       not null
+        id             serial       not null
             constraint petshop_api_service_pkey primary key,
-        name  varchar(255) not null,
-        price decimal      not null default 0
+        name           varchar(255) not null,
+        price          decimal      not null default 0,
+        active         bool         not null default true,
+        fk_id_contract int          not null,
+        FOREIGN KEY (fk_id_contract) references contract (id)
     )
 
     create
         unique index petshop_api_service_id_uindex
         on service (id)
 
-    create table service_time
+    create table service_duration_time
     (
-        id            serial       not null
+        id             serial       not null
             constraint petshop_api_service_time_pkey primary key,
-        hour          varchar(255) not null,
-        fk_id_service int          not null,
+        hour           varchar(255) not null,
+        active         bool         not null default true,
+        fk_id_service  int          not null,
+        fk_id_contract int          not null,
+        FOREIGN KEY (fk_id_contract) references contract (id),
         FOREIGN KEY (fk_id_service) references service (id)
     )
 
     create
-        unique index petshop_api_service_time_id_uindex
-        on service_time (id)
+        unique index petshop_api_service_duration_time_id_uindex
+        on service_duration_time (id)
+
+    create table employee
+    (
+        id             serial       not null
+            constraint petshop_api_employee_pkey primary key,
+        name           varchar(255) not null,
+        register       varchar(255) not null,
+        date_created   timestamp default timezone('BRT'::text, now()),
+        fk_id_person   int          not null,
+        fk_id_contract int          not null,
+        FOREIGN KEY (fk_id_contract) references contract (id),
+        FOREIGN KEY (fk_id_person) references person (id)
+    )
+
+    create
+        unique index petshop_api_employee_id_uindex
+        on employee (id)
+
+    create table service_employee
+    (
+        id             serial not null
+            constraint petshop_api_service_employee_pkey primary key,
+        fk_id_employee int    not null,
+        fk_id_service  int    not null,
+        fk_id_contract int    not null,
+        FOREIGN KEY (fk_id_contract) references contract (id),
+        FOREIGN KEY (fk_id_service) references service (id),
+        FOREIGN KEY (fk_id_employee) references employee (id)
+    )
+
+    create
+        unique index petshop_api_service_employee_id_uindex
+        on service_employee (id)
 
     create table schedule
     (
-        id                 serial  not null
+        id                          serial  not null
             constraint petshop_api_schedule_pkey primary key,
-        date_created       timestamp        default timezone('BRT'::text, now()),
-        booking            date    not null,
-        price              decimal not null default 0,
-        fk_id_pet          int     not null,
-        fk_id_service_time int     not null,
-        fk_id_contract     int     not null,
+        date_created                timestamp        default timezone('BRT'::text, now()),
+        date_declined               timestamp,
+        booking                     date    not null,
+        price                       decimal not null default 0,
+        fk_id_pet                   int     not null,
+        fk_id_service_duration_time int     not null,
+        fk_id_employee              int     not null,
+        fk_id_contract              int     not null,
         FOREIGN KEY (fk_id_contract) references contract (id),
+        FOREIGN KEY (fk_id_employee) references employee (id),
         FOREIGN KEY (fk_id_pet) references pet (id),
-        FOREIGN KEY (fk_id_service_time) references service_time (id)
+        FOREIGN KEY (fk_id_service_duration_time) references service_duration_time (id)
     )
 
     create
@@ -178,11 +220,12 @@ VALUES ('Av. Juiz de Fora', 1001);
 
 INSERT INTO petshop_api.person (document, person_type)
 VALUES ('22233344409', 'individual');
+
 INSERT INTO petshop_api.person (document, person_type)
 VALUES ('38988657000181', 'legal');
 
 INSERT INTO petshop_api.contract (name, email, date_created, fk_id_address, fk_id_person)
-VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 3, 2) ;
+VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 3, 2);
 
 INSERT INTO petshop_api.customer (name, fk_id_address, email, date_created, fk_id_person, fk_id_contract)
 VALUES ('siclano', 1, 'siclano@gmail.com', now(), 1, 1);
@@ -195,6 +238,7 @@ VALUES ('912345678', '72', 'celular', 1);
 
 INSERT INTO petshop_api.species (name)
 VALUES ('Canino');
+
 INSERT INTO petshop_api.species (name)
 VALUES ('Felino');
 
@@ -202,5 +246,5 @@ INSERT INTO petshop_api.breed (name, fk_id_species)
 VALUES ('Pastor Alemao', 1);
 
 INSERT INTO petshop_api.pet (name, date_created, date_birthday, fk_id_customer, fk_id_breed, fk_id_contract)
-VALUES ('Rex', now(), to_date('12/12/2016', 'dd/MM/yyyy'), 1, 1, 2);
+VALUES ('Rex', now(), to_date('12/12/2016', 'dd/MM/yyyy'), 1, 1, 1);
 
