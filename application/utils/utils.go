@@ -106,9 +106,6 @@ func ValidateCnpj(cnpj string) error {
 	lastPosition := len(cleanedCnpj) - 1
 	lastValue, _ := strconv.Atoi(characters[lastPosition])
 
-	multipliers1 := []int{5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2}    // Calculation Rule for CNPJ. Array for the first step of CNPJ calculation.
-	multipliers2 := []int{6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2} //Calculation Rule for CNPJ. Array for the second step of CNPJ calculation.
-
 	verification := func(positionVerification int, multipliers []int, charVerification int, errorMessageVerification string) error {
 		var status int
 
@@ -126,25 +123,23 @@ func ValidateCnpj(cnpj string) error {
 
 		checkCharacter := status % cnpjCalculationFactor
 
-		if checkCharacter == 0 || checkCharacter == 1 { //Calculation Rule for CNPJ. If the remainder of the division is 0 or 1, the penultimate digit should be 0.
-			if charVerification != 0 {
-				return fmt.Errorf(errorMessageVerification)
-			}
+		if (checkCharacter == 0 || checkCharacter == 1) && charVerification != 0 { //Calculation Rule for CNPJ. If the remainder of the division is 0 or 1, the penultimate digit should be 0.
+			return fmt.Errorf(errorMessageVerification)
 		}
 
-		if checkCharacter >= minValueVerification && checkCharacter <= maxValueVerification { //from min to max: Calculation Rule for CNPJ
-			if charVerification != cnpjCalculationFactor-checkCharacter {
-				return fmt.Errorf(errorMessageVerification)
-			}
+		if (checkCharacter >= minValueVerification && checkCharacter <= maxValueVerification) && (charVerification != cnpjCalculationFactor-checkCharacter) { //from min to max: Calculation Rule for CNPJ
+			return fmt.Errorf(errorMessageVerification)
 		}
 		return nil
 	}
 
-	if err := verification(beforeLastPosition, multipliers1, beforeLastValue, ErrorFirstVerificationCNPJ); err != nil {
+	cnpjMultipliersFirst := []int{5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2} // Calculation Rule for CNPJ. Array for the first step of CNPJ calculation.
+	if err := verification(beforeLastPosition, cnpjMultipliersFirst, beforeLastValue, ErrorFirstVerificationCNPJ); err != nil {
 		return err
 	}
 
-	if err := verification(lastPosition, multipliers2, lastValue, ErrorSecondVerificationCNPJ); err != nil {
+	cnpjMultipliersSecond := []int{6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2} //Calculation Rule for CNPJ. Array for the second step of CNPJ calculation.
+	if err := verification(lastPosition, cnpjMultipliersSecond, lastValue, ErrorSecondVerificationCNPJ); err != nil {
 		return err
 	}
 	return nil
