@@ -135,29 +135,14 @@ create schema petshop_api
         unique index petshop_api_service_id_uindex
         on service (id)
 
-    create table service_duration_time
-    (
-        id             serial       not null
-            constraint petshop_api_service_time_pkey primary key,
-        hour           varchar(255) not null,
-        active         bool         not null default true,
-        fk_id_service  int          not null,
-        fk_id_contract int          not null,
-        FOREIGN KEY (fk_id_contract) references contract (id),
-        FOREIGN KEY (fk_id_service) references service (id)
-    )
-
-    create
-        unique index petshop_api_service_duration_time_id_uindex
-        on service_duration_time (id)
-
     create table employee
     (
         id             serial       not null
             constraint petshop_api_employee_pkey primary key,
         name           varchar(255) not null,
         register       varchar(255) not null,
-        date_created   timestamp default timezone('BRT'::text, now()),
+        date_created   timestamp             default timezone('BRT'::text, now()),
+        active         bool         not null default true,
         fk_id_person   int          not null,
         fk_id_contract int          not null,
         FOREIGN KEY (fk_id_contract) references contract (id),
@@ -168,21 +153,23 @@ create schema petshop_api
         unique index petshop_api_employee_id_uindex
         on employee (id)
 
-    create table service_employee
+    create table service_duration_time
     (
-        id             serial not null
-            constraint petshop_api_service_employee_pkey primary key,
-        fk_id_employee int    not null,
-        fk_id_service  int    not null,
-        fk_id_contract int    not null,
+        id             serial       not null
+            constraint petshop_api_service_time_pkey primary key,
+        hour           varchar(255) not null,
+        active         bool         not null default true,
+        fk_id_service  int          not null,
+        fk_id_contract int          not null,
+        fk_id_employee int          not null,
         FOREIGN KEY (fk_id_contract) references contract (id),
         FOREIGN KEY (fk_id_service) references service (id),
         FOREIGN KEY (fk_id_employee) references employee (id)
     )
 
     create
-        unique index petshop_api_service_employee_id_uindex
-        on service_employee (id)
+        unique index petshop_api_service_duration_time_id_uindex
+        on service_duration_time (id)
 
     create table schedule
     (
@@ -194,10 +181,8 @@ create schema petshop_api
         price                       decimal not null default 0,
         fk_id_pet                   int     not null,
         fk_id_service_duration_time int     not null,
-        fk_id_employee              int     not null,
         fk_id_contract              int     not null,
         FOREIGN KEY (fk_id_contract) references contract (id),
-        FOREIGN KEY (fk_id_employee) references employee (id),
         FOREIGN KEY (fk_id_pet) references pet (id),
         FOREIGN KEY (fk_id_service_duration_time) references service_duration_time (id)
     )
