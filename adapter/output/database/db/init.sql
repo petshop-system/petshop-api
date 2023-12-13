@@ -209,32 +209,48 @@ create schema petshop_api
 
 -- Create default clientes inserts
 
+-- contract
+INSERT INTO petshop_api.person (document, person_type)
+VALUES ('38988657000181', 'legal');
+
 INSERT INTO petshop_api.address (street, number)
 VALUES ('Rua Jose Bonifácio', 1432);
 
+INSERT INTO petshop_api.contract (name, email, date_created, fk_id_address, fk_id_person)
+VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 1, 1);
+
+INSERT INTO petshop_api.phone (number, location, phone_type, fk_id_person)
+VALUES ('912345674', '72', 'celular', 1);
+
+-- first customer
+
+INSERT INTO petshop_api.person (document, person_type)
+VALUES ('22233344409', 'individual');
+
 INSERT INTO petshop_api.address (street, number)
 VALUES ('Rua Lechitz', 11);
+
+INSERT INTO petshop_api.customer (name, fk_id_address, email, date_created, fk_id_person, fk_id_contract)
+VALUES ('siclano', 2, 'siclano@gmail.com', now(), 2, 1);
+
+INSERT INTO petshop_api.phone (number, location, phone_type, fk_id_person)
+VALUES ('912345000', '72', 'celular', 2);
+
+-- second customer
 
 INSERT INTO petshop_api.address (street, number)
 VALUES ('Av. Juiz de Fora', 1001);
 
 INSERT INTO petshop_api.person (document, person_type)
-VALUES ('22233344409', 'individual');
-
-INSERT INTO petshop_api.person (document, person_type)
-VALUES ('38988657000181', 'legal');
-
-INSERT INTO petshop_api.contract (name, email, date_created, fk_id_address, fk_id_person)
-VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 3, 2);
+VALUES ('38988657000182', 'legal');
 
 INSERT INTO petshop_api.customer (name, fk_id_address, email, date_created, fk_id_person, fk_id_contract)
-VALUES ('siclano', 1, 'siclano@gmail.com', now(), 1, 1);
-
-INSERT INTO petshop_api.customer (name, fk_id_address, email, date_created, fk_id_person, fk_id_contract)
-VALUES ('testando cnpj', 2, 'company@gmail.com', now(), 2, 1);
+VALUES ('testando cnpj', 3, 'company@gmail.com', now(), 3, 1);
 
 INSERT INTO petshop_api.phone (number, location, phone_type, fk_id_person)
-VALUES ('912345678', '72', 'celular', 1);
+VALUES ('900045678', '72', 'celular', 3);
+
+-- pet control
 
 INSERT INTO petshop_api.species (name)
 VALUES ('Canino');
