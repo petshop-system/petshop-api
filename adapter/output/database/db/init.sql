@@ -19,7 +19,9 @@ create schema petshop_api
         id          serial       not null
             constraint petshop_api_person_pkey primary key,
         document    varchar(255) not null unique,
-        person_type varchar(255) not null
+        person_type varchar(255) not null,
+        CONSTRAINT chk_person_type_value
+            CHECK (person_type IN ('individual', 'legal'))
     )
 
     create
