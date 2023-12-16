@@ -109,7 +109,7 @@ func TestValidateCnpj(t *testing.T) {
 	}
 }
 
-func TestRemoveNonNumericCharacters(t *testing.T) {
+func TestRemoveNonAlphaNumericCharacters(t *testing.T) {
 	testCases := []struct {
 		Name           string
 		InputDocument  string
