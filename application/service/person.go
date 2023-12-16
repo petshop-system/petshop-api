@@ -28,6 +28,7 @@ const (
 const (
 	PersonErrorToSaveInCache    = "error to save person in cache"
 	PersonErrorToGetByIDInCache = "error to save person in cache"
+	InvalidTypeOfDocument       = "invalid type of person"
 )
 
 func (service PersonService) getCacheKey(cacheKeyType string, value string) string {
@@ -45,6 +46,8 @@ func (service PersonService) Create(contextControl domain.ContextControl, person
 		if err := utils.ValidateCpf(person.Document); err != nil {
 			return domain.PersonDomain{}, err
 		}
+	default:
+		return domain.PersonDomain{}, fmt.Errorf(InvalidTypeOfDocument)
 	}
 
 	save, err := service.PersonDomainDataBaseRepository.Save(contextControl, person)

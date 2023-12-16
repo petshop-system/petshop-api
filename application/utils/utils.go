@@ -4,24 +4,23 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 const (
-	ErrorInvalidCPFLength                = "invalid CPF length error"
-	ErrorAllDigitsEqualCPF               = "invalid CPF because all digits are equal"
-	ErrorFirstVerificationCPF            = "error in the first verification of the CPF"
-	ErrorSecondVerificationCPF           = "error in the second verification of the CPF"
-	ErrorIncorrectCharacterConversionCPF = "invalid CPF with incorrect character conversion"
+	ErrorInvalidCPFLength      = "invalid CPF length error"
+	ErrorAllDigitsEqualCPF     = "invalid CPF because all digits are equal"
+	ErrorFirstVerificationCPF  = "error in the first verification of the CPF"
+	ErrorSecondVerificationCPF = "error in the second verification of the CPF"
 
-	ErrorInvalidCNPJLength                = "invalid CNPJ length error"
-	ErrorAllDigitsEqualCNPJ               = "invalid CNPJ because all digits are equal"
-	ErrorFirstVerificationCNPJ            = "error in the first verification of the CNPJ"
-	ErrorSecondVerificationCNPJ           = "error in the second verification of the CNPJ"
-	ErrorIncorrectCharacterConversionCNPJ = "invalid CNPJ with incorrect character conversion"
+	ErrorInvalidCNPJLength      = "invalid CNPJ length error"
+	ErrorAllDigitsEqualCNPJ     = "invalid CNPJ because all digits are equal"
+	ErrorFirstVerificationCNPJ  = "error in the first verification of the CNPJ"
+	ErrorSecondVerificationCNPJ = "error in the second verification of the CNPJ"
 )
 
 func ValidateCpf(cpf string) error {
-	cleanedCpf := RemoveNonNumericCharacters(cpf)
+	cleanedCpf, _ := RemoveNonNumericCharacters(cpf)
 
 	cpfLen := 11
 	if len(cleanedCpf) != cpfLen {
@@ -52,7 +51,7 @@ func ValidateCpf(cpf string) error {
 		for i := 0; i < positionVerification; i++ {
 			num, err := strconv.Atoi(characters[i])
 			if err != nil {
-				return fmt.Errorf(ErrorIncorrectCharacterConversionCPF)
+				return fmt.Errorf(ErrorInvalidCPFLength)
 			}
 			status += num * ((positionVerification + 1) - i)
 		}
@@ -81,15 +80,8 @@ func ValidateCpf(cpf string) error {
 	return nil
 }
 
-func RemoveNonNumericCharacters(documentNumber string) string {
-	documentNumber = strings.ReplaceAll(documentNumber, ".", "")
-	documentNumber = strings.ReplaceAll(documentNumber, "-", "")
-	documentNumber = strings.ReplaceAll(documentNumber, "/", "")
-	return documentNumber
-}
-
 func ValidateCnpj(cnpj string) error {
-	cleanedCnpj := RemoveNonNumericCharacters(cnpj)
+	cleanedCnpj, _ := RemoveNonNumericCharacters(cnpj)
 
 	cnpjLen := 14
 	if len(cleanedCnpj) != cnpjLen {
@@ -112,7 +104,7 @@ func ValidateCnpj(cnpj string) error {
 		for i := 0; i < positionVerification; i++ {
 			num, err := strconv.Atoi(characters[i])
 			if err != nil {
-				return fmt.Errorf(ErrorIncorrectCharacterConversionCNPJ)
+				return fmt.Errorf(ErrorInvalidCNPJLength)
 			}
 			status += num * multipliers[i]
 		}
@@ -143,4 +135,18 @@ func ValidateCnpj(cnpj string) error {
 		return err
 	}
 	return nil
+}
+
+func RemoveNonNumericCharacters(documentNumber string) (string, bool) {
+	documentNumber = strings.ReplaceAll(documentNumber, ".", "")
+	documentNumber = strings.ReplaceAll(documentNumber, "-", "")
+	documentNumber = strings.ReplaceAll(documentNumber, "/", "")
+
+	for _, char := range documentNumber {
+		if !unicode.IsDigit(char) {
+			return "", false
+		}
+	}
+
+	return documentNumber, true
 }
