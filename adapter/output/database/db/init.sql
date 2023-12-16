@@ -110,6 +110,7 @@ create schema petshop_api
         name           varchar(255) not null,
         date_created   timestamp default timezone('BRT'::text, now()),
         date_birthday  date      default timezone('BRT'::text, null),
+        date_deleted   date      default timezone('BRT'::text, null),
         fk_id_customer int          not null,
         fk_id_breed    int          not null,
         fk_id_contract int          not null,
