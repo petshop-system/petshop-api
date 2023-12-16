@@ -114,27 +114,38 @@ func TestRemoveNonNumericCharacters(t *testing.T) {
 		Name           string
 		InputDocument  string
 		ExpectedResult string
-		ExpectedError  bool
 	}{
 		{
-			Name:           "Success to remove Characters",
+			Name:           "given a cnpj with mask must remove non Characters",
 			InputDocument:  "123.456-789/0001-23",
 			ExpectedResult: "123456789000123",
-			ExpectedError:  true,
 		},
 		{
-			Name:           "Error to remove Characters",
+			Name:           "given a string with number must remove non Characters",
 			InputDocument:  "abc123",
+			ExpectedResult: "123",
+		},
+		{
+			Name:           "given a string of numbers must return only the given numbers",
+			InputDocument:  "4567",
+			ExpectedResult: "4567",
+		},
+		{
+			Name:           "given a string of letters must return an empty string",
+			InputDocument:  "abc",
 			ExpectedResult: "",
-			ExpectedError:  false,
+		},
+		{
+			Name:           "given a string of special chars must return an empty string",
+			InputDocument:  "!@#$%^&*()_-+=/\\|?",
+			ExpectedResult: "",
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
-			result, err := RemoveNonNumericCharacters(tc.InputDocument)
+			result := RemoveNonNumericCharacters(tc.InputDocument)
 			assert.Equal(t, tc.ExpectedResult, result)
-			assert.Equal(t, tc.ExpectedError, err)
 		})
 	}
 }

@@ -2,9 +2,9 @@ package utils
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
-	"unicode"
 )
 
 const (
@@ -20,7 +20,7 @@ const (
 )
 
 func ValidateCpf(cpf string) error {
-	cleanedCpf, _ := RemoveNonNumericCharacters(cpf)
+	cleanedCpf := RemoveNonNumericCharacters(cpf)
 
 	cpfLen := 11
 	if len(cleanedCpf) != cpfLen {
@@ -81,7 +81,7 @@ func ValidateCpf(cpf string) error {
 }
 
 func ValidateCnpj(cnpj string) error {
-	cleanedCnpj, _ := RemoveNonNumericCharacters(cnpj)
+	cleanedCnpj := RemoveNonNumericCharacters(cnpj)
 
 	cnpjLen := 14
 	if len(cleanedCnpj) != cnpjLen {
@@ -137,16 +137,6 @@ func ValidateCnpj(cnpj string) error {
 	return nil
 }
 
-func RemoveNonNumericCharacters(documentNumber string) (string, bool) {
-	documentNumber = strings.ReplaceAll(documentNumber, ".", "")
-	documentNumber = strings.ReplaceAll(documentNumber, "-", "")
-	documentNumber = strings.ReplaceAll(documentNumber, "/", "")
-
-	for _, char := range documentNumber {
-		if !unicode.IsDigit(char) {
-			return "", false
-		}
-	}
-
-	return documentNumber, true
+func RemoveNonNumericCharacters(documentNumber string) string {
+	return regexp.MustCompile(`[^0-9]+`).ReplaceAllString(documentNumber, "")
 }
