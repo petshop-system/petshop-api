@@ -48,7 +48,7 @@ func (cp PersonPostgresDB) Save(contextControl domain.ContextControl, personDoma
 
 	var personDB PersonDB
 	copier.Copy(&personDB, &personDomain)
-	personDB.Document = utils.RemoveNonNumericCharacters(personDB.Document)
+	personDB.Document = utils.RemoveNonAlphaNumericCharacters(personDB.Document)
 
 	if err := cp.DB.WithContext(contextControl.Context).Create(&personDB).Error; err != nil {
 		cp.LoggerSugar.Errorw(PersonSaveDBError, "error", err.Error())

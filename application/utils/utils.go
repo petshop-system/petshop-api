@@ -20,7 +20,7 @@ const (
 )
 
 func ValidateCpf(cpf string) error {
-	cleanedCpf := RemoveNonNumericCharacters(cpf)
+	cleanedCpf := RemoveNonAlphaNumericCharacters(cpf)
 
 	cpfLen := 11
 	if len(cleanedCpf) != cpfLen {
@@ -81,7 +81,7 @@ func ValidateCpf(cpf string) error {
 }
 
 func ValidateCnpj(cnpj string) error {
-	cleanedCnpj := RemoveNonNumericCharacters(cnpj)
+	cleanedCnpj := RemoveNonAlphaNumericCharacters(cnpj)
 
 	cnpjLen := 14
 	if len(cleanedCnpj) != cnpjLen {
@@ -137,6 +137,6 @@ func ValidateCnpj(cnpj string) error {
 	return nil
 }
 
-func RemoveNonNumericCharacters(documentNumber string) string {
-	return regexp.MustCompile(`[^0-9]+`).ReplaceAllString(documentNumber, "")
+func RemoveNonAlphaNumericCharacters(documentNumber string) string {
+	return regexp.MustCompile(`[^a-zA-Z0-9]+`).ReplaceAllString(documentNumber, "")
 }
