@@ -76,7 +76,7 @@ func main() {
 		LoggerSugar:    loggerSugar,
 	}
 
-	personService := service.PersonService{
+	personService := &service.PersonService{
 		LoggerSugar:                    loggerSugar,
 		PersonDomainDataBaseRepository: &personPostgresDB,
 		PersonDomainCacheRepository:    &redisCache,
