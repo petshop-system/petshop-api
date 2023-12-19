@@ -7,7 +7,7 @@ import (
 
 type IPersonDomainDataBaseRepository interface {
 	Save(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error)
-	GetByID(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, error)
+	GetByID(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, bool, error)
 }
 
 type IPersonDomainCacheRepository interface {

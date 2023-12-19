@@ -33,6 +33,6 @@ type AddressDomain struct {
 
 type PersonDomain struct {
 	ID          int64
-	Cpf_cnpj    string
-	Tipo_pessoa string
+	Document    string
+	Person_type string
 }

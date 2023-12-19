@@ -7,7 +7,7 @@ import (
 
 type PersonDomainDataBaseRepositoryMock struct {
 	SaveMock    func(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error)
-	GetByIDMock func(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, error)
+	GetByIDMock func(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, bool, error)
 }
 
 type PersonDomainCacheRepositoryMock struct {
@@ -23,11 +23,11 @@ func (c PersonDomainDataBaseRepositoryMock) Save(contextControl domain.ContextCo
 	return domain.PersonDomain{}, nil
 }
 
-func (c PersonDomainDataBaseRepositoryMock) GetByID(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, error) {
+func (c PersonDomainDataBaseRepositoryMock) GetByID(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, bool, error) {
 	if c.GetByIDMock != nil {
 		return c.GetByIDMock(contextControl, ID)
 	}
-	return domain.PersonDomain{}, nil
+	return domain.PersonDomain{}, false, nil
 }
 
 func (c PersonDomainCacheRepositoryMock) Delete(contextControl domain.ContextControl, key string) error {
