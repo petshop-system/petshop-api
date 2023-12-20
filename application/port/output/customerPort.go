@@ -6,8 +6,8 @@ import (
 )
 
 type ICustomerDomainDataBaseRepository interface {
-	Save(contextControl domain.ContextControl, cliente domain.ClienteDomain) (domain.ClienteDomain, error)
-	GetByID(contextControl domain.ContextControl, ID int64) (domain.ClienteDomain, error)
+	Save(contextControl domain.ContextControl, customer domain.CustomerDomain) (domain.CustomerDomain, error)
+	GetByID(contextControl domain.ContextControl, ID int64) (domain.CustomerDomain, error)
 }
 
 type ICustomerDomainCacheRepository interface {

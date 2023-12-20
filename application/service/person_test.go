@@ -50,15 +50,15 @@ func TestPersonService_Create(t *testing.T) {
 		{
 			Name: "success saving person",
 			Person: domain.PersonDomain{
-				Document:    "296.230.570-91",
-				Person_type: TypePersonIndividual,
+				Document:   "296.230.570-91",
+				PersonType: TypePersonIndividual,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
 					return domain.PersonDomain{
-						ID:          1,
-						Document:    "296.230.570-91",
-						Person_type: TypePersonIndividual,
+						ID:         1,
+						Document:   "296.230.570-91",
+						PersonType: TypePersonIndividual,
 					}, nil
 				},
 			},
@@ -68,17 +68,17 @@ func TestPersonService_Create(t *testing.T) {
 				},
 			},
 			ExpectedResult: domain.PersonDomain{
-				ID:          1,
-				Document:    "296.230.570-91",
-				Person_type: TypePersonIndividual,
+				ID:         1,
+				Document:   "296.230.570-91",
+				PersonType: TypePersonIndividual,
 			},
 			ExpectedError: nil,
 		},
 		{
 			Name: "error saving person",
 			Person: domain.PersonDomain{
-				Document:    "296.230.570-91",
-				Person_type: TypePersonIndividual,
+				Document:   "296.230.570-91",
+				PersonType: TypePersonIndividual,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
@@ -126,15 +126,15 @@ func TestPersonService_GetById(t *testing.T) {
 		{
 			Name: "success to get a person individual by id",
 			Person: domain.PersonDomain{
-				Document:    "296.230.570-91",
-				Person_type: TypePersonIndividual,
+				Document:   "296.230.570-91",
+				PersonType: TypePersonIndividual,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, bool, error) {
 					return domain.PersonDomain{
-						ID:          1,
-						Document:    "296.230.570-91",
-						Person_type: TypePersonIndividual,
+						ID:         1,
+						Document:   "296.230.570-91",
+						PersonType: TypePersonIndividual,
 					}, true, nil
 				},
 			},
@@ -144,9 +144,9 @@ func TestPersonService_GetById(t *testing.T) {
 				},
 			},
 			ExpectedResult: domain.PersonDomain{
-				ID:          1,
-				Document:    "296.230.570-91",
-				Person_type: TypePersonIndividual,
+				ID:         1,
+				Document:   "296.230.570-91",
+				PersonType: TypePersonIndividual,
 			},
 			ExpectedExists: true,
 			ExpectedError:  nil,
@@ -154,15 +154,15 @@ func TestPersonService_GetById(t *testing.T) {
 		{
 			Name: "success to get a person legal by id",
 			Person: domain.PersonDomain{
-				Document:    "06.990.590/0001-23",
-				Person_type: TypePersonLegal,
+				Document:   "06.990.590/0001-23",
+				PersonType: TypePersonLegal,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, bool, error) {
 					return domain.PersonDomain{
-						ID:          1,
-						Document:    "06.990.590/0001-23",
-						Person_type: TypePersonLegal,
+						ID:         1,
+						Document:   "06.990.590/0001-23",
+						PersonType: TypePersonLegal,
 					}, true, nil
 				},
 			},
@@ -172,9 +172,9 @@ func TestPersonService_GetById(t *testing.T) {
 				},
 			},
 			ExpectedResult: domain.PersonDomain{
-				ID:          1,
-				Document:    "06.990.590/0001-23",
-				Person_type: TypePersonLegal,
+				ID:         1,
+				Document:   "06.990.590/0001-23",
+				PersonType: TypePersonLegal,
 			},
 			ExpectedExists: true,
 			ExpectedError:  nil,
@@ -182,8 +182,8 @@ func TestPersonService_GetById(t *testing.T) {
 		{
 			Name: "Person individual not found",
 			Person: domain.PersonDomain{
-				Document:    "296.230.570-91",
-				Person_type: TypePersonIndividual,
+				Document:   "296.230.570-91",
+				PersonType: TypePersonIndividual,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, bool, error) {
@@ -202,8 +202,8 @@ func TestPersonService_GetById(t *testing.T) {
 		{
 			Name: "Person legal not found",
 			Person: domain.PersonDomain{
-				Document:    "06.990.590/0001-23",
-				Person_type: TypePersonLegal,
+				Document:   "06.990.590/0001-23",
+				PersonType: TypePersonLegal,
 			},
 			PersonDomainDataBaseRepository: output.PersonDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.PersonDomain, bool, error) {

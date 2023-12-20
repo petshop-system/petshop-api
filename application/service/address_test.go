@@ -48,15 +48,15 @@ func TestAddressService_Create(t *testing.T) {
 		{
 			Name: "success to save an address",
 			Address: domain.AddressDomain{
-				Logradouro: "Rua Fulaninho da Silva",
-				Numero:     "123",
+				Street: "Rua Fulaninho da Silva",
+				Number: "123",
 			},
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
 					return domain.AddressDomain{
-						ID:         1,
-						Logradouro: "Rua Fulaninho da Silva",
-						Numero:     "123",
+						ID:     1,
+						Street: "Rua Fulaninho da Silva",
+						Number: "123",
 					}, nil
 				},
 			},
@@ -66,9 +66,9 @@ func TestAddressService_Create(t *testing.T) {
 				},
 			},
 			ExpectedResult: domain.AddressDomain{
-				ID:         1,
-				Logradouro: "Rua Fulaninho da Silva",
-				Numero:     "123",
+				ID:     1,
+				Street: "Rua Fulaninho da Silva",
+				Number: "123",
 			},
 			ExpectedError: nil,
 		},
@@ -110,15 +110,15 @@ func TestAddressService_GetById(t *testing.T) {
 		{
 			Name: "success to get an address by id",
 			Address: domain.AddressDomain{
-				Logradouro: "Rua Fulaninho da Silva",
-				Numero:     "123",
+				Street: "Rua Fulaninho da Silva",
+				Number: "123",
 			},
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
 					return domain.AddressDomain{
-						ID:         1,
-						Logradouro: "Rua Fulaninho da Silva",
-						Numero:     "123",
+						ID:     1,
+						Street: "Rua Fulaninho da Silva",
+						Number: "123",
 					}, true, nil
 				},
 			},
@@ -128,9 +128,9 @@ func TestAddressService_GetById(t *testing.T) {
 				},
 			},
 			ExpectedResult: domain.AddressDomain{
-				ID:         1,
-				Logradouro: "Rua Fulaninho da Silva",
-				Numero:     "123",
+				ID:     1,
+				Street: "Rua Fulaninho da Silva",
+				Number: "123",
 			},
 			ExpectedExists: true,
 			ExpectedError:  nil,
@@ -138,8 +138,8 @@ func TestAddressService_GetById(t *testing.T) {
 		{
 			Name: "address not found",
 			Address: domain.AddressDomain{
-				Logradouro: "Rua Fulaninho da Silva",
-				Numero:     "123",
+				Street: "Rua Fulaninho da Silva",
+				Number: "123",
 			},
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {

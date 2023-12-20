@@ -28,15 +28,15 @@ type Address struct {
 }
 
 type AddressRequest struct {
-	ID         int64  `json:"id"`
-	Logradouro string `json:"logradouro"`
-	Numero     string `json:"numero"`
+	ID     int64  `json:"id"`
+	Street string `json:"street"`
+	Number string `json:"number"`
 }
 
 type AddressResponse struct {
-	ID         int64  `json:"id"`
-	Logradouro string `json:"logradouro"`
-	Numero     string `json:"numero"`
+	ID     int64  `json:"id"`
+	Street string `json:"street"`
+	Number string `json:"number"`
 }
 
 func (c *Address) Create(w http.ResponseWriter, r *http.Request) {

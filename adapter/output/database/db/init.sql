@@ -195,7 +195,7 @@ create schema petshop_api
         on schedule (id);
 
 
--- Create default clientes inserts
+-- Create default customers inserts
 
 -- contract
 INSERT INTO petshop_api.person (document, person_type)

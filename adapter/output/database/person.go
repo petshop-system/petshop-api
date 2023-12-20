@@ -27,9 +27,9 @@ func NewPersonPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) Person
 }
 
 type PersonDB struct {
-	ID          int64  `gorm:"primaryKey, column:id"`
-	Document    string `gorm:"column:document"`
-	Person_type string `gorm:"column:person_type"`
+	ID         int64  `gorm:"primaryKey, column:id"`
+	Document   string `gorm:"column:document"`
+	PersonType string `gorm:"column:person_type"`
 }
 
 func (PersonDB) TableName() string {
@@ -38,9 +38,9 @@ func (PersonDB) TableName() string {
 
 func (c PersonDB) CopyToPersonDomain() domain.PersonDomain {
 	return domain.PersonDomain{
-		ID:          c.ID,
-		Document:    c.Document,
-		Person_type: c.Person_type,
+		ID:         c.ID,
+		Document:   c.Document,
+		PersonType: c.PersonType,
 	}
 }
 

@@ -75,7 +75,7 @@ func (service *PersonService) GetByID(contextControl domain.ContextControl, ID i
 }
 
 func (service *PersonService) Validate(person domain.PersonDomain) error {
-	switch person.Person_type {
+	switch person.PersonType {
 	case TypePersonLegal:
 		if err := utils.ValidateCnpj(person.Document); err != nil {
 			return err
