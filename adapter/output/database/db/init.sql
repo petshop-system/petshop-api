@@ -156,11 +156,12 @@ create schema petshop_api
         unique index petshop_api_employee_id_uindex
         on employee (id)
 
-    create table service_duration_time
+    create table service_attention_time
     (
         id             serial       not null
-            constraint petshop_api_service_time_pkey primary key,
-        hour           varchar(255) not null,
+            constraint petshop_api_service_attention_time_pkey primary key,
+        initial_time   varchar(255) not null,
+        final_time     varchar(255) not null,
         active         bool         not null default true,
         fk_id_service  int          not null,
         fk_id_contract int          not null,
@@ -171,23 +172,24 @@ create schema petshop_api
     )
 
     create
-        unique index petshop_api_service_duration_time_id_uindex
-        on service_duration_time (id)
+        unique index petshop_api_service_attention_time_id_uindex
+        on service_attention_time (id)
 
     create table schedule
     (
-        id                          serial  not null
+        id                           serial       not null
             constraint petshop_api_schedule_pkey primary key,
-        date_created                timestamp        default timezone('BRT'::text, now()),
-        date_declined               timestamp,
-        booking                     date    not null,
-        price                       decimal not null default 0,
-        fk_id_pet                   int     not null,
-        fk_id_service_duration_time int     not null,
-        fk_id_contract              int     not null,
+        date_created                 timestamp             default timezone('BRT'::text, now()),
+        date_declined                timestamp,
+        number                       varchar(255) not null, -- 2023dez10.000001
+        booking                      date         not null,
+        price                        decimal      not null default 0,
+        fk_id_pet                    int          not null,
+        fk_id_service_attention_time int          not null,
+        fk_id_contract               int          not null,
         FOREIGN KEY (fk_id_contract) references contract (id),
         FOREIGN KEY (fk_id_pet) references pet (id),
-        FOREIGN KEY (fk_id_service_duration_time) references service_duration_time (id)
+        FOREIGN KEY (fk_id_service_attention_time) references service_attention_time (id)
     )
 
     create
