@@ -2,37 +2,37 @@ package domain
 
 import "time"
 
-type ClienteDomain struct {
-	ID           int64
-	Nome         string
-	DataCadastro time.Time
+type CustomerDomain struct {
+	ID          int64
+	Name        string
+	DateCreated time.Time
 }
 
-type TelefoneDomain struct {
-	ID           int64
-	Numero       string
-	DDD          string
-	TipoTelefone string
+type PhoneDomain struct {
+	ID        int64
+	Number    string
+	Location  string
+	PhoneType string
 }
 
-type EspecieDomain struct {
+type SpeciesDomain struct {
 	ID   int64
-	Nome string
+	Name string
 }
 
-type RacaDomain struct {
+type BreedDomain struct {
 	ID   int64
-	Nome string
+	Name string
 }
 
 type AddressDomain struct {
-	ID         int64
-	Logradouro string
-	Numero     string
+	ID     int64
+	Street string
+	Number string
 }
 
 type PersonDomain struct {
-	ID          int64
-	Document    string
-	Person_type string
+	ID         int64
+	Document   string
+	PersonType string
 }

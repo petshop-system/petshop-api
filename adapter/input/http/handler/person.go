@@ -27,15 +27,15 @@ type Person struct {
 }
 
 type PersonRequest struct {
-	ID          int64  `json:"id"`
-	Document    string `json:"document"`
-	Person_type string `json:"person_type"`
+	ID         int64  `json:"id"`
+	Document   string `json:"document"`
+	PersonType string `json:"person_type"`
 }
 
 type PersonResponse struct {
-	ID          int64  `json:"id"`
-	Document    string `json:"document"`
-	Person_type string `json:"person_type"`
+	ID         int64  `json:"id"`
+	Document   string `json:"document"`
+	PersonType string `json:"person_type"`
 }
 
 func (c *Person) Create(w http.ResponseWriter, r *http.Request) {

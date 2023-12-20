@@ -6,8 +6,8 @@ import (
 )
 
 type CustomerDomainDataBaseRepositoryMock struct {
-	SaveMock    func(contextControl domain.ContextControl, cliente domain.ClienteDomain) (domain.ClienteDomain, error)
-	GetByIDMock func(contextControl domain.ContextControl, ID int64) (domain.ClienteDomain, error)
+	SaveMock    func(contextControl domain.ContextControl, customer domain.CustomerDomain) (domain.CustomerDomain, error)
+	GetByIDMock func(contextControl domain.ContextControl, ID int64) (domain.CustomerDomain, error)
 }
 
 type CustomerDomainCacheRepositoryMock struct {
@@ -16,18 +16,18 @@ type CustomerDomainCacheRepositoryMock struct {
 	DeleteMock func(contextControl domain.ContextControl, key string) error
 }
 
-func (c CustomerDomainDataBaseRepositoryMock) Save(contextControl domain.ContextControl, cliente domain.ClienteDomain) (domain.ClienteDomain, error) {
+func (c CustomerDomainDataBaseRepositoryMock) Save(contextControl domain.ContextControl, customer domain.CustomerDomain) (domain.CustomerDomain, error) {
 	if c.SaveMock != nil {
-		return c.SaveMock(contextControl, cliente)
+		return c.SaveMock(contextControl, customer)
 	}
-	return domain.ClienteDomain{}, nil
+	return domain.CustomerDomain{}, nil
 }
 
-func (c CustomerDomainDataBaseRepositoryMock) GetByID(contextControl domain.ContextControl, ID int64) (domain.ClienteDomain, error) {
+func (c CustomerDomainDataBaseRepositoryMock) GetByID(contextControl domain.ContextControl, ID int64) (domain.CustomerDomain, error) {
 	if c.GetByIDMock != nil {
 		return c.GetByIDMock(contextControl, ID)
 	}
-	return domain.ClienteDomain{}, nil
+	return domain.CustomerDomain{}, nil
 }
 
 func (c CustomerDomainCacheRepositoryMock) Delete(contextControl domain.ContextControl, key string) error {

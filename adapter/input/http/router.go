@@ -32,19 +32,19 @@ func (router Router) AddGroupHandlerHealthCheck(ah *handler.Generic) func(r chi.
 	}
 }
 
-func (router Router) AddGroupHandlerCliente(ah *handler.Cliente) func(r chi.Router) {
+func (router Router) AddGroupHandlerCustomer(ah *handler.Customer) func(r chi.Router) {
 	return func(r chi.Router) {
-		r.Route("/cliente", func(r chi.Router) {
-			r.Post("/cadastrar", ah.Create)
+		r.Route("/customer", func(r chi.Router) {
+			r.Post("/create", ah.Create)
 		})
 	}
 }
 
 func (router Router) AddGroupHandlerAddress(ah *handler.Address) func(r chi.Router) {
 	return func(r chi.Router) {
-		r.Route("/endereco", func(r chi.Router) {
-			r.Post("/cadastrar", ah.Create)
-			r.Get("/consultar/{id}", ah.GetByID)
+		r.Route("/address", func(r chi.Router) {
+			r.Post("/create", ah.Create)
+			r.Get("/search/{id}", ah.GetByID)
 		})
 	}
 }

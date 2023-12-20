@@ -26,9 +26,9 @@ func NewAddressPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) Addre
 }
 
 type AddressDB struct {
-	ID         int64  `gorm:"primaryKey, column:id"`
-	Logradouro string `gorm:"column:logradouro"`
-	Numero     string `gorm:"column:numero"`
+	ID     int64  `gorm:"primaryKey, column:id"`
+	Street string `gorm:"column:street"`
+	Number string `gorm:"column:number"`
 }
 
 func (AddressDB) TableName() string {
@@ -37,9 +37,9 @@ func (AddressDB) TableName() string {
 
 func (c AddressDB) CopyToAddressDomain() domain.AddressDomain {
 	return domain.AddressDomain{
-		ID:         c.ID,
-		Logradouro: c.Logradouro,
-		Numero:     c.Numero,
+		ID:     c.ID,
+		Street: c.Street,
+		Number: c.Number,
 	}
 }
 
