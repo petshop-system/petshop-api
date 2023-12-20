@@ -41,22 +41,22 @@ func TestCustomerService_Create(t *testing.T) {
 
 	tests := []struct {
 		Name                             string
-		Cliente                          domain.ClienteDomain
+		Customer                         domain.CustomerDomain
 		CustomerDomainDataBaseRepository output.ICustomerDomainDataBaseRepository
 		CustomerDomainCacheRepository    output.ICustomerDomainCacheRepository
-		ExpectedResult                   domain.ClienteDomain
+		ExpectedResult                   domain.CustomerDomain
 		ExpectedError                    error
 	}{
 		{
-			Name: "sucesso ao salvar cliente",
-			Cliente: domain.ClienteDomain{
-				Nome: "Fulano",
+			Name: "success saving customer",
+			Customer: domain.CustomerDomain{
+				Name: "Fulano",
 			},
 			CustomerDomainDataBaseRepository: output.CustomerDomainDataBaseRepositoryMock{
-				SaveMock: func(contextControl domain.ContextControl, cliente domain.ClienteDomain) (domain.ClienteDomain, error) {
-					return domain.ClienteDomain{
+				SaveMock: func(contextControl domain.ContextControl, customer domain.CustomerDomain) (domain.CustomerDomain, error) {
+					return domain.CustomerDomain{
 						ID:   1,
-						Nome: "Fulano",
+						Name: "Fulano",
 					}, nil
 				},
 			},
@@ -65,9 +65,9 @@ func TestCustomerService_Create(t *testing.T) {
 					return nil
 				},
 			},
-			ExpectedResult: domain.ClienteDomain{
+			ExpectedResult: domain.CustomerDomain{
 				ID:   1,
-				Nome: "Fulano",
+				Name: "Fulano",
 			},
 			ExpectedError: nil,
 		},
@@ -77,7 +77,7 @@ func TestCustomerService_Create(t *testing.T) {
 
 		t.Run(test.Name, func(t *testing.T) {
 
-			clienteService := ClienteService{
+			customerService := CustomerService{
 				LoggerSugar:                      loggerSugar,
 				CustomerDomainCacheRepository:    test.CustomerDomainCacheRepository,
 				CustomerDomainDataBaseRepository: test.CustomerDomainDataBaseRepository,
@@ -87,8 +87,8 @@ func TestCustomerService_Create(t *testing.T) {
 				Context: context.Background(),
 			}
 
-			cliente, err := clienteService.Create(contextControl, test.Cliente)
-			assert.Equal(t, test.ExpectedResult, cliente)
+			customer, err := customerService.Create(contextControl, test.Customer)
+			assert.Equal(t, test.ExpectedResult, customer)
 			assert.Equal(t, test.ExpectedError, err)
 
 		})
