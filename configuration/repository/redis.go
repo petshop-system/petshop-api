@@ -26,5 +26,7 @@ func NewRedisClient(addr string, db int, password string, poolSize int, readTime
 		panic(err)
 	}
 
+	loggerSugar.Infow("redis connected successfully", "addr", addr)
+
 	return rdb
 }

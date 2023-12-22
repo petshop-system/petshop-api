@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-chi/chi"
 	"github.com/kelseyhightower/envconfig"
 	adpterHttpInput "github.com/petshop-system/petshop-api/adapter/input/http"
 	"github.com/petshop-system/petshop-api/adapter/input/http/handler"
@@ -13,8 +14,6 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"net/http"
-
-	"github.com/go-chi/chi"
 	"os"
 )
 

@@ -1,5 +1,5 @@
 #makefile
-APPLICATION_NAME := hexagonal
+APPLICATION_NAME := petshop-api
 PORT := 5001
 
 docker-compose-up: docker-compose-down
@@ -20,14 +20,13 @@ test-cover:
 	rm -f coverage_tmp.out
 	go tool cover -html=coverage.out
 
-build:
+docker-build:
 	docker build -t $(APPLICATION_NAME):latest .
 
-build-run:	build
-	docker run -p $(PORT):$(PORT) -t $(APPLICATION_NAME):latest
+docker-build-run:	docker-build docker-run
 
-run:
-	docker run -p $(PORT):$(PORT) -t $(APPLICATION_NAME):latest
+docker-run:
+	docker run -e REDIS_ADDR='redis:6379' -p $(PORT):$(PORT) -t $(APPLICATION_NAME):latest
 
 docker-clean-all:
 	#To clear containers:
