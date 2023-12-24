@@ -69,7 +69,7 @@ create schema petshop_api
         id           serial       not null
             constraint petshop_api_phone_pkey primary key,
         number       varchar(255) not null,
-        location     varchar(255) not null,
+        code_area_number     varchar(255) not null,
         phone_type   varchar(255) not null,
         fk_id_person int          not null,
         FOREIGN KEY (fk_id_person) references person (id)
