@@ -185,3 +185,29 @@ func TestValidatePhoneNumber(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateCodeAreaNumber(t *testing.T) {
+	testCases := []struct {
+		Name          string
+		AreaCode      string
+		ExpectedError error
+	}{
+		{
+			Name:          "valid area code format",
+			AreaCode:      "32",
+			ExpectedError: nil,
+		},
+		{
+			Name:          "invalid area code format",
+			AreaCode:      "29",
+			ExpectedError: errors.New(ErrorAreaCodeVerification),
+		},
+	}
+
+	for _, test := range testCases {
+		t.Run(test.Name, func(t *testing.T) {
+			err := ValidateCodeAreaNumber(test.AreaCode)
+			assert.Equal(t, test.ExpectedError, err)
+		})
+	}
+}

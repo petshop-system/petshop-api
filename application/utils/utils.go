@@ -22,6 +22,7 @@ const (
 const (
 	ErrorInvalidMobilePhoneLength   = "invalid Mobile Phone length error"
 	ErrorInvalidLandLinePhoneLength = "invalid Land Line Phone length error"
+	ErrorAreaCodeVerification       = "invalid area code"
 )
 
 const (
@@ -47,12 +48,36 @@ func ValidatePhoneNumber(phoneType, phoneNumber string) error {
 			return err
 		}
 	case MobilePhone:
-
 		if err := verification(mobilePhoneLen, phoneType, ErrorInvalidMobilePhoneLength); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func ValidateCodeAreaNumber(areaCode string) error {
+
+	dddList := []string{
+		// North Region
+		"68", "96", "92", "97", "91", "93", "94", "69", "95", "63",
+		// Northeast Region
+		"82", "71", "73", "74", "75", "77", "85", "88", "98", "99", "83", "81", "87", "86", "89", "84", "79",
+		// Midwest Region
+		"61", "62", "64", "65", "66",
+		// Southeast Region
+		"27", "28", "31", "32", "33", "34", "35", "37", "38", "21", "22", "24", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+		// South Region
+		"41", "42", "43", "44", "45", "46", "51", "53", "54", "55",
+	}
+
+	clearAreaCode := RemoveNonAlphaNumericCharacters(areaCode)
+
+	for _, ddd := range dddList {
+		if clearAreaCode == ddd {
+			return nil
+		}
+	}
+	return fmt.Errorf(ErrorAreaCodeVerification)
 }
 
 func ValidateCpf(cpf string) error {
