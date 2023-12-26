@@ -19,6 +19,42 @@ const (
 	ErrorSecondVerificationCNPJ = "error in the second verification of the CNPJ"
 )
 
+const (
+	ErrorInvalidMobilePhoneLength   = "invalid Mobile Phone length error"
+	ErrorInvalidLandLinePhoneLength = "invalid Land Line Phone length error"
+)
+
+const (
+	LandLinePhone = "landline_phone"
+	MobilePhone   = "mobile_phone"
+)
+
+func ValidatePhoneNumber(phoneType, phoneNumber string) error {
+	landLinePhoneLen := 8
+	mobilePhoneLen := 9
+
+	clearPhone := RemoveNonAlphaNumericCharacters(phoneNumber)
+	verification := func(phoneLen int, phoneTypeVerification, errorMessageVerification string) error {
+		if len(clearPhone) != phoneLen {
+			return fmt.Errorf(errorMessageVerification)
+		}
+		return nil
+	}
+
+	switch phoneType {
+	case LandLinePhone:
+		if err := verification(landLinePhoneLen, phoneType, ErrorInvalidLandLinePhoneLength); err != nil {
+			return err
+		}
+	case MobilePhone:
+
+		if err := verification(mobilePhoneLen, phoneType, ErrorInvalidMobilePhoneLength); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func ValidateCpf(cpf string) error {
 	cleanedCpf := RemoveNonAlphaNumericCharacters(cpf)
 

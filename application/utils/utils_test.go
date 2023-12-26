@@ -137,10 +137,51 @@ func TestRemoveNonAlphaNumericCharacters(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.Name, func(t *testing.T) {
-			result := RemoveNonAlphaNumericCharacters(tc.InputDocument)
-			assert.Equal(t, tc.ExpectedResult, result)
+	for _, test := range testCases {
+		t.Run(test.Name, func(t *testing.T) {
+			result := RemoveNonAlphaNumericCharacters(test.InputDocument)
+			assert.Equal(t, test.ExpectedResult, result)
+		})
+	}
+}
+
+func TestValidatePhoneNumber(t *testing.T) {
+	testCases := []struct {
+		Name          string
+		PhoneNumber   string
+		PhoneType     string
+		ExpectedError error
+	}{
+		{
+			Name:          "valid mobile phone format",
+			PhoneNumber:   "99919-2111",
+			PhoneType:     "mobile_phone",
+			ExpectedError: nil,
+		},
+		{
+			Name:          "invalid mobile phone format",
+			PhoneNumber:   "1234",
+			PhoneType:     "mobile_phone",
+			ExpectedError: errors.New(ErrorInvalidMobilePhoneLength),
+		},
+		{
+			Name:          "valid landline phone format",
+			PhoneNumber:   "3212-2111",
+			PhoneType:     "landline_phone",
+			ExpectedError: nil,
+		},
+		{
+			Name:          "invalid landline phone format",
+			PhoneNumber:   "1234",
+			PhoneType:     "landline_phone",
+			ExpectedError: errors.New(ErrorInvalidLandLinePhoneLength),
+		},
+	}
+
+	for _, test := range testCases {
+		t.Run(test.Name, func(t *testing.T) {
+			err := ValidatePhoneNumber(test.PhoneType, test.PhoneNumber)
+			assert.Equal(t, test.ExpectedError, err)
 		})
 	}
 }

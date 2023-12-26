@@ -62,6 +62,7 @@ func (router Router) AddGroupHandlerPhone(ah *handler.Phone) func(r chi.Router) 
 	return func(r chi.Router) {
 		r.Route("/phone", func(r chi.Router) {
 			r.Post("/create", ah.Create)
+			r.Get("/search/{id}", ah.GetByID)
 		})
 	}
 }
