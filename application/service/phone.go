@@ -33,7 +33,7 @@ func (service *PhoneService) getCacheKey(cacheKeyType, value string) string {
 }
 
 func (service *PhoneService) Create(contextControl domain.ContextControl, phone domain.PhoneDomain) (domain.PhoneDomain, error) {
-	err := utils.ValidatePhone(phone.PhoneType, phone.Number)
+	err := utils.ValidatePhoneNumber(phone.PhoneType, phone.Number)
 	if err != nil {
 		return domain.PhoneDomain{}, err
 	}
