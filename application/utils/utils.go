@@ -57,25 +57,23 @@ func ValidatePhoneNumber(phoneType, phoneNumber string) error {
 
 func ValidateCodeAreaNumber(areaCode string) error {
 
-	dddList := []string{
+	dddList := map[string]bool{
 		// North Region
-		"68", "96", "92", "97", "91", "93", "94", "69", "95", "63",
+		"68": true, "96": true, "92": true, "97": true, "91": true, "93": true, "94": true, "69": true, "95": true, "63": true,
 		// Northeast Region
-		"82", "71", "73", "74", "75", "77", "85", "88", "98", "99", "83", "81", "87", "86", "89", "84", "79",
+		"82": true, "71": true, "73": true, "74": true, "75": true, "77": true, "85": true, "88": true, "98": true, "99": true, "83": true, "81": true, "87": true, "86": true, "89": true, "84": true, "79": true,
 		// Midwest Region
-		"61", "62", "64", "65", "66",
+		"61": true, "62": true, "64": true, "65": true, "66": true,
 		// Southeast Region
-		"27", "28", "31", "32", "33", "34", "35", "37", "38", "21", "22", "24", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+		"27": true, "28": true, "31": true, "32": true, "33": true, "34": true, "35": true, "37": true, "38": true, "21": true, "22": true, "24": true, "11": true, "12": true, "13": true, "14": true, "15": true, "16": true, "17": true, "18": true, "19": true,
 		// South Region
-		"41", "42", "43", "44", "45", "46", "51", "53", "54", "55",
+		"41": true, "42": true, "43": true, "44": true, "45": true, "46": true, "51": true, "53": true, "54": true, "55": true,
 	}
 
 	clearAreaCode := RemoveNonAlphaNumericCharacters(areaCode)
 
-	for _, ddd := range dddList {
-		if clearAreaCode == ddd {
-			return nil
-		}
+	if dddList[clearAreaCode] {
+		return nil
 	}
 	return fmt.Errorf(ErrorAreaCodeVerification)
 }
