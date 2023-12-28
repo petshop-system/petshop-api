@@ -49,6 +49,7 @@ func main() {
 	customerPostgresDB := database.NewCustomerPostgresDB(postgresConnectionDB, loggerSugar)
 	addressPostgresDB := database.NewAddressPostgresDB(postgresConnectionDB, loggerSugar)
 	personPostgresDB := database.NewPersonPostgresDB(postgresConnectionDB, loggerSugar)
+	phonePostgresDB := database.NewPhonePostgresDB(postgresConnectionDB, loggerSugar)
 
 	genericHandler := &handler.Generic{
 		LoggerSugar: loggerSugar,
@@ -87,6 +88,17 @@ func main() {
 		LoggerSugar:   loggerSugar,
 	}
 
+	phoneService := &service.PhoneService{
+		LoggerSugar:                   loggerSugar,
+		PhoneDomainDataBaseRepository: &phonePostgresDB,
+		PhoneDomainCacheRepository:    &redisCache,
+	}
+
+	phoneHandler := &handler.Phone{
+		PhoneService: phoneService,
+		LoggerSugar:  loggerSugar,
+	}
+
 	contextPath := environment.Setting.Server.Context
 	newRouter := adpterHttpInput.GetNewRouter(loggerSugar)
 	newRouter.GetChiRouter().Route(fmt.Sprintf("/%s", contextPath), func(r chi.Router) {
@@ -95,6 +107,7 @@ func main() {
 		r.Group(newRouter.AddGroupHandlerCustomer(customerHandler))
 		r.Group(newRouter.AddGroupHandlerAddress(addressHandler))
 		r.Group(newRouter.AddGroupHandlerPerson(personHandler))
+		r.Group(newRouter.AddGroupHandlerPhone(phoneHandler))
 	})
 
 	serverHttp := &http.Server{

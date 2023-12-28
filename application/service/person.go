@@ -68,13 +68,13 @@ func (service *PersonService) GetByID(contextControl domain.ContextControl, ID i
 	hash, _ := json.Marshal(person)
 	if err = service.PersonDomainCacheRepository.Set(contextControl,
 		service.getCacheKey(AddressCacheKeyTypeID, strconv.FormatInt(person.ID, 10)),
-		string(hash), AddressCacheTTL); err != nil {
-		service.LoggerSugar.Infow(PersonErrorToGetByIDInCache, "address_id", person.ID)
+		string(hash), PersonCacheTTL); err != nil {
+		service.LoggerSugar.Infow(PersonErrorToGetByIDInCache, "address_id", person.ID) //TODO: to adjust the keyAndValues
 	}
 	return person, exists, nil
 }
 
-func (service *PersonService) Validate(person domain.PersonDomain) error {
+func (service *PersonService) Validate(person domain.PersonDomain) error { //TODO: Change the method name to ValidatePerson
 	switch person.PersonType {
 	case TypePersonLegal:
 		if err := utils.ValidateCnpj(person.Document); err != nil {

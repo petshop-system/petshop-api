@@ -11,7 +11,7 @@ type CustomerDomain struct {
 type PhoneDomain struct {
 	ID        int64
 	Number    string
-	Location  string
+	CodeArea  string
 	PhoneType string
 }
 

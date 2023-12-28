@@ -69,7 +69,7 @@ create schema petshop_api
         id           serial       not null
             constraint petshop_api_phone_pkey primary key,
         number       varchar(255) not null,
-        location     varchar(255) not null,
+        code_area     varchar(255) not null,
         phone_type   varchar(255) not null,
         fk_id_person int          not null,
         FOREIGN KEY (fk_id_person) references person (id)
@@ -156,11 +156,12 @@ create schema petshop_api
         unique index petshop_api_employee_id_uindex
         on employee (id)
 
-    create table service_duration_time
+    create table service_attention_time
     (
         id             serial       not null
-            constraint petshop_api_service_time_pkey primary key,
-        hour           varchar(255) not null,
+            constraint petshop_api_service_attention_time_pkey primary key,
+        initial_time   varchar(255) not null,
+        final_time     varchar(255) not null,
         active         bool         not null default true,
         fk_id_service  int          not null,
         fk_id_contract int          not null,
@@ -171,23 +172,24 @@ create schema petshop_api
     )
 
     create
-        unique index petshop_api_service_duration_time_id_uindex
-        on service_duration_time (id)
+        unique index petshop_api_service_attention_time_id_uindex
+        on service_attention_time (id)
 
     create table schedule
     (
-        id                          serial  not null
+        id                           serial       not null
             constraint petshop_api_schedule_pkey primary key,
-        date_created                timestamp        default timezone('BRT'::text, now()),
-        date_declined               timestamp,
-        booking                     date    not null,
-        price                       decimal not null default 0,
-        fk_id_pet                   int     not null,
-        fk_id_service_duration_time int     not null,
-        fk_id_contract              int     not null,
+        date_created                 timestamp             default timezone('BRT'::text, now()),
+        date_declined                timestamp,
+        number                       varchar(255) not null, -- 2023dez10.000001
+        booking                      date         not null,
+        price                        decimal      not null default 0,
+        fk_id_pet                    int          not null,
+        fk_id_service_attention_time int          not null,
+        fk_id_contract               int          not null,
         FOREIGN KEY (fk_id_contract) references contract (id),
         FOREIGN KEY (fk_id_pet) references pet (id),
-        FOREIGN KEY (fk_id_service_duration_time) references service_duration_time (id)
+        FOREIGN KEY (fk_id_service_attention_time) references service_attention_time (id)
     )
 
     create
@@ -207,8 +209,8 @@ VALUES ('Rua Jose Bonifácio', 1432);
 INSERT INTO petshop_api.contract (name, email, date_created, fk_id_address, fk_id_person)
 VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 1, 1);
 
-INSERT INTO petshop_api.phone (number, location, phone_type, fk_id_person)
-VALUES ('912345674', '72', 'celular', 1);
+INSERT INTO petshop_api.phone (number, code_area, phone_type, fk_id_person)
+VALUES ('991234567', '72', 'mobile_phone', 1);
 
 -- first customer
 
@@ -221,8 +223,8 @@ VALUES ('Rua Lechitz', 11);
 INSERT INTO petshop_api.customer (name, fk_id_address, email, date_created, fk_id_person, fk_id_contract)
 VALUES ('siclano', 2, 'siclano@gmail.com', now(), 2, 1);
 
-INSERT INTO petshop_api.phone (number, location, phone_type, fk_id_person)
-VALUES ('912345000', '72', 'celular', 2);
+INSERT INTO petshop_api.phone (number, code_area, phone_type, fk_id_person)
+VALUES ('912345000', '72', 'mobile_phone', 2);
 
 -- second customer
 
@@ -235,8 +237,8 @@ VALUES ('38988657000182', 'legal');
 INSERT INTO petshop_api.customer (name, fk_id_address, email, date_created, fk_id_person, fk_id_contract)
 VALUES ('testando cnpj', 3, 'company@gmail.com', now(), 3, 1);
 
-INSERT INTO petshop_api.phone (number, location, phone_type, fk_id_person)
-VALUES ('900045678', '72', 'celular', 3);
+INSERT INTO petshop_api.phone (number, code_area, phone_type, fk_id_person)
+VALUES ('32110022', '72', 'landline_phone', 3);
 
 -- pet control
 
