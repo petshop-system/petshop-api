@@ -5,9 +5,9 @@ name: Go Pipeliene
 
 on:
   push:
-    branches: [ "master", "developer" ]
+    branches: [ "master", "develop" ]
   pull_request:
-    branches: [ "master", "developer" ]
+    branches: [ "master", "develop" ]
 
 jobs:
 
