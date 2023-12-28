@@ -37,8 +37,7 @@ func (service *PhoneService) Create(contextControl domain.ContextControl, phone 
 		return domain.PhoneDomain{}, nil
 	}
 
-	err := utils.ValidatePhoneNumber(phone.PhoneType, phone.Number)
-	if err != nil {
+	if err := utils.ValidatePhoneNumber(phone.PhoneType, phone.Number); err != nil {
 		return domain.PhoneDomain{}, err
 	}
 

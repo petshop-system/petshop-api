@@ -18,7 +18,7 @@ const (
 	SuccessToGetPerson    = "person found with success"
 	ErrorToCreatePerson   = "error to create and process the request"
 	ErrorToGetPerson      = "error to get person by id"
-	PersonNotFound        = "person not found"
+	PersonNotFound        = "person with id %d wasn´t found"
 )
 
 type Person struct {
