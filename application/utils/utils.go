@@ -31,8 +31,6 @@ const (
 )
 
 func ValidatePhoneNumber(phoneType, phoneNumber string) error {
-	landLinePhoneLen := 8
-	mobilePhoneLen := 9
 
 	clearPhone := RemoveNonAlphaNumericCharacters(phoneNumber)
 	verification := func(phoneLen int, phoneTypeVerification, errorMessageVerification string) error {
@@ -44,10 +42,12 @@ func ValidatePhoneNumber(phoneType, phoneNumber string) error {
 
 	switch phoneType {
 	case LandLinePhone:
+		landLinePhoneLen := 8
 		if err := verification(landLinePhoneLen, phoneType, ErrorInvalidLandLinePhoneLength); err != nil {
 			return err
 		}
 	case MobilePhone:
+		mobilePhoneLen := 9
 		if err := verification(mobilePhoneLen, phoneType, ErrorInvalidMobilePhoneLength); err != nil {
 			return err
 		}

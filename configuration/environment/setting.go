@@ -8,7 +8,7 @@ type setting struct {
 	}
 
 	Server struct {
-		Context      string        `envconfig:"SERVER_CONTEXT" default:"petshop-api"`
+		Context      string        `envconfig:"SERVER_CONTEXT" default:" "`
 		Port         string        `envconfig:"PORT" default:"5001" required:"true" ignored:"false"`
 		ReadTimeout  time.Duration `envconfig:"READ_TIMEOUT" default:"10s"`
 		WriteTimeout time.Duration `envconfig:"READ_TIMEOUT" default:"10s"`
