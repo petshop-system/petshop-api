@@ -15,7 +15,7 @@ type PersonPostgresDB struct {
 
 const (
 	PersonSaveDBError    = "error to save the person into postgres"
-	PersonGetByIdDBError = "error to get a person by id"
+	PersonGetByIDDBError = "error to get a person by id"
 	PersonNotFound       = "person not found"
 )
 
