@@ -14,7 +14,7 @@ services:
     image: postgres
     restart: always
     environment:
-      - POSTGRES_USER=petshop-api
+      - POSTGRES_USER=petshop-system
       - POSTGRES_PASSWORD=test1234
       - POSTGRES_DB=petshop-system
     volumes:
