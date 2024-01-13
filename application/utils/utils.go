@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/petshop-system/petshop-api/application/service"
 	"regexp"
 	"strconv"
 	"strings"
@@ -23,16 +24,10 @@ const (
 	ErrorInvalidMobilePhoneLength   = "invalid Mobile Phone length error"
 	ErrorInvalidLandLinePhoneLength = "invalid Land Line Phone length error"
 	ErrorAreaCodeVerification       = "invalid area code"
+	InvalidTypeOfPhone              = "invalid type of phone"
 )
 
-const (
-	LandLinePhone = "landline_phone"
-	MobilePhone   = "mobile_phone"
-)
-
-func ValidatePhoneNumber(phoneType, phoneNumber string) error {
-	landLinePhoneLen := 8
-	mobilePhoneLen := 9
+func ValidatePhoneTypeAndPhoneNumber(phoneType, phoneNumber string) error {
 
 	clearPhone := RemoveNonAlphaNumericCharacters(phoneNumber)
 	verification := func(phoneLen int, phoneTypeVerification, errorMessageVerification string) error {
@@ -43,14 +38,18 @@ func ValidatePhoneNumber(phoneType, phoneNumber string) error {
 	}
 
 	switch phoneType {
-	case LandLinePhone:
+	case service.LandLinePhone:
+		landLinePhoneLen := 8
 		if err := verification(landLinePhoneLen, phoneType, ErrorInvalidLandLinePhoneLength); err != nil {
 			return err
 		}
-	case MobilePhone:
+	case service.MobilePhone:
+		mobilePhoneLen := 9
 		if err := verification(mobilePhoneLen, phoneType, ErrorInvalidMobilePhoneLength); err != nil {
 			return err
 		}
+	default:
+		return fmt.Errorf(InvalidTypeOfPhone)
 	}
 	return nil
 }

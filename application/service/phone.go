@@ -21,6 +21,8 @@ var PhoneCacheTTL = 10 * time.Minute
 
 const (
 	PhoneCacheKeyTypeID = "ID"
+	LandLinePhone       = "landline_phone"
+	MobilePhone         = "mobile_phone"
 )
 
 const (
@@ -33,11 +35,9 @@ func (service *PhoneService) getCacheKey(cacheKeyType, value string) string {
 }
 
 func (service *PhoneService) Create(contextControl domain.ContextControl, phone domain.PhoneDomain) (domain.PhoneDomain, error) {
-	if err := utils.ValidateCodeAreaNumber(phone.CodeArea); err != nil {
-		return domain.PhoneDomain{}, nil
-	}
 
-	if err := utils.ValidatePhoneNumber(phone.PhoneType, phone.Number); err != nil {
+	err := service.ValidatePhone(phone)
+	if err != nil {
 		return domain.PhoneDomain{}, err
 	}
 
@@ -70,4 +70,16 @@ func (service *PhoneService) GetByID(contextControl domain.ContextControl, ID in
 		service.LoggerSugar.Infow(PhoneErrorToGetByIDInCache, "phone_id", phone.ID)
 	}
 	return phone, exists, nil
+}
+
+func (service *PhoneService) ValidatePhone(phone domain.PhoneDomain) error {
+	if err := utils.ValidateCodeAreaNumber(phone.CodeArea); err != nil {
+		return err
+	}
+
+	if err := utils.ValidatePhoneTypeAndPhoneNumber(phone.PhoneType, phone.Number); err != nil {
+		return err
+	}
+
+	return nil
 }
