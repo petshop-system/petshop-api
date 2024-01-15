@@ -30,6 +30,15 @@ type setting struct {
 		DBPort     string `envconfig:"DB_PORT" default:"5432"`
 		DBType     string `envconfig:"DB_TYPE" default:"postgres"`
 	}
+
+	Kafka struct {
+		Schedule struct {
+			BootstrapServer string `envconfig:"KAFKA_SCHEDULE_BOOTSTRAP_SERVER" default:"localhost:29092"`
+			GroupID         string `envconfig:"KAFKA_SCHEDULE_GROUPID" default:"kafka_schedule"`
+			AutoOffsetReset string `envconfig:"KAFKA_SCHEDULE_AUTO_OFFSET_RESET" default:"earliest"`
+			Topic           string `envconfig:"KAFKA_SCHEDULE_TOPIC" default:"schedule"`
+		}
+	}
 }
 
 var Setting setting

@@ -69,7 +69,7 @@ create schema petshop_api
         id           serial       not null
             constraint petshop_api_phone_pkey primary key,
         number       varchar(255) not null,
-        code_area     varchar(255) not null,
+        code_area    varchar(255) not null,
         phone_type   varchar(255) not null,
         fk_id_person int          not null,
         FOREIGN KEY (fk_id_person) references person (id)
@@ -130,6 +130,7 @@ create schema petshop_api
         name           varchar(255) not null,
         price          decimal      not null default 0,
         active         bool         not null default true,
+        description    varchar(255) not null,
         fk_id_contract int          not null,
         FOREIGN KEY (fk_id_contract) references contract (id)
     )
@@ -143,7 +144,7 @@ create schema petshop_api
         id             serial       not null
             constraint petshop_api_employee_pkey primary key,
         name           varchar(255) not null,
-        register       varchar(255) not null,
+        register       varchar(255) not null unique,
         date_created   timestamp             default timezone('BRT'::text, now()),
         active         bool         not null default true,
         fk_id_person   int          not null,
@@ -162,7 +163,7 @@ create schema petshop_api
             constraint petshop_api_service_employee_attention_time_pkey primary key,
         initial_time   varchar(255) not null,
         final_time     varchar(255) not null,
-        active         bool         not null default true,
+        active         bool         not null default false,
         fk_id_service  int          not null,
         fk_id_contract int          not null,
         fk_id_employee int          not null,
@@ -177,17 +178,17 @@ create schema petshop_api
 
     create table schedule
     (
-        id                           serial       not null
+        id                                    serial       not null
             constraint petshop_api_schedule_pkey primary key,
-        date_created                 timestamp             default timezone('BRT'::text, now()),
-        date_declined                timestamp,
-        number                       varchar(255) not null, -- 2023dez10.000001
-        booking                      date         not null,
-        price                        decimal      not null default 0,
-        fk_id_pet                    int          not null,
+        date_created                          timestamp             default timezone('BRT'::text, now()),
+        date_declined                         timestamp,
+        number                                varchar(255) not null, -- 2023dez10.000001
+        booking                               date         not null,
+        price                                 decimal      not null default 0,
+        fk_id_pet                             int          not null,
         fk_id_service_employee_attention_time int          not null,
-        fk_id_contract               int          not null,
-        FOREIGN KEY (fk_id_contract) references contract (id),
+--         fk_id_contract                        int          not null,
+--         FOREIGN KEY (fk_id_contract) references contract (id),
         FOREIGN KEY (fk_id_pet) references pet (id),
         FOREIGN KEY (fk_id_service_employee_attention_time) references service_employee_attention_time (id)
     )
@@ -197,7 +198,7 @@ create schema petshop_api
         on schedule (id);
 
 
--- Create default customers inserts
+-- Create default inserts
 
 -- contract
 INSERT INTO petshop_api.person (document, person_type)
@@ -254,11 +255,51 @@ VALUES ('Pastor Alemao', 1);
 INSERT INTO petshop_api.pet (name, date_created, date_birthday, fk_id_customer, fk_id_breed, fk_id_contract)
 VALUES ('Rex', now(), to_date('12/12/2016', 'dd/MM/yyyy'), 1, 1, 1);
 
-INSERT INTO petshop_api.service (name, price, active, fk_id_contract)
-VALUES ('TOSA', 50.65, true, 1);
+INSERT INTO petshop_api.service (name, price, active, fk_id_contract, description)
+VALUES ('TOSA', 50.65, true, 1, 'Tosa com tesoura.');
 
-INSERT INTO petshop_api.service (name, price, active, fk_id_contract)
-VALUES ('BANHO', 55.99, true, 1);
+INSERT INTO petshop_api.service (name, price, active, fk_id_contract, description)
+VALUES ('BANHO', 55.99, true, 1, 'Banho com sais minerais e água morna.');
 
-INSERT INTO petshop_api.service (name, price, active, fk_id_contract)
-VALUES ('VACINA ANTIRRABICA', 112.70, false, 1);
+INSERT INTO petshop_api.service (name, price, active, fk_id_contract, description)
+VALUES ('VACINA ANTIRRABICA', 112.70, true, 1, 'Vacina antirrabica para cachorros.');
+
+-- Employee
+
+INSERT INTO petshop_api.person(document, person_type)
+VALUES ('63609931043', 'individual');
+
+INSERT INTO petshop_api.employee(name, register, fk_id_person, fk_id_contract)
+VALUES ('Fulana da Silva Sauro', 'FUNC-0001', 4, 1);
+
+INSERT INTO petshop_api.person(document, person_type)
+VALUES ('56689159051', 'individual');
+
+INSERT INTO petshop_api.employee(name, register, fk_id_person, fk_id_contract)
+VALUES ('Ciclano da Silva Sauro', 'FUNC-0002', 5, 1);
+
+INSERT INTO petshop_api.person(document, person_type)
+VALUES ('05740847036', 'individual');
+
+INSERT INTO petshop_api.employee(name, register, fk_id_person, fk_id_contract)
+VALUES ('Brave Vacinador', 'FUNC-0003', 6, 1);
+
+-- service employee attention time
+
+INSERT INTO petshop_api.service_employee_attention_time(active, initial_time, final_time, fk_id_service, fk_id_contract, fk_id_employee)
+VALUES (true, '9:00', '9:40', 1, 1, 1);
+
+INSERT INTO petshop_api.service_employee_attention_time(active, initial_time, final_time, fk_id_service, fk_id_contract, fk_id_employee)
+VALUES (true, '10:00', '10:40', 1, 1, 1);
+
+INSERT INTO petshop_api.service_employee_attention_time(active, initial_time, final_time, fk_id_service, fk_id_contract, fk_id_employee)
+VALUES (true, '11:00', '11:40', 2, 1, 1);
+
+INSERT INTO petshop_api.service_employee_attention_time(active, initial_time, final_time, fk_id_service, fk_id_contract, fk_id_employee)
+VALUES (true, '10:00', '12:40', 2, 1, 2);
+
+INSERT INTO petshop_api.service_employee_attention_time(active, initial_time, final_time, fk_id_service, fk_id_contract, fk_id_employee)
+VALUES (true, '13:00', '15:40', 2, 1, 2);
+
+INSERT INTO petshop_api.service_employee_attention_time(active, initial_time, final_time, fk_id_service, fk_id_contract, fk_id_employee)
+VALUES (true, '8:00', '8:30', 3, 1, 3);

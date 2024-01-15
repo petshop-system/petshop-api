@@ -6,6 +6,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	adpterHttpInput "github.com/petshop-system/petshop-api/adapter/input/http"
 	"github.com/petshop-system/petshop-api/adapter/input/http/handler"
+	"github.com/petshop-system/petshop-api/adapter/input/message/stream"
 	"github.com/petshop-system/petshop-api/adapter/output/cache"
 	"github.com/petshop-system/petshop-api/adapter/output/database"
 	"github.com/petshop-system/petshop-api/application/service"
@@ -97,6 +98,16 @@ func main() {
 		PhoneService: phoneService,
 		LoggerSugar:  loggerSugar,
 	}
+
+	scheduleService := &service.ScheduleService{
+		LoggerSugar: loggerSugar,
+	}
+
+	scheduleKafkaClient := stream.NewScheduleKafkaClient(loggerSugar, scheduleService, environment.Setting.Kafka.Schedule.BootstrapServer,
+		environment.Setting.Kafka.Schedule.GroupID, environment.Setting.Kafka.Schedule.AutoOffsetReset,
+		environment.Setting.Kafka.Schedule.Topic)
+
+	scheduleKafkaClient.ConsumerMessages()
 
 	contextPath := environment.Setting.Server.Context
 	newRouter := adpterHttpInput.GetNewRouter(loggerSugar)

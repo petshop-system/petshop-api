@@ -36,3 +36,9 @@ type PersonDomain struct {
 	Document   string
 	PersonType string
 }
+
+type ScheduleMessage struct {
+	Booking                    string
+	PetId                      int
+	ServiceEmployeeAttentionId int
+}
