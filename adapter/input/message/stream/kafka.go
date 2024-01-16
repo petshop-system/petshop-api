@@ -76,23 +76,20 @@ func (schedule *ScheduleKafkaConsumer) ConsumerMessages() {
 				schedule.LoggerSugar.Errorw(ScheduleKafkaConsumerErrorToReadMessage, "error", err.Error(),
 					"message", string(message.Value))
 				continue
-			}
-
-			if !err.(kafka.Error).IsTimeout() {
+			} else if err != nil && !err.(kafka.Error).IsTimeout() {
 				schedule.LoggerSugar.Errorw(ScheduleKafkaConsumerErrorTimeoutToReadMessage, "error", err.Error(),
 					"message", message)
 				continue
 			}
 
 			var scheduleMessageKafka ScheduleMessageKafka
-			json.NewDecoder(bytes.NewReader(message.Value)).Decode(scheduleMessageKafka)
-			contextControl := domain.ContextControl{
-				Context: context.Background(),
-			}
+			json.NewDecoder(bytes.NewReader(message.Value)).Decode(&scheduleMessageKafka)
 
 			var scheduleMessage domain.ScheduleMessage
-			copier.Copy(scheduleMessage, scheduleMessageKafka)
-			schedule.ScheduleService.CreateFromMessage(contextControl, domain.ScheduleMessage{})
+			copier.Copy(&scheduleMessage, &scheduleMessageKafka)
+			schedule.ScheduleService.CreateFromMessage(domain.ContextControl{
+				Context: context.Background(),
+			}, domain.ScheduleMessage{})
 
 			schedule.LoggerSugar.Infow(ScheduleKafkaConsumerSuccessToConsumer, "message", string(message.Value))
 
