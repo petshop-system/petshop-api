@@ -14,9 +14,9 @@ type PhonePostgresDB struct {
 }
 
 const (
-	PhoneSaveError      = "error to save the phone into postgres"
-	PhoneGetByIDDBError = "error to get a phone by id"
-	PhoneNotFound       = "phone not found"
+	PhoneSaveError = "error to save the phone into postgres"
+	//PhoneGetByIDDBError = "error to get a phone by id"
+	PhoneNotFound = "phone not found"
 )
 
 func NewPhonePostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) PhonePostgresDB {
@@ -51,6 +51,7 @@ func (cp PhonePostgresDB) Save(contextControl domain.ContextControl, phoneDomain
 	var phoneDB PhoneDB
 	copier.Copy(&phoneDB, &phoneDomain)
 	phoneDB.Number = utils.RemoveNonAlphaNumericCharacters(phoneDB.Number)
+	phoneDB.CodeArea = utils.RemoveNonAlphaNumericCharacters(phoneDB.CodeArea)
 
 	if err := cp.DB.WithContext(contextControl.Context).Create(&phoneDB).Error; err != nil {
 		cp.LoggerSugar.Errorw(PhoneSaveError, "error", err.Error())

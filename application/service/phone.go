@@ -26,8 +26,11 @@ const (
 )
 
 const (
-	PhoneErrorToSaveInCache    = "error to save phone in cache"
-	PhoneErrorToGetByIDInCache = "error to get phone by id in cache"
+	PhoneErrorToSaveInCache         = "error to save phone in cache"
+	PhoneErrorToGetByIDInCache      = "error to get phone by id in cache"
+	ErrorInvalidMobilePhoneLength   = "invalid Mobile Phone length error"
+	ErrorInvalidLandLinePhoneLength = "invalid Land Line Phone length error"
+	InvalidTypeOfPhone              = "invalid type of phone"
 )
 
 func (service *PhoneService) getCacheKey(cacheKeyType, value string) string {
@@ -73,13 +76,31 @@ func (service *PhoneService) GetByID(contextControl domain.ContextControl, ID in
 }
 
 func (service *PhoneService) ValidatePhone(phone domain.PhoneDomain) error {
-	if err := utils.ValidateCodeAreaNumber(phone.CodeArea); err != nil {
+	if _, err := utils.ValidateCodeAreaNumber(phone.CodeArea); err != nil {
 		return err
 	}
 
-	if err := utils.ValidatePhoneTypeAndPhoneNumber(phone.PhoneType, phone.Number); err != nil {
-		return err
+	clearPhone := utils.RemoveNonAlphaNumericCharacters(phone.Number)
+	verification := func(phoneLen int, phoneTypeVerification, errorMessageVerification string) error {
+		if len(clearPhone) != phoneLen {
+			return fmt.Errorf(errorMessageVerification)
+		}
+		return nil
 	}
 
+	switch phone.PhoneType {
+	case LandLinePhone:
+		landLinePhoneLen := 8
+		if err := verification(landLinePhoneLen, phone.PhoneType, ErrorInvalidLandLinePhoneLength); err != nil {
+			return err
+		}
+	case MobilePhone:
+		mobilePhoneLen := 9
+		if err := verification(mobilePhoneLen, phone.PhoneType, ErrorInvalidMobilePhoneLength); err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf(InvalidTypeOfPhone)
+	}
 	return nil
 }

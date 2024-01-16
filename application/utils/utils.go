@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"github.com/petshop-system/petshop-api/application/service"
 	"regexp"
 	"strconv"
 	"strings"
@@ -21,60 +20,30 @@ const (
 )
 
 const (
-	ErrorInvalidMobilePhoneLength   = "invalid Mobile Phone length error"
-	ErrorInvalidLandLinePhoneLength = "invalid Land Line Phone length error"
-	ErrorAreaCodeVerification       = "invalid area code"
-	InvalidTypeOfPhone              = "invalid type of phone"
+	ErrorAreaCodeVerification = "invalid area code"
 )
 
-func ValidatePhoneTypeAndPhoneNumber(phoneType, phoneNumber string) error {
-
-	clearPhone := RemoveNonAlphaNumericCharacters(phoneNumber)
-	verification := func(phoneLen int, phoneTypeVerification, errorMessageVerification string) error {
-		if len(clearPhone) != phoneLen {
-			return fmt.Errorf(errorMessageVerification)
-		}
-		return nil
-	}
-
-	switch phoneType {
-	case service.LandLinePhone:
-		landLinePhoneLen := 8
-		if err := verification(landLinePhoneLen, phoneType, ErrorInvalidLandLinePhoneLength); err != nil {
-			return err
-		}
-	case service.MobilePhone:
-		mobilePhoneLen := 9
-		if err := verification(mobilePhoneLen, phoneType, ErrorInvalidMobilePhoneLength); err != nil {
-			return err
-		}
-	default:
-		return fmt.Errorf(InvalidTypeOfPhone)
-	}
-	return nil
+var dddList = map[string]bool{
+	// North Region
+	"68": true, "96": true, "92": true, "97": true, "91": true, "93": true, "94": true, "69": true, "95": true, "63": true,
+	// Northeast Region
+	"82": true, "71": true, "73": true, "74": true, "75": true, "77": true, "85": true, "88": true, "98": true, "99": true, "83": true, "81": true, "87": true, "86": true, "89": true, "84": true, "79": true,
+	// Midwest Region
+	"61": true, "62": true, "64": true, "65": true, "66": true,
+	// Southeast Region
+	"27": true, "28": true, "31": true, "32": true, "33": true, "34": true, "35": true, "37": true, "38": true, "21": true, "22": true, "24": true, "11": true, "12": true, "13": true, "14": true, "15": true, "16": true, "17": true, "18": true, "19": true,
+	// South Region
+	"41": true, "42": true, "43": true, "44": true, "45": true, "46": true, "51": true, "53": true, "54": true, "55": true,
 }
 
-func ValidateCodeAreaNumber(areaCode string) error {
-
-	dddList := map[string]bool{
-		// North Region
-		"68": true, "96": true, "92": true, "97": true, "91": true, "93": true, "94": true, "69": true, "95": true, "63": true,
-		// Northeast Region
-		"82": true, "71": true, "73": true, "74": true, "75": true, "77": true, "85": true, "88": true, "98": true, "99": true, "83": true, "81": true, "87": true, "86": true, "89": true, "84": true, "79": true,
-		// Midwest Region
-		"61": true, "62": true, "64": true, "65": true, "66": true,
-		// Southeast Region
-		"27": true, "28": true, "31": true, "32": true, "33": true, "34": true, "35": true, "37": true, "38": true, "21": true, "22": true, "24": true, "11": true, "12": true, "13": true, "14": true, "15": true, "16": true, "17": true, "18": true, "19": true,
-		// South Region
-		"41": true, "42": true, "43": true, "44": true, "45": true, "46": true, "51": true, "53": true, "54": true, "55": true,
-	}
-
+func ValidateCodeAreaNumber(areaCode string) (string, error) {
 	clearAreaCode := RemoveNonAlphaNumericCharacters(areaCode)
 
-	if dddList[clearAreaCode] {
-		return nil
+	if !dddList[clearAreaCode] {
+		return "", fmt.Errorf(ErrorAreaCodeVerification)
 	}
-	return fmt.Errorf(ErrorAreaCodeVerification)
+
+	return clearAreaCode, nil
 }
 
 func ValidateCpf(cpf string) error {
