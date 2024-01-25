@@ -81,9 +81,9 @@ func (service *PhoneService) ValidatePhone(phone domain.PhoneDomain) error {
 	}
 
 	clearPhone := utils.RemoveNonAlphaNumericCharacters(phone.Number)
-	verification := func(phoneLen int, phoneTypeVerification, errorMessageVerification string) error {
+	verification := func(phoneLen int, phoneTypeVerification, ErrorMessageVerification string) error {
 		if len(clearPhone) != phoneLen {
-			return fmt.Errorf(errorMessageVerification)
+			return fmt.Errorf(ErrorMessageVerification)
 		}
 		return nil
 	}
