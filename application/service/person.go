@@ -37,7 +37,7 @@ func (service *PersonService) getCacheKey(cacheKeyType string, value string) str
 
 func (service *PersonService) Create(contextControl domain.ContextControl, person domain.PersonDomain) (domain.PersonDomain, error) {
 
-	err := service.Validate(person)
+	err := service.ValidateTypePerson(person)
 	if err != nil {
 		return domain.PersonDomain{}, err
 	}
@@ -74,7 +74,7 @@ func (service *PersonService) GetByID(contextControl domain.ContextControl, ID i
 	return person, exists, nil
 }
 
-func (service *PersonService) Validate(person domain.PersonDomain) error { //TODO: Change the method name to ValidatePerson
+func (service *PersonService) ValidateTypePerson(person domain.PersonDomain) error { //TODO: Change the method name to ValidatePerson
 	switch person.PersonType {
 	case TypePersonLegal:
 		if err := utils.ValidateCnpj(person.Document); err != nil {

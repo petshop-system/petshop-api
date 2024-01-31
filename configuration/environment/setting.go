@@ -23,7 +23,7 @@ type setting struct {
 	}
 
 	Postgres struct {
-		DBUser     string `envconfig:"DB_USER" default:"petshop-api"`
+		DBUser     string `envconfig:"DB_USER" default:"petshop-system"`
 		DBPassword string `envconfig:"DB_PASSWORD" default:"test1234"`
 		DBName     string `envconfig:"DB_NAME" default:"petshop-system"`
 		DBHost     string `envconfig:"DB_HOST" default:"localhost"`

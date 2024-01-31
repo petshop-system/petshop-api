@@ -21,11 +21,16 @@ var PhoneCacheTTL = 10 * time.Minute
 
 const (
 	PhoneCacheKeyTypeID = "ID"
+	LandLinePhone       = "landline_phone"
+	MobilePhone         = "mobile_phone"
 )
 
 const (
-	PhoneErrorToSaveInCache    = "error to save phone in cache"
-	PhoneErrorToGetByIDInCache = "error to get phone by id in cache"
+	PhoneErrorToSaveInCache         = "error to save phone in cache"
+	PhoneErrorToGetByIDInCache      = "error to get phone by id in cache"
+	ErrorInvalidMobilePhoneLength   = "invalid Mobile Phone length error"
+	ErrorInvalidLandLinePhoneLength = "invalid Land Line Phone length error"
+	InvalidTypeOfPhone              = "invalid type of phone"
 )
 
 func (service *PhoneService) getCacheKey(cacheKeyType, value string) string {
@@ -33,11 +38,9 @@ func (service *PhoneService) getCacheKey(cacheKeyType, value string) string {
 }
 
 func (service *PhoneService) Create(contextControl domain.ContextControl, phone domain.PhoneDomain) (domain.PhoneDomain, error) {
-	if err := utils.ValidateCodeAreaNumber(phone.CodeArea); err != nil {
-		return domain.PhoneDomain{}, nil
-	}
 
-	if err := utils.ValidatePhoneNumber(phone.PhoneType, phone.Number); err != nil {
+	err := service.ValidatePhone(phone)
+	if err != nil {
 		return domain.PhoneDomain{}, err
 	}
 
@@ -70,4 +73,34 @@ func (service *PhoneService) GetByID(contextControl domain.ContextControl, ID in
 		service.LoggerSugar.Infow(PhoneErrorToGetByIDInCache, "phone_id", phone.ID)
 	}
 	return phone, exists, nil
+}
+
+func (service *PhoneService) ValidatePhone(phone domain.PhoneDomain) error {
+	if _, err := utils.ValidateCodeAreaNumber(phone.CodeArea); err != nil {
+		return err
+	}
+
+	clearPhone := utils.RemoveNonAlphaNumericCharacters(phone.Number)
+	verification := func(phoneLen int, phoneTypeVerification, ErrorMessageVerification string) error {
+		if len(clearPhone) != phoneLen {
+			return fmt.Errorf(ErrorMessageVerification)
+		}
+		return nil
+	}
+
+	switch phone.PhoneType {
+	case LandLinePhone:
+		landLinePhoneLen := 8
+		if err := verification(landLinePhoneLen, phone.PhoneType, ErrorInvalidLandLinePhoneLength); err != nil {
+			return err
+		}
+	case MobilePhone:
+		mobilePhoneLen := 9
+		if err := verification(mobilePhoneLen, phone.PhoneType, ErrorInvalidMobilePhoneLength); err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf(InvalidTypeOfPhone)
+	}
+	return nil
 }

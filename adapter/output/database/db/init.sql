@@ -156,10 +156,10 @@ create schema petshop_api
         unique index petshop_api_employee_id_uindex
         on employee (id)
 
-    create table service_attention_time
+    create table service_employee_attention_time
     (
         id             serial       not null
-            constraint petshop_api_service_attention_time_pkey primary key,
+            constraint petshop_api_service_employee_attention_time_pkey primary key,
         initial_time   varchar(255) not null,
         final_time     varchar(255) not null,
         active         bool         not null default true,
@@ -172,8 +172,8 @@ create schema petshop_api
     )
 
     create
-        unique index petshop_api_service_attention_time_id_uindex
-        on service_attention_time (id)
+        unique index petshop_api_service_employee_attention_time_id_uindex
+        on service_employee_attention_time (id)
 
     create table schedule
     (
@@ -185,11 +185,11 @@ create schema petshop_api
         booking                      date         not null,
         price                        decimal      not null default 0,
         fk_id_pet                    int          not null,
-        fk_id_service_attention_time int          not null,
+        fk_id_service_employee_attention_time int          not null,
         fk_id_contract               int          not null,
         FOREIGN KEY (fk_id_contract) references contract (id),
         FOREIGN KEY (fk_id_pet) references pet (id),
-        FOREIGN KEY (fk_id_service_attention_time) references service_attention_time (id)
+        FOREIGN KEY (fk_id_service_employee_attention_time) references service_employee_attention_time (id)
     )
 
     create
@@ -210,7 +210,7 @@ INSERT INTO petshop_api.contract (name, email, date_created, fk_id_address, fk_i
 VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 1, 1);
 
 INSERT INTO petshop_api.phone (number, code_area, phone_type, fk_id_person)
-VALUES ('991234567', '72', 'mobile_phone', 1);
+VALUES ('912345674', '72', 'mobile_phone', 1);
 
 -- first customer
 
@@ -238,7 +238,7 @@ INSERT INTO petshop_api.customer (name, fk_id_address, email, date_created, fk_i
 VALUES ('testando cnpj', 3, 'company@gmail.com', now(), 3, 1);
 
 INSERT INTO petshop_api.phone (number, code_area, phone_type, fk_id_person)
-VALUES ('32110022', '72', 'landline_phone', 3);
+VALUES ('22045678', '72', 'landline_phone', 3);
 
 -- pet control
 
@@ -254,3 +254,11 @@ VALUES ('Pastor Alemao', 1);
 INSERT INTO petshop_api.pet (name, date_created, date_birthday, fk_id_customer, fk_id_breed, fk_id_contract)
 VALUES ('Rex', now(), to_date('12/12/2016', 'dd/MM/yyyy'), 1, 1, 1);
 
+INSERT INTO petshop_api.service (name, price, active, fk_id_contract)
+VALUES ('TOSA', 50.65, true, 1);
+
+INSERT INTO petshop_api.service (name, price, active, fk_id_contract)
+VALUES ('BANHO', 55.99, true, 1);
+
+INSERT INTO petshop_api.service (name, price, active, fk_id_contract)
+VALUES ('VACINA ANTIRRABICA', 112.70, false, 1);
