@@ -211,7 +211,7 @@ INSERT INTO petshop_api.contract (name, email, date_created, fk_id_address, fk_i
 VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 1, 1);
 
 INSERT INTO petshop_api.phone (number, code_area, phone_type, fk_id_person)
-VALUES ('912345674', '72', 'celular', 1);
+VALUES ('912345674', '72', 'mobile_phone', 1);
 
 -- first customer
 
@@ -225,7 +225,7 @@ INSERT INTO petshop_api.customer (name, fk_id_address, email, date_created, fk_i
 VALUES ('siclano', 2, 'siclano@gmail.com', now(), 2, 1);
 
 INSERT INTO petshop_api.phone (number, code_area, phone_type, fk_id_person)
-VALUES ('912345000', '72', 'celular', 2);
+VALUES ('912345000', '72', 'mobile_phone', 2);
 
 -- second customer
 
@@ -239,7 +239,7 @@ INSERT INTO petshop_api.customer (name, fk_id_address, email, date_created, fk_i
 VALUES ('testando cnpj', 3, 'company@gmail.com', now(), 3, 1);
 
 INSERT INTO petshop_api.phone (number, code_area, phone_type, fk_id_person)
-VALUES ('900045678', '72', 'celular', 3);
+VALUES ('22045678', '72', 'landline_phone', 3);
 
 -- pet control
 

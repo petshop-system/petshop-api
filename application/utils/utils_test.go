@@ -2,6 +2,8 @@ package utils
 
 import (
 	"errors"
+
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -145,69 +147,39 @@ func TestRemoveNonAlphaNumericCharacters(t *testing.T) {
 	}
 }
 
-func TestValidatePhoneNumber(t *testing.T) {
-	testCases := []struct {
-		Name          string
-		PhoneNumber   string
-		PhoneType     string
-		ExpectedError error
-	}{
-		{
-			Name:          "valid mobile phone format",
-			PhoneNumber:   "99919-2111",
-			PhoneType:     "mobile_phone",
-			ExpectedError: nil,
-		},
-		{
-			Name:          "invalid mobile phone format",
-			PhoneNumber:   "1234",
-			PhoneType:     "mobile_phone",
-			ExpectedError: errors.New(ErrorInvalidMobilePhoneLength),
-		},
-		{
-			Name:          "valid landline phone format",
-			PhoneNumber:   "3212-2111",
-			PhoneType:     "landline_phone",
-			ExpectedError: nil,
-		},
-		{
-			Name:          "invalid landline phone format",
-			PhoneNumber:   "1234",
-			PhoneType:     "landline_phone",
-			ExpectedError: errors.New(ErrorInvalidLandLinePhoneLength),
-		},
-	}
-
-	for _, test := range testCases {
-		t.Run(test.Name, func(t *testing.T) {
-			err := ValidatePhoneNumber(test.PhoneType, test.PhoneNumber)
-			assert.Equal(t, test.ExpectedError, err)
-		})
-	}
-}
-
 func TestValidateCodeAreaNumber(t *testing.T) {
 	testCases := []struct {
-		Name          string
-		AreaCode      string
-		ExpectedError error
+		Name           string
+		AreaCode       string
+		ExpectedResult string
+		ExpectedError  error
 	}{
 		{
-			Name:          "valid area code format",
-			AreaCode:      "32",
-			ExpectedError: nil,
+			Name:           "valid area code format",
+			AreaCode:       "32",
+			ExpectedResult: "32",
+			ExpectedError:  nil,
 		},
 		{
-			Name:          "invalid area code format",
-			AreaCode:      "29",
-			ExpectedError: errors.New(ErrorAreaCodeVerification),
+			Name:           "invalid area code format",
+			AreaCode:       "293",
+			ExpectedResult: "",
+			ExpectedError:  fmt.Errorf(ErrorAreaCodeVerification),
 		},
 	}
 
 	for _, test := range testCases {
 		t.Run(test.Name, func(t *testing.T) {
-			err := ValidateCodeAreaNumber(test.AreaCode)
-			assert.Equal(t, test.ExpectedError, err)
+			result, err := ValidateCodeAreaNumber(test.AreaCode)
+
+			assert.Equal(t, test.ExpectedResult, result)
+
+			if test.ExpectedError != nil {
+				assert.Error(t, err)
+				assert.EqualError(t, err, test.ExpectedError.Error())
+			} else {
+				assert.NoError(t, err)
+			}
 		})
 	}
 }
