@@ -58,7 +58,7 @@ services:
 
   petshop-admin-api:
     container_name: petshop-admin-api
-    build: ../../../../../petshop-admin-api/
+    build: ${DEV_ENV_FOLDER}/petshop-admin-api/
     restart: always
     environment:
       - SPRING_PROFILE=docker
@@ -83,7 +83,7 @@ services:
 
   petshop-message-api:
     container_name: petshop-message-api
-    build: ../../../../../petshop-message-api/
+    build: ${DEV_ENV_FOLDER}/petshop-message-api/
     restart: always
     environment:
       - SPRING_PROFILE=docker
@@ -101,7 +101,7 @@ services:
 
   petshop-api-gateway:
     container_name: petshop-api-gateway
-    build: ../petshop-api-gateway
+    build: ${PETSHOP_GO_FOLDER}/petshop-api-gateway
     restart: always
     ports:
       - "9999:9999"
