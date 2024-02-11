@@ -207,7 +207,7 @@ create schema petshop_api
         date_created                          timestamp             default timezone('BRT'::text, now()),
         date_declined                         timestamp,
         number                                varchar(255) not null, -- 2023dez10.000001
-        booked_at                               date         not null,
+        booked_at                             date         not null,
         price                                 decimal      not null default 0,
         fk_id_pet                             int          not null,
         fk_id_service_employee_attention_time int          not null,
@@ -268,10 +268,7 @@ VALUES ('900045678', '72', 'celular', 3);
 -- pet control
 
 INSERT INTO petshop_api.species (name)
-VALUES ('Canino');
-
-INSERT INTO petshop_api.species (name)
-VALUES ('Felino');
+VALUES ('Canino'), ('Felino');
 
 INSERT INTO petshop_api.breed (name, fk_id_species)
 VALUES ('Pastor Alemao', 1), ('Siames', 2);
@@ -313,6 +310,7 @@ VALUES ('Brave Vacinador', 'FUNC-0003', 6, 1);
 
 INSERT INTO petshop_api.service_employee_attention_time(active, initial_time,  fk_id_service, fk_id_contract, fk_id_employee)
 VALUES (true, '9:00', 1, 1, 1),
+       (true, '9:00', 2, 1, 1),
        (true, '10:00', 1, 1, 1),
        (true, '11:00', 2, 1, 1),
        (true, '10:00', 2, 1, 2),
@@ -322,3 +320,57 @@ VALUES (true, '9:00', 1, 1, 1),
 INSERT INTO petshop_api.schedule(date_created, number, booked_at, price, fk_id_pet, fk_id_service_employee_attention_time)
 VALUES (now(), '2024020001', now() + interval '1 day', 10.50, 1, 1),
        (now(), '2024020002', now() + interval '1 day', 100.50, 2, 4);
+
+
+-- FUNCTIONS
+
+CREATE OR REPLACE FUNCTION petshop_api.GET_SERVICE_SCHEDULE_AVAILABLE(P_DATE_SCHEDULE VARCHAR, P_SERVICE_ID INTEGER)
+    RETURNS TABLE
+            (
+                service_attention_id int,
+                service_attention_active bool,
+                service_attention_initial_time varchar(255),
+                service_attention_fk_id_service int,
+                service_attention_fk_id_contract int,
+                service_attention_fk_id_employee int
+            )
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    RETURN QUERY
+        select
+            service_attention.id::int,
+            service_attention.active ,
+            service_attention.initial_time,
+            service_attention.fk_id_service,
+            service_attention.fk_id_contract,
+            service_attention.fk_id_employee
+        from (select service_attention.*
+              from petshop_api.service_employee_attention_time service_attention
+              where 1 = 1
+                and service_attention.active = true
+                and not exists (select 1
+                                from petshop_api.schedule schedule
+                                where service_attention.id = schedule.fk_id_service_employee_attention_time
+                                  and schedule.booked_at = TO_DATE(P_DATE_SCHEDULE, 'YYYY-MM-DD')))
+            service_attention -- pegando agendamento disponiveis
+        where 1 = 1
+          and not exists( -- nega select
+            -- select pegando funcionario com possivel agendamento de mesmo horario
+            select 1
+            from petshop_api.schedule schedule,
+                 petshop_api.service_employee_attention_time seat,
+                 petshop_api.employee emp
+            where 1 = 1
+              and schedule.booked_at = TO_DATE(P_DATE_SCHEDULE, 'YYYY-MM-DD')
+              and service_attention.initial_time = seat.initial_time
+              and schedule.fk_id_service_employee_attention_time = seat.id
+              and seat.fk_id_employee = emp.id
+              and service_attention.fk_id_employee = emp.id)
+          and service_attention.fk_id_service = P_SERVICE_ID
+        order by cast(SPLIT_PART(initial_time, ':', 1) as INTEGER);
+end;
+$$
+
+
