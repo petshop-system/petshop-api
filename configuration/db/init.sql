@@ -324,7 +324,7 @@ VALUES (now(), '2024020001', now() + interval '1 day', 10.50, 1, 1),
 
 -- FUNCTIONS
 
-CREATE OR REPLACE FUNCTION petshop_api.GET_SERVICE_SCHEDULE_AVAILABLE(P_DATE_SCHEDULE VARCHAR, P_SERVICE_ID INTEGER)
+CREATE OR REPLACE FUNCTION petshop_api.GET_SERVICE_ATTENTION_AVAILABLE(P_DATE_SCHEDULE VARCHAR(12), P_SERVICE_ID INTEGER)
     RETURNS TABLE
             (
                 service_attention_id int,
@@ -340,8 +340,8 @@ $$
 BEGIN
     RETURN QUERY
         select
-            service_attention.id::int,
-            service_attention.active ,
+            service_attention.id::integer,
+            service_attention.active,
             service_attention.initial_time,
             service_attention.fk_id_service,
             service_attention.fk_id_contract,
@@ -354,21 +354,20 @@ BEGIN
                                 from petshop_api.schedule schedule
                                 where service_attention.id = schedule.fk_id_service_employee_attention_time
                                   and schedule.booked_at = TO_DATE(P_DATE_SCHEDULE, 'YYYY-MM-DD')))
-            service_attention -- pegando agendamento disponiveis
+            service_attention -- getting all available services attention in order to schedules
         where 1 = 1
-          and not exists( -- nega select
-            -- select pegando funcionario com possivel agendamento de mesmo horario
-            select 1
-            from petshop_api.schedule schedule,
-                 petshop_api.service_employee_attention_time seat,
-                 petshop_api.employee emp
+          and not exists( -- denying select
+            -- select to get employees with possibles appointments in the same hour
+            select 1 from petshop_api.schedule schedule
+                              inner join petshop_api.service_employee_attention_time seat
+                                         on schedule.fk_id_service_employee_attention_time = seat.id
             where 1 = 1
               and schedule.booked_at = TO_DATE(P_DATE_SCHEDULE, 'YYYY-MM-DD')
               and service_attention.initial_time = seat.initial_time
-              and schedule.fk_id_service_employee_attention_time = seat.id
-              and seat.fk_id_employee = emp.id
-              and service_attention.fk_id_employee = emp.id)
-          and service_attention.fk_id_service = P_SERVICE_ID
+              and seat.fk_id_employee = service_attention.fk_id_employee
+
+            )
+          and service_attention.fk_id_service = P_SERVICE_ID -- getting only service attention for specific service
         order by cast(SPLIT_PART(initial_time, ':', 1) as INTEGER);
 end;
 $$
