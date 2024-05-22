@@ -1,11 +1,13 @@
 package domain
 
-import "time"
-
 type CustomerDomain struct {
-	ID          int64
-	Name        string
-	DateCreated time.Time
+	ID         int64
+	Name       string
+	Email      string
+	Document   string
+	PersonType string
+	ContractID int64
+	AddressID  int64
 }
 
 type PhoneDomain struct {
@@ -31,8 +33,8 @@ type AddressDomain struct {
 	Number string
 }
 
-type PersonDomain struct {
-	ID         int64
-	Document   string
-	PersonType string
+type ScheduleMessage struct {
+	Booking                    string
+	PetId                      int
+	ServiceEmployeeAttentionId int
 }

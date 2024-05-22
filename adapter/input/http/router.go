@@ -35,6 +35,7 @@ func (router Router) AddGroupHandlerHealthCheck(ah *handler.Generic) func(r chi.
 func (router Router) AddGroupHandlerCustomer(ah *handler.Customer) func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Route("/customer", func(r chi.Router) {
+			r.Post("/validate-create", ah.ValidateCreate)
 			r.Post("/create", ah.Create)
 		})
 	}
@@ -43,15 +44,6 @@ func (router Router) AddGroupHandlerCustomer(ah *handler.Customer) func(r chi.Ro
 func (router Router) AddGroupHandlerAddress(ah *handler.Address) func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Route("/address", func(r chi.Router) {
-			r.Post("/create", ah.Create)
-			r.Get("/search/{id}", ah.GetByID)
-		})
-	}
-}
-
-func (router Router) AddGroupHandlerPerson(ah *handler.Person) func(r chi.Router) {
-	return func(r chi.Router) {
-		r.Route("/person", func(r chi.Router) {
 			r.Post("/create", ah.Create)
 			r.Get("/search/{id}", ah.GetByID)
 		})

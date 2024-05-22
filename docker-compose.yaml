@@ -1,7 +1,8 @@
 version: '3.8'
+
 services:
   redis:
-    image: redis
+    image: 'redis:latest'
     restart: always
     ports:
       - "6379:6379"
@@ -19,13 +20,153 @@ services:
       - POSTGRES_DB=petshop-system
     volumes:
       - /tmp/postgres-volume:/data/db
-      - ./adapter/output/database/db/:/docker-entrypoint-initdb.d
+      - ./configuration/db/:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     expose:
       - "5432"
     networks:
       rede_local:
+
+#  zookeeper:
+#    image: confluentinc/cp-zookeeper:latest
+#    environment:
+#      ZOOKEEPER_CLIENT_PORT: 2181
+#      ZOOKEEPER_TICK_TIME: 2000
+#    ports:
+#      - "22181:2181"
+#
+#  kafka:
+#    hostname: kafka
+#    image: confluentinc/cp-kafka:latest
+#    depends_on:
+#      - zookeeper
+#    ports:
+#      - "29092:29092"
+#    environment:
+#      KAFKA_BROKER_ID: 1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  petshop-api-gateway:
+    container_name: petshop-api-gateway
+    build: ${PETSHOP_GO_FOLDER}/petshop-api-gateway
+    restart: always
+    environment:
+      - TICKER_RELOAD_ROUTERS=4m
+      - DB_USER=petshop-system
+      - DB_PASSWORD=test1234
+      - DB_NAME=petshop-system
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_TYPE=postgres
+    ports:
+      - "9999:9999"
+    expose:
+      - "9999"
+    depends_on:
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      rede_local:
+
+#  petshop-api:
+#    container_name: petshop-api
+#    build: ${PETSHOP_GO_FOLDER}/petshop-api
+#    restart: always
+#    environment:
+#      - REDIS_ADDR=redis:6379
+#      - DB_USER=petshop-system
+#      - DB_PASSWORD=test1234
+#      - DB_NAME=petshop-system
+#      - DB_HOST=postgres
+#      - DB_PORT=5432
+#      - DB_TYPE=postgres
+#    ports:
+#      - "5001:5001"
+#    expose:
+#      - "5001"
+#    depends_on:
+#      postgres:
+#        condition: service_started
+#      redis:
+#        condition: service_started
+#    networks:
+#      rede_local:
+
+#  petshop-admin-api:
+#    container_name: petshop-admin-api
+#    build: ${DEV_ENV_FOLDER}/petshop-admin-api
+#    restart: always
+#    environment:
+#      - SPRING_PROFILE=docker
+#      - REDIS_ADDR=redis:6379
+#      - DB_USER=petshop-system
+#      - DB_PASSWORD=test1234
+#      - DB_NAME=petshop-system
+#      - DB_HOST=postgres
+#      - DB_PORT=5432
+#      - DB_TYPE=postgres
+#    ports:
+#      - "5002:5002"
+#    expose:
+#      - "5002"
+#    depends_on:
+#      postgres:
+#        condition: service_started
+#      redis:
+#        condition: service_started
+#      petshop-api-gateway:
+#        condition: service_started
+#    networks:
+#      rede_local:
+
+#  petshop-bff-desktop:
+#    container_name: petshop-bff-desktop
+#    build: ${DEV_ENV_FOLDER}/petshop-bff-desktop
+#    restart: always
+#    environment:
+#      - SPRING_PROFILE=docker
+#      - REDIS_ADDR=redis:6379
+#      - DOCKER_EXPOSE_PORT=9998
+#    ports:
+#      - "9998:9998"
+#    expose:
+#      - "9998"
+#    depends_on:
+#      redis:
+#        condition: service_started
+#      petshop-api-gateway:
+#        condition: service_started
+#    networks:
+#      rede_local:
+
+#  petshop-auth-api:
+#    container_name: petshop-auth-api
+#    build: ${DEV_ENV_FOLDER}/petshop-auth-api
+#    restart: always
+#    environment:
+#      - SPRING_PROFILE=docker
+#      - JWT_SECRET=f39bfd500d348b2180f25a4df7c2b5b057a4ee73e27b980573b38a5b7b651cc6  # petshop-system - https://cryptii.com/pipes/hmac
+#      - ENCRYPTION_AES_KEY=6a9f163c84d74b858d510e26c65ebd28  # p&tsh0p-s7st3m
+#    ports:
+#      - "5004:5004"
+#    expose:
+#      - "5004"
+#    depends_on:
+#      postgres:
+#        condition: service_started
+#      redis:
+#        condition: service_started
+#      petshop-api-gateway:
+#        condition: service_started
+#    networks:
+#      rede_local:
 
 networks:
   rede_local:

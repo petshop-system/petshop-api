@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/petshop-system/petshop-api/adapter/output/database"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/output"
 	"github.com/petshop-system/petshop-api/configuration/environment"
@@ -48,15 +50,24 @@ func TestCustomerService_Create(t *testing.T) {
 		ExpectedError                    error
 	}{
 		{
-			Name: "success saving customer",
+			Name: "success saving an individual customer",
 			Customer: domain.CustomerDomain{
-				Name: "Fulano",
+				Name:       "Fulano",
+				Document:   "296.230.570-91",
+				PersonType: TypePersonIndividual,
+				AddressID:  1,
+				ContractID: 1,
+				Email:      "fulano@email.com",
 			},
 			CustomerDomainDataBaseRepository: output.CustomerDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, customer domain.CustomerDomain) (domain.CustomerDomain, error) {
 					return domain.CustomerDomain{
-						ID:   1,
-						Name: "Fulano",
+						Name:       "Fulano",
+						Document:   "296.230.570-91",
+						PersonType: TypePersonIndividual,
+						AddressID:  1,
+						ContractID: 1,
+						Email:      "fulano@email.com",
 					}, nil
 				},
 			},
@@ -66,10 +77,37 @@ func TestCustomerService_Create(t *testing.T) {
 				},
 			},
 			ExpectedResult: domain.CustomerDomain{
-				ID:   1,
-				Name: "Fulano",
+				Name:       "Fulano",
+				Document:   "296.230.570-91",
+				PersonType: TypePersonIndividual,
+				AddressID:  1,
+				ContractID: 1,
+				Email:      "fulano@email.com",
 			},
 			ExpectedError: nil,
+		},
+		{
+			Name: "error to save an individual customer into DB",
+			Customer: domain.CustomerDomain{
+				Name:       "Fulano",
+				Document:   "296.230.570-91",
+				PersonType: TypePersonIndividual,
+				AddressID:  1,
+				ContractID: 1,
+				Email:      "fulano@email.com",
+			},
+			CustomerDomainDataBaseRepository: output.CustomerDomainDataBaseRepositoryMock{
+				SaveMock: func(contextControl domain.ContextControl, customer domain.CustomerDomain) (domain.CustomerDomain, error) {
+					return domain.CustomerDomain{}, fmt.Errorf(database.CustomerSaveDBError)
+				},
+			},
+			CustomerDomainCacheRepository: output.CustomerDomainCacheRepositoryMock{
+				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
+					return nil
+				},
+			},
+			ExpectedResult: domain.CustomerDomain{},
+			ExpectedError:  fmt.Errorf(database.CustomerSaveDBError),
 		},
 	}
 

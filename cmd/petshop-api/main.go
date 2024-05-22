@@ -6,6 +6,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	adpterHttpInput "github.com/petshop-system/petshop-api/adapter/input/http"
 	"github.com/petshop-system/petshop-api/adapter/input/http/handler"
+	"github.com/petshop-system/petshop-api/adapter/input/message/stream"
 	"github.com/petshop-system/petshop-api/adapter/output/cache"
 	"github.com/petshop-system/petshop-api/adapter/output/database"
 	"github.com/petshop-system/petshop-api/application/service"
@@ -47,14 +48,13 @@ func main() {
 
 	customerPostgresDB := database.NewCustomerPostgresDB(postgresConnectionDB, loggerSugar)
 	addressPostgresDB := database.NewAddressPostgresDB(postgresConnectionDB, loggerSugar)
-	personPostgresDB := database.NewPersonPostgresDB(postgresConnectionDB, loggerSugar)
 	phonePostgresDB := database.NewPhonePostgresDB(postgresConnectionDB, loggerSugar)
 
 	genericHandler := &handler.Generic{
 		LoggerSugar: loggerSugar,
 	}
 
-	customerService := service.CustomerService{
+	customerService := &service.CustomerService{
 		LoggerSugar:                      loggerSugar,
 		CustomerDomainDataBaseRepository: &customerPostgresDB,
 		CustomerDomainCacheRepository:    &redisCache,
@@ -76,17 +76,6 @@ func main() {
 		LoggerSugar:    loggerSugar,
 	}
 
-	personService := &service.PersonService{
-		LoggerSugar:                    loggerSugar,
-		PersonDomainDataBaseRepository: &personPostgresDB,
-		PersonDomainCacheRepository:    &redisCache,
-	}
-
-	personHandler := &handler.Person{
-		PersonService: personService,
-		LoggerSugar:   loggerSugar,
-	}
-
 	phoneService := &service.PhoneService{
 		LoggerSugar:                   loggerSugar,
 		PhoneDomainDataBaseRepository: &phonePostgresDB,
@@ -98,6 +87,16 @@ func main() {
 		LoggerSugar:  loggerSugar,
 	}
 
+	scheduleService := &service.ScheduleService{
+		LoggerSugar: loggerSugar,
+	}
+
+	scheduleKafkaClient := stream.NewScheduleKafkaClient(loggerSugar, scheduleService, environment.Setting.Kafka.Schedule.BootstrapServer,
+		environment.Setting.Kafka.Schedule.GroupID, environment.Setting.Kafka.Schedule.AutoOffsetReset,
+		environment.Setting.Kafka.Schedule.Topic)
+
+	scheduleKafkaClient.ConsumerMessages()
+
 	contextPath := environment.Setting.Server.Context
 	newRouter := adpterHttpInput.GetNewRouter(loggerSugar)
 	newRouter.GetChiRouter().Route(fmt.Sprintf("/%s", contextPath), func(r chi.Router) {
@@ -105,7 +104,6 @@ func main() {
 		r.Group(newRouter.AddGroupHandlerHealthCheck(genericHandler))
 		r.Group(newRouter.AddGroupHandlerCustomer(customerHandler))
 		r.Group(newRouter.AddGroupHandlerAddress(addressHandler))
-		r.Group(newRouter.AddGroupHandlerPerson(personHandler))
 		r.Group(newRouter.AddGroupHandlerPhone(phoneHandler))
 	})
 
