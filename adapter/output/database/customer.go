@@ -5,7 +5,12 @@ import (
 	"github.com/petshop-system/petshop-api/application/domain"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"time"
+)
+
+const (
+	CustomerSaveDBError    = "error to save the customer into postgres"
+	CustomerGetByIDDBError = "error to get a customer by id"
+	CustomerNotFound       = "customer not found"
 )
 
 type CustomerPostgresDB struct {
@@ -26,11 +31,13 @@ func (cp CustomerPostgresDB) GetByID(contextControl domain.ContextControl, ID in
 }
 
 type CustomerDB struct {
-	ID          int64             `gorm:"primaryKey, column:id"`
-	Name        string            `gorm:"column:name"`
-	Phone       map[string]string `gorm:"type:json, column:phone"` // key: tipo telefone, val: telefone
-	Address     string            `gorm:"column:address"`
-	DataCreated time.Time         `gorm:"column:date_created"`
+	ID         int64  `gorm:"primaryKey, column:id"`
+	Name       string `gorm:"column:name"`
+	Email      string `gorm:"column:email"`
+	Document   string `gorm:"column:document"`
+	PersonType string `gorm:"column:person_type"`
+	ContractID int64  `gorm:"column:fk_id_contract"`
+	AddressID  int64  `gorm:"column:fk_id_address"`
 }
 
 func (CustomerDB) TableName() string {
@@ -39,9 +46,8 @@ func (CustomerDB) TableName() string {
 
 func (c CustomerDB) CopyToCustomerDomain() domain.CustomerDomain {
 	return domain.CustomerDomain{
-		ID:          c.ID,
-		Name:        c.Name,
-		DateCreated: c.DataCreated,
+		ID:   c.ID,
+		Name: c.Name,
 	}
 }
 
@@ -52,7 +58,7 @@ func (cp CustomerPostgresDB) Save(contextControl domain.ContextControl, customer
 
 	if err := cp.DB.WithContext(contextControl.Context).
 		Create(&customerDB).Error; err != nil {
-		cp.LoggerSugar.Errorw("error to save into postgres",
+		cp.LoggerSugar.Errorw(CustomerSaveDBError,
 			"error", err.Error())
 		return domain.CustomerDomain{}, err
 	}

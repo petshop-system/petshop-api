@@ -48,14 +48,13 @@ func main() {
 
 	customerPostgresDB := database.NewCustomerPostgresDB(postgresConnectionDB, loggerSugar)
 	addressPostgresDB := database.NewAddressPostgresDB(postgresConnectionDB, loggerSugar)
-	personPostgresDB := database.NewPersonPostgresDB(postgresConnectionDB, loggerSugar)
 	phonePostgresDB := database.NewPhonePostgresDB(postgresConnectionDB, loggerSugar)
 
 	genericHandler := &handler.Generic{
 		LoggerSugar: loggerSugar,
 	}
 
-	customerService := service.CustomerService{
+	customerService := &service.CustomerService{
 		LoggerSugar:                      loggerSugar,
 		CustomerDomainDataBaseRepository: &customerPostgresDB,
 		CustomerDomainCacheRepository:    &redisCache,
@@ -75,17 +74,6 @@ func main() {
 	addressHandler := &handler.Address{
 		AddressService: addressService,
 		LoggerSugar:    loggerSugar,
-	}
-
-	personService := &service.PersonService{
-		LoggerSugar:                    loggerSugar,
-		PersonDomainDataBaseRepository: &personPostgresDB,
-		PersonDomainCacheRepository:    &redisCache,
-	}
-
-	personHandler := &handler.Person{
-		PersonService: personService,
-		LoggerSugar:   loggerSugar,
 	}
 
 	phoneService := &service.PhoneService{
@@ -116,7 +104,6 @@ func main() {
 		r.Group(newRouter.AddGroupHandlerHealthCheck(genericHandler))
 		r.Group(newRouter.AddGroupHandlerCustomer(customerHandler))
 		r.Group(newRouter.AddGroupHandlerAddress(addressHandler))
-		r.Group(newRouter.AddGroupHandlerPerson(personHandler))
 		r.Group(newRouter.AddGroupHandlerPhone(phoneHandler))
 	})
 
