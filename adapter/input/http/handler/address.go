@@ -20,6 +20,8 @@ const (
 	ErrorToGetAddress      = "error to get and address by id"
 	AddressNotFound        = "address not found"
 	AddressNotFoundMessage = "the address with id %d wasn't found"
+	StreetIsRequired       = "street is required"
+	NumberIsRequired       = "number is required"
 )
 
 type Address struct {
@@ -40,18 +42,37 @@ type AddressResponse struct {
 }
 
 func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
-
 	contextControl := domain.ContextControl{
 		Context: context.Background(),
 	}
 
 	var addressRequest AddressRequest
-	json.NewDecoder(r.Body).Decode(&addressRequest)
+	err := json.NewDecoder(r.Body).Decode(&addressRequest)
+	if err != nil {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
+		response := objectResponse(ErrorToCreateAddress, err.Error())
+		responseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
+
+	if addressRequest.Street == "" {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", StreetIsRequired)
+		response := objectResponse(ErrorToCreateAddress, StreetIsRequired)
+		responseReturn(w, http.StatusBadRequest, response.Bytes())
+		return
+	}
+
+	if addressRequest.Number == "" {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", NumberIsRequired)
+		response := objectResponse(ErrorToCreateAddress, NumberIsRequired)
+		responseReturn(w, http.StatusBadRequest, response.Bytes())
+		return
+	}
 
 	var addressDomain domain.AddressDomain
 	copier.Copy(&addressDomain, &addressRequest)
 
-	addressDomain, err := c.AddressService.Create(contextControl, addressDomain)
+	addressDomain, err = c.AddressService.Create(contextControl, addressDomain)
 	if err != nil {
 		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
 		response := objectResponse(ErrorToCreateAddress, err.Error())

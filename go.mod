@@ -3,7 +3,6 @@ module github.com/petshop-system/petshop-api
 go 1.20
 
 require (
-	github.com/confluentinc/confluent-kafka-go/v2 v2.3.0
 	github.com/go-chi/chi v1.5.5
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/jinzhu/copier v0.4.0

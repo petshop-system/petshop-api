@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/petshop-system/petshop-api/adapter/input/http/handler"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/output"
 	"github.com/petshop-system/petshop-api/configuration/environment"
@@ -71,6 +73,44 @@ func TestAddressService_Create(t *testing.T) {
 				Number: "123",
 			},
 			ExpectedError: nil,
+		},
+		{
+			Name: "error to save an address: street is required",
+			Address: domain.AddressDomain{
+				Street: "",
+				Number: "123",
+			},
+			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
+				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
+					return domain.AddressDomain{}, errors.New(handler.StreetIsRequired)
+				},
+			},
+			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
+				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
+					return nil
+				},
+			},
+			ExpectedResult: domain.AddressDomain{},
+			ExpectedError:  errors.New(handler.StreetIsRequired),
+		},
+		{
+			Name: "error to save an address: number is required",
+			Address: domain.AddressDomain{
+				Street: "Rua Fulaninho da Silva",
+				Number: "",
+			},
+			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
+				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
+					return domain.AddressDomain{}, errors.New(handler.NumberIsRequired)
+				},
+			},
+			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
+				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
+					return nil
+				},
+			},
+			ExpectedResult: domain.AddressDomain{},
+			ExpectedError:  errors.New(handler.NumberIsRequired),
 		},
 	}
 
