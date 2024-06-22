@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/jinzhu/copier"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/input"
@@ -22,6 +22,11 @@ const (
 	AddressNotFoundMessage = "the address with id %d wasn't found"
 	StreetIsRequired       = "street is required"
 	NumberIsRequired       = "number is required"
+	NeighborhoodIsRequired = "neighborhood is required"
+	ZipCodeIsRequired      = "zip code is required"
+	CityIsRequired         = "city is required"
+	StateIsRequired        = "state is required"
+	CountryIsRequired      = "country is required"
 )
 
 type Address struct {
@@ -30,15 +35,29 @@ type Address struct {
 }
 
 type AddressRequest struct {
-	ID     int64  `json:"id"`
-	Street string `json:"street"`
-	Number string `json:"number"`
+	ID           int64  `json:"id"`
+	Street       string `json:"street"`
+	Number       string `json:"number"`
+	Complement   string `json:"complement"`
+	Block        string `json:"block"`
+	Neighborhood string `json:"neighborhood"`
+	ZipCode      string `json:"zip_code"`
+	City         string `json:"city"`
+	State        string `json:"state"`
+	Country      string `json:"country"`
 }
 
 type AddressResponse struct {
-	ID     int64  `json:"id"`
-	Street string `json:"street"`
-	Number string `json:"number"`
+	ID           int64  `json:"id"`
+	Street       string `json:"street"`
+	Number       string `json:"number"`
+	Complement   string `json:"complement"`
+	Block        string `json:"block"`
+	Neighborhood string `json:"neighborhood"`
+	ZipCode      string `json:"zip_code"`
+	City         string `json:"city"`
+	State        string `json:"state"`
+	Country      string `json:"country"`
 }
 
 func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
@@ -55,16 +74,51 @@ func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if addressRequest.Street == "" {
+	if len(addressRequest.Street) == 0 {
 		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", StreetIsRequired)
 		response := objectResponse(ErrorToCreateAddress, StreetIsRequired)
 		responseReturn(w, http.StatusBadRequest, response.Bytes())
 		return
 	}
 
-	if addressRequest.Number == "" {
+	if len(addressRequest.Number) == 0 {
 		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", NumberIsRequired)
 		response := objectResponse(ErrorToCreateAddress, NumberIsRequired)
+		responseReturn(w, http.StatusBadRequest, response.Bytes())
+		return
+	}
+
+	if len(addressRequest.Neighborhood) == 0 {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", NeighborhoodIsRequired)
+		response := objectResponse(ErrorToCreateAddress, NeighborhoodIsRequired)
+		responseReturn(w, http.StatusBadRequest, response.Bytes())
+		return
+	}
+
+	if len(addressRequest.ZipCode) == 0 {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", ZipCodeIsRequired)
+		response := objectResponse(ErrorToCreateAddress, ZipCodeIsRequired)
+		responseReturn(w, http.StatusBadRequest, response.Bytes())
+		return
+	}
+
+	if len(addressRequest.City) == 0 {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", CityIsRequired)
+		response := objectResponse(ErrorToCreateAddress, CityIsRequired)
+		responseReturn(w, http.StatusBadRequest, response.Bytes())
+		return
+	}
+
+	if len(addressRequest.State) == 0 {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", StateIsRequired)
+		response := objectResponse(ErrorToCreateAddress, StateIsRequired)
+		responseReturn(w, http.StatusBadRequest, response.Bytes())
+		return
+	}
+
+	if len(addressRequest.Country) == 0 {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", CountryIsRequired)
+		response := objectResponse(ErrorToCreateAddress, CountryIsRequired)
 		responseReturn(w, http.StatusBadRequest, response.Bytes())
 		return
 	}

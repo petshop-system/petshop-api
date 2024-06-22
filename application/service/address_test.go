@@ -50,15 +50,30 @@ func TestAddressService_Create(t *testing.T) {
 		{
 			Name: "success to save an address",
 			Address: domain.AddressDomain{
-				Street: "Rua Fulaninho da Silva",
-				Number: "123",
+				ID:           0,
+				Street:       "Rua Fulaninho da Silva",
+				Number:       "123",
+				Complement:   "303",
+				Block:        "A",
+				Neighborhood: "São Mateus",
+				ZipCode:      "36025-290",
+				City:         "Juiz de Fora",
+				State:        "MG",
+				Country:      "Brasil",
 			},
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
 					return domain.AddressDomain{
-						ID:     1,
-						Street: "Rua Fulaninho da Silva",
-						Number: "123",
+						ID:           1,
+						Street:       "Rua Fulaninho da Silva",
+						Number:       "123",
+						Complement:   "303",
+						Block:        "A",
+						Neighborhood: "São Mateus",
+						ZipCode:      "36025-290",
+						City:         "Juiz de Fora",
+						State:        "MG",
+						Country:      "Brasil",
 					}, nil
 				},
 			},
@@ -68,17 +83,32 @@ func TestAddressService_Create(t *testing.T) {
 				},
 			},
 			ExpectedResult: domain.AddressDomain{
-				ID:     1,
-				Street: "Rua Fulaninho da Silva",
-				Number: "123",
+				ID:           1,
+				Street:       "Rua Fulaninho da Silva",
+				Number:       "123",
+				Complement:   "303",
+				Block:        "A",
+				Neighborhood: "São Mateus",
+				ZipCode:      "36025-290",
+				City:         "Juiz de Fora",
+				State:        "MG",
+				Country:      "Brasil",
 			},
 			ExpectedError: nil,
 		},
 		{
 			Name: "error to save an address: street is required",
 			Address: domain.AddressDomain{
-				Street: "",
-				Number: "123",
+				ID:           0,
+				Street:       "",
+				Number:       "123",
+				Complement:   "303",
+				Block:        "A",
+				Neighborhood: "São Mateus",
+				ZipCode:      "36025-290",
+				City:         "Juiz de Fora",
+				State:        "MG",
+				Country:      "Brasil",
 			},
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
@@ -111,6 +141,136 @@ func TestAddressService_Create(t *testing.T) {
 			},
 			ExpectedResult: domain.AddressDomain{},
 			ExpectedError:  errors.New(handler.NumberIsRequired),
+		},
+		{
+			Name: "error to save an address: neighborhood is required",
+			Address: domain.AddressDomain{
+				Street:       "Rua Fulaninho da Silva",
+				Number:       "123",
+				Complement:   "303",
+				Block:        "A",
+				Neighborhood: "",
+				ZipCode:      "36025-290",
+				City:         "Juiz de Fora",
+				State:        "MG",
+				Country:      "Brasil",
+			},
+			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
+				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
+					return domain.AddressDomain{}, errors.New(handler.NeighborhoodIsRequired)
+				},
+			},
+			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
+				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
+					return nil
+				},
+			},
+			ExpectedResult: domain.AddressDomain{},
+			ExpectedError:  errors.New(handler.NeighborhoodIsRequired),
+		},
+		{
+			Name: "error to save an address: zip code is required",
+			Address: domain.AddressDomain{
+				Street:       "Rua Fulaninho da Silva",
+				Number:       "123",
+				Complement:   "303",
+				Block:        "A",
+				Neighborhood: "São Mateus",
+				ZipCode:      "",
+				City:         "Juiz de Fora",
+				State:        "MG",
+				Country:      "Brasil",
+			},
+			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
+				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
+					return domain.AddressDomain{}, errors.New(handler.ZipCodeIsRequired)
+				},
+			},
+			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
+				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
+					return nil
+				},
+			},
+			ExpectedResult: domain.AddressDomain{},
+			ExpectedError:  errors.New(handler.ZipCodeIsRequired),
+		},
+		{
+			Name: "error to save an address: city is required",
+			Address: domain.AddressDomain{
+				Street:       "Rua Fulaninho da Silva",
+				Number:       "123",
+				Complement:   "303",
+				Block:        "A",
+				Neighborhood: "São Mateus",
+				ZipCode:      "36025-290",
+				City:         "",
+				State:        "MG",
+				Country:      "Brasil",
+			},
+			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
+				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
+					return domain.AddressDomain{}, errors.New(handler.CityIsRequired)
+				},
+			},
+			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
+				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
+					return nil
+				},
+			},
+			ExpectedResult: domain.AddressDomain{},
+			ExpectedError:  errors.New(handler.CityIsRequired),
+		},
+		{
+			Name: "error to save an address: state is required",
+			Address: domain.AddressDomain{
+				Street:       "Rua Fulaninho da Silva",
+				Number:       "123",
+				Complement:   "303",
+				Block:        "A",
+				Neighborhood: "São Mateus",
+				ZipCode:      "36025-290",
+				City:         "Juiz de Fora",
+				State:        "",
+				Country:      "Brasil",
+			},
+			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
+				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
+					return domain.AddressDomain{}, errors.New(handler.StateIsRequired)
+				},
+			},
+			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
+				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
+					return nil
+				},
+			},
+			ExpectedResult: domain.AddressDomain{},
+			ExpectedError:  errors.New(handler.StateIsRequired),
+		},
+		{
+			Name: "error to save an address: country is required",
+			Address: domain.AddressDomain{
+				Street:       "Rua Fulaninho da Silva",
+				Number:       "123",
+				Complement:   "303",
+				Block:        "A",
+				Neighborhood: "São Mateus",
+				ZipCode:      "36025-290",
+				City:         "Juiz de Fora",
+				State:        "MG",
+				Country:      "",
+			},
+			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
+				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
+					return domain.AddressDomain{}, errors.New(handler.CountryIsRequired)
+				},
+			},
+			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
+				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
+					return nil
+				},
+			},
+			ExpectedResult: domain.AddressDomain{},
+			ExpectedError:  errors.New(handler.CountryIsRequired),
 		},
 	}
 
@@ -156,9 +316,16 @@ func TestAddressService_GetById(t *testing.T) {
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
 					return domain.AddressDomain{
-						ID:     1,
-						Street: "Rua Fulaninho da Silva",
-						Number: "123",
+						ID:           1,
+						Street:       "Rua Fulaninho da Silva",
+						Number:       "123",
+						Complement:   "303",
+						Block:        "A",
+						Neighborhood: "São Mateus",
+						ZipCode:      "36025-290",
+						City:         "Juiz de Fora",
+						State:        "MG",
+						Country:      "Brasil",
 					}, true, nil
 				},
 			},
@@ -168,9 +335,16 @@ func TestAddressService_GetById(t *testing.T) {
 				},
 			},
 			ExpectedResult: domain.AddressDomain{
-				ID:     1,
-				Street: "Rua Fulaninho da Silva",
-				Number: "123",
+				ID:           1,
+				Street:       "Rua Fulaninho da Silva",
+				Number:       "123",
+				Complement:   "303",
+				Block:        "A",
+				Neighborhood: "São Mateus",
+				ZipCode:      "36025-290",
+				City:         "Juiz de Fora",
+				State:        "MG",
+				Country:      "Brasil",
 			},
 			ExpectedExists: true,
 			ExpectedError:  nil,
@@ -178,8 +352,15 @@ func TestAddressService_GetById(t *testing.T) {
 		{
 			Name: "address not found",
 			Address: domain.AddressDomain{
-				Street: "Rua Fulaninho da Silva",
-				Number: "123",
+				Street:       "Rua Fulaninho da Silva",
+				Number:       "123",
+				Complement:   "303",
+				Block:        "A",
+				Neighborhood: "São Mateus",
+				ZipCode:      "36025-290",
+				City:         "Juiz de Fora",
+				State:        "MG",
+				Country:      "Brasil",
 			},
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {

@@ -26,9 +26,16 @@ func NewAddressPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) Addre
 }
 
 type AddressDB struct {
-	ID     int64  `gorm:"primaryKey, column:id"`
-	Street string `gorm:"column:street"`
-	Number string `gorm:"column:number"`
+	ID           int64  `gorm:"primaryKey, column:id"`
+	Street       string `gorm:"column:street"`
+	Number       string `gorm:"column:number"`
+	Complement   string `gorm:"column:complement"`
+	Block        string `gorm:"column:block"`
+	Neighborhood string `gorm:"column:neighborhood"`
+	ZipCode      string `gorm:"column:zip_code"`
+	City         string `gorm:"column:city"`
+	State        string `gorm:"column:state"`
+	Country      string `gorm:"column:country"`
 }
 
 func (AddressDB) TableName() string {
@@ -37,9 +44,16 @@ func (AddressDB) TableName() string {
 
 func (c AddressDB) CopyToAddressDomain() domain.AddressDomain {
 	return domain.AddressDomain{
-		ID:     c.ID,
-		Street: c.Street,
-		Number: c.Number,
+		ID:           c.ID,
+		Street:       c.Street,
+		Number:       c.Number,
+		Complement:   c.Complement,
+		Block:        c.Block,
+		Neighborhood: c.Neighborhood,
+		ZipCode:      c.ZipCode,
+		City:         c.City,
+		State:        c.State,
+		Country:      c.Country,
 	}
 }
 
