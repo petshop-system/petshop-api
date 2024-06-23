@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"github.com/jinzhu/copier"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"go.uber.org/zap"
@@ -13,7 +14,7 @@ type AddressPostgresDB struct {
 }
 
 const (
-	AddressSaveDBError = "error to save the address into postgres "
+	AddressSaveDBError = "error to save the address into postgres"
 	AddressNotFound    = "address not found"
 )
 
@@ -70,7 +71,7 @@ func (cp AddressPostgresDB) GetByID(contextControl domain.ContextControl, ID int
 	result := cp.DB.WithContext(contextControl.Context).First(&addressDB, ID)
 	if result.RowsAffected == 0 {
 		cp.LoggerSugar.Errorw(AddressNotFound)
-		return domain.AddressDomain{}, false, nil
+		return domain.AddressDomain{}, false, errors.New(AddressNotFound)
 	}
 
 	return addressDB.CopyToAddressDomain(), true, nil

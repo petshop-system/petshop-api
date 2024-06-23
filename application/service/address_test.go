@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/petshop-system/petshop-api/adapter/output/database"
 	"github.com/petshop-system/petshop-api/application/domain"
@@ -106,7 +105,7 @@ func TestAddressService_Create(t *testing.T) {
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{},
 			AddressDomainCacheRepository:    output.AddressDomainCacheRepositoryMock{},
 			ExpectedResult:                  domain.AddressDomain{},
-			ExpectedError:                   fmt.Errorf(StreetIsRequired),
+			ExpectedError:                   errors.New(StreetIsRequired),
 		},
 		{
 			Name: "Test Failure - Error while saving address to the database",
@@ -116,7 +115,7 @@ func TestAddressService_Create(t *testing.T) {
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return domain.AddressDomain{}, fmt.Errorf(database.AddressSaveDBError)
+					return domain.AddressDomain{}, errors.New(database.AddressSaveDBError)
 				},
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
@@ -170,6 +169,8 @@ func TestAddressService_Create(t *testing.T) {
 }
 
 func TestAddressService_GetById(t *testing.T) {
+
+	const CacheError = "cache error"
 
 	tests := []struct {
 		Name                            string
@@ -229,7 +230,7 @@ func TestAddressService_GetById(t *testing.T) {
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
-					return domain.AddressDomain{}, false, errors.New("database error")
+					return domain.AddressDomain{}, false, errors.New(database.AddressNotFound)
 				},
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
@@ -239,7 +240,7 @@ func TestAddressService_GetById(t *testing.T) {
 			},
 			ExpectedResult: domain.AddressDomain{},
 			ExpectedExists: false,
-			ExpectedError:  errors.New("database error"),
+			ExpectedError:  errors.New(database.AddressNotFound),
 		},
 		{
 			Name: "Test Failure - Error returned from cache repository",
@@ -253,12 +254,12 @@ func TestAddressService_GetById(t *testing.T) {
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
 				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
-					return errors.New("cache error")
+					return errors.New(CacheError)
 				},
 			},
 			ExpectedResult: domain.AddressDomain{},
 			ExpectedExists: true,
-			ExpectedError:  errors.New("cache error"),
+			ExpectedError:  errors.New(CacheError),
 		},
 	}
 

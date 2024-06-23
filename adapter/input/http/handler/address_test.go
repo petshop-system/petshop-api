@@ -11,6 +11,11 @@ import (
 	"testing"
 )
 
+const (
+	ExpectedStatusCodeDidntMatch = "Expected status code did not match"
+	ExpectedBodyDidntMatch       = "Expected body did not match"
+)
+
 type MockAddressService struct {
 	CreateFunc  func(ctx domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error)
 	GetByIDFunc func(ctx domain.ContextControl, ID int64) (domain.AddressDomain, bool, error)
@@ -71,9 +76,8 @@ func TestAddress_Create(t *testing.T) {
 			response := httptest.NewRecorder()
 			handler.Create(response, request)
 
-			assert.Equal(t, tt.expectedCode, response.Code, "Expected status code did not match")
-
-			assert.Equal(t, tt.expectedBody, response.Body.String()[:len(tt.expectedBody)], "Expected body did not match")
+			assert.Equal(t, tt.expectedCode, response.Code, ExpectedStatusCodeDidntMatch)
+			assert.Equal(t, tt.expectedBody, response.Body.String()[:len(tt.expectedBody)], ExpectedBodyDidntMatch)
 		})
 	}
 }
