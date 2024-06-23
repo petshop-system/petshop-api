@@ -3,8 +3,9 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/petshop-system/petshop-api/adapter/input/http/handler"
+	"github.com/petshop-system/petshop-api/adapter/output/database"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/output"
 	"github.com/petshop-system/petshop-api/configuration/environment"
@@ -37,6 +38,32 @@ func init() {
 
 }
 
+const (
+	streetTest       = "Rua Conde de Bonfim"
+	numberTest       = "123"
+	complementTest   = "303"
+	blockTest        = "C"
+	neighborhoodTest = "Tijuca"
+	zipCodeTest      = "20520-050"
+	cityTest         = "Rio de Janeiro"
+	stateTest        = "RJ"
+	countryTest      = "Brasil"
+)
+
+func testAddress() domain.AddressDomain {
+	return domain.AddressDomain{
+		Street:       streetTest,
+		Number:       numberTest,
+		Complement:   complementTest,
+		Block:        blockTest,
+		Neighborhood: neighborhoodTest,
+		ZipCode:      zipCodeTest,
+		City:         cityTest,
+		State:        stateTest,
+		Country:      countryTest,
+	}
+}
+
 func TestAddressService_Create(t *testing.T) {
 
 	tests := []struct {
@@ -48,33 +75,15 @@ func TestAddressService_Create(t *testing.T) {
 		ExpectedError                   error
 	}{
 		{
-			Name: "success to save an address",
-			Address: domain.AddressDomain{
-				ID:           0,
-				Street:       "Rua Fulaninho da Silva",
-				Number:       "123",
-				Complement:   "303",
-				Block:        "A",
-				Neighborhood: "São Mateus",
-				ZipCode:      "36025-290",
-				City:         "Juiz de Fora",
-				State:        "MG",
-				Country:      "Brasil",
-			},
+			Name: "Test Successful - Address correctly saved to the database",
+			Address: func() domain.AddressDomain {
+				return testAddress()
+			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return domain.AddressDomain{
-						ID:           1,
-						Street:       "Rua Fulaninho da Silva",
-						Number:       "123",
-						Complement:   "303",
-						Block:        "A",
-						Neighborhood: "São Mateus",
-						ZipCode:      "36025-290",
-						City:         "Juiz de Fora",
-						State:        "MG",
-						Country:      "Brasil",
-					}, nil
+					return func() domain.AddressDomain {
+						return testAddress()
+					}(), nil
 				},
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
@@ -82,56 +91,32 @@ func TestAddressService_Create(t *testing.T) {
 					return nil
 				},
 			},
-			ExpectedResult: domain.AddressDomain{
-				ID:           1,
-				Street:       "Rua Fulaninho da Silva",
-				Number:       "123",
-				Complement:   "303",
-				Block:        "A",
-				Neighborhood: "São Mateus",
-				ZipCode:      "36025-290",
-				City:         "Juiz de Fora",
-				State:        "MG",
-				Country:      "Brasil",
-			},
+			ExpectedResult: func() domain.AddressDomain {
+				return testAddress()
+			}(),
 			ExpectedError: nil,
 		},
 		{
-			Name: "error to save an address: street is required",
-			Address: domain.AddressDomain{
-				ID:           0,
-				Street:       "",
-				Number:       "123",
-				Complement:   "303",
-				Block:        "A",
-				Neighborhood: "São Mateus",
-				ZipCode:      "36025-290",
-				City:         "Juiz de Fora",
-				State:        "MG",
-				Country:      "Brasil",
-			},
-			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
-				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return domain.AddressDomain{}, errors.New(handler.StreetIsRequired)
-				},
-			},
-			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
-				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
-					return nil
-				},
-			},
-			ExpectedResult: domain.AddressDomain{},
-			ExpectedError:  errors.New(handler.StreetIsRequired),
+			Name: "Test Failure - Error while validating address",
+			Address: func() domain.AddressDomain {
+				address := testAddress()
+				address.Street = ""
+				return address
+			}(),
+			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{},
+			AddressDomainCacheRepository:    output.AddressDomainCacheRepositoryMock{},
+			ExpectedResult:                  domain.AddressDomain{},
+			ExpectedError:                   fmt.Errorf(StreetIsRequired),
 		},
 		{
-			Name: "error to save an address: number is required",
-			Address: domain.AddressDomain{
-				Street: "Rua Fulaninho da Silva",
-				Number: "",
-			},
+			Name: "Test Failure - Error while saving address to the database",
+			Address: func() domain.AddressDomain {
+				return testAddress()
+
+			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return domain.AddressDomain{}, errors.New(handler.NumberIsRequired)
+					return domain.AddressDomain{}, fmt.Errorf(database.AddressSaveDBError)
 				},
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
@@ -140,137 +125,25 @@ func TestAddressService_Create(t *testing.T) {
 				},
 			},
 			ExpectedResult: domain.AddressDomain{},
-			ExpectedError:  errors.New(handler.NumberIsRequired),
+			ExpectedError:  errors.New(database.AddressSaveDBError),
 		},
 		{
-			Name: "error to save an address: neighborhood is required",
-			Address: domain.AddressDomain{
-				Street:       "Rua Fulaninho da Silva",
-				Number:       "123",
-				Complement:   "303",
-				Block:        "A",
-				Neighborhood: "",
-				ZipCode:      "36025-290",
-				City:         "Juiz de Fora",
-				State:        "MG",
-				Country:      "Brasil",
-			},
+			Name: "Test Failure - Error while saving address to the cache",
+			Address: func() domain.AddressDomain {
+				return testAddress()
+			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return domain.AddressDomain{}, errors.New(handler.NeighborhoodIsRequired)
+					return address, nil
 				},
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
 				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
-					return nil
+					return errors.New(AddressErrorToSaveInCache)
 				},
 			},
 			ExpectedResult: domain.AddressDomain{},
-			ExpectedError:  errors.New(handler.NeighborhoodIsRequired),
-		},
-		{
-			Name: "error to save an address: zip code is required",
-			Address: domain.AddressDomain{
-				Street:       "Rua Fulaninho da Silva",
-				Number:       "123",
-				Complement:   "303",
-				Block:        "A",
-				Neighborhood: "São Mateus",
-				ZipCode:      "",
-				City:         "Juiz de Fora",
-				State:        "MG",
-				Country:      "Brasil",
-			},
-			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
-				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return domain.AddressDomain{}, errors.New(handler.ZipCodeIsRequired)
-				},
-			},
-			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
-				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
-					return nil
-				},
-			},
-			ExpectedResult: domain.AddressDomain{},
-			ExpectedError:  errors.New(handler.ZipCodeIsRequired),
-		},
-		{
-			Name: "error to save an address: city is required",
-			Address: domain.AddressDomain{
-				Street:       "Rua Fulaninho da Silva",
-				Number:       "123",
-				Complement:   "303",
-				Block:        "A",
-				Neighborhood: "São Mateus",
-				ZipCode:      "36025-290",
-				City:         "",
-				State:        "MG",
-				Country:      "Brasil",
-			},
-			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
-				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return domain.AddressDomain{}, errors.New(handler.CityIsRequired)
-				},
-			},
-			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
-				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
-					return nil
-				},
-			},
-			ExpectedResult: domain.AddressDomain{},
-			ExpectedError:  errors.New(handler.CityIsRequired),
-		},
-		{
-			Name: "error to save an address: state is required",
-			Address: domain.AddressDomain{
-				Street:       "Rua Fulaninho da Silva",
-				Number:       "123",
-				Complement:   "303",
-				Block:        "A",
-				Neighborhood: "São Mateus",
-				ZipCode:      "36025-290",
-				City:         "Juiz de Fora",
-				State:        "",
-				Country:      "Brasil",
-			},
-			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
-				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return domain.AddressDomain{}, errors.New(handler.StateIsRequired)
-				},
-			},
-			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
-				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
-					return nil
-				},
-			},
-			ExpectedResult: domain.AddressDomain{},
-			ExpectedError:  errors.New(handler.StateIsRequired),
-		},
-		{
-			Name: "error to save an address: country is required",
-			Address: domain.AddressDomain{
-				Street:       "Rua Fulaninho da Silva",
-				Number:       "123",
-				Complement:   "303",
-				Block:        "A",
-				Neighborhood: "São Mateus",
-				ZipCode:      "36025-290",
-				City:         "Juiz de Fora",
-				State:        "MG",
-				Country:      "",
-			},
-			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
-				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return domain.AddressDomain{}, errors.New(handler.CountryIsRequired)
-				},
-			},
-			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
-				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
-					return nil
-				},
-			},
-			ExpectedResult: domain.AddressDomain{},
-			ExpectedError:  errors.New(handler.CountryIsRequired),
+			ExpectedError:  errors.New(AddressErrorToSaveInCache),
 		},
 	}
 
@@ -308,25 +181,15 @@ func TestAddressService_GetById(t *testing.T) {
 		ExpectedError                   error
 	}{
 		{
-			Name: "success to get an address by id",
-			Address: domain.AddressDomain{
-				Street: "Rua Fulaninho da Silva",
-				Number: "123",
-			},
+			Name: "Test Successful - Getting an address by id",
+			Address: func() domain.AddressDomain {
+				return testAddress()
+			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
-					return domain.AddressDomain{
-						ID:           1,
-						Street:       "Rua Fulaninho da Silva",
-						Number:       "123",
-						Complement:   "303",
-						Block:        "A",
-						Neighborhood: "São Mateus",
-						ZipCode:      "36025-290",
-						City:         "Juiz de Fora",
-						State:        "MG",
-						Country:      "Brasil",
-					}, true, nil
+					return func() domain.AddressDomain {
+						return testAddress()
+					}(), true, nil
 				},
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
@@ -334,34 +197,17 @@ func TestAddressService_GetById(t *testing.T) {
 					return nil
 				},
 			},
-			ExpectedResult: domain.AddressDomain{
-				ID:           1,
-				Street:       "Rua Fulaninho da Silva",
-				Number:       "123",
-				Complement:   "303",
-				Block:        "A",
-				Neighborhood: "São Mateus",
-				ZipCode:      "36025-290",
-				City:         "Juiz de Fora",
-				State:        "MG",
-				Country:      "Brasil",
-			},
+			ExpectedResult: func() domain.AddressDomain {
+				return testAddress()
+			}(),
 			ExpectedExists: true,
 			ExpectedError:  nil,
 		},
 		{
-			Name: "address not found",
-			Address: domain.AddressDomain{
-				Street:       "Rua Fulaninho da Silva",
-				Number:       "123",
-				Complement:   "303",
-				Block:        "A",
-				Neighborhood: "São Mateus",
-				ZipCode:      "36025-290",
-				City:         "Juiz de Fora",
-				State:        "MG",
-				Country:      "Brasil",
-			},
+			Name: "Test Failure - Error to get an address by id",
+			Address: func() domain.AddressDomain {
+				return testAddress()
+			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
 					return domain.AddressDomain{}, false, nil
@@ -375,6 +221,44 @@ func TestAddressService_GetById(t *testing.T) {
 			ExpectedResult: domain.AddressDomain{},
 			ExpectedExists: false,
 			ExpectedError:  nil,
+		},
+		{
+			Name: "Test Failure - Error returned from repository",
+			Address: func() domain.AddressDomain {
+				return testAddress()
+			}(),
+			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
+				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
+					return domain.AddressDomain{}, false, errors.New("database error")
+				},
+			},
+			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
+				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
+					return nil
+				},
+			},
+			ExpectedResult: domain.AddressDomain{},
+			ExpectedExists: false,
+			ExpectedError:  errors.New("database error"),
+		},
+		{
+			Name: "Test Failure - Error returned from cache repository",
+			Address: func() domain.AddressDomain {
+				return testAddress()
+			}(),
+			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
+				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
+					return testAddress(), true, nil
+				},
+			},
+			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
+				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
+					return errors.New("cache error")
+				},
+			},
+			ExpectedResult: domain.AddressDomain{},
+			ExpectedExists: true,
+			ExpectedError:  errors.New("cache error"),
 		},
 	}
 
@@ -397,6 +281,100 @@ func TestAddressService_GetById(t *testing.T) {
 			assert.Equal(t, test.ExpectedExists, exists)
 			assert.Equal(t, test.ExpectedError, err)
 
+		})
+	}
+}
+
+func TestAddressService_ValidateAddress(t *testing.T) {
+
+	tests := []struct {
+		Name          string
+		Address       domain.AddressDomain
+		ExpectedError error
+	}{
+		{
+			Name: "Test Successful - Validating address",
+			Address: func() domain.AddressDomain {
+				return testAddress()
+			}(),
+			ExpectedError: nil,
+		},
+		{
+			Name: "Test Failure - Error to validate address: street is required",
+			Address: func() domain.AddressDomain {
+				address := testAddress()
+				address.Street = ""
+				return address
+			}(),
+			ExpectedError: errors.New(StreetIsRequired),
+		},
+
+		{
+			Name: "Test Failure - Error to validate address: number is required",
+			Address: func() domain.AddressDomain {
+				address := testAddress()
+				address.Number = ""
+				return address
+			}(),
+			ExpectedError: errors.New(NumberIsRequired),
+		},
+		{
+			Name: "Test Failure - Error to validate address: neighborhood is required",
+			Address: func() domain.AddressDomain {
+				address := testAddress()
+				address.Neighborhood = ""
+				return address
+			}(),
+			ExpectedError: errors.New(NeighborhoodIsRequired),
+		},
+		{
+			Name: "Test Failure - Error to validate address: zip code is required",
+			Address: func() domain.AddressDomain {
+				address := testAddress()
+				address.ZipCode = ""
+				return address
+			}(),
+			ExpectedError: errors.New(ZipCodeIsRequired),
+		},
+		{
+			Name: "Test Failure - Error to validate address: city is required",
+			Address: func() domain.AddressDomain {
+				address := testAddress()
+				address.City = ""
+				return address
+			}(),
+			ExpectedError: errors.New(CityIsRequired),
+		},
+		{
+			Name: "Test Failure - Error to validate address: state is required",
+			Address: func() domain.AddressDomain {
+				address := testAddress()
+				address.State = ""
+				return address
+			}(),
+			ExpectedError: errors.New(StateIsRequired),
+		},
+		{
+			Name: "Test Failure - Error to validate address: country is required",
+			Address: func() domain.AddressDomain {
+				address := testAddress()
+				address.Country = ""
+				return address
+			}(),
+			ExpectedError: errors.New(CountryIsRequired),
+		},
+	}
+
+	for _, test := range tests {
+
+		t.Run(test.Name, func(t *testing.T) {
+
+			addressService := AddressService{
+				AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{},
+			}
+
+			err := addressService.ValidateAddress(test.Address)
+			assert.Equal(t, test.ExpectedError, err)
 		})
 	}
 }

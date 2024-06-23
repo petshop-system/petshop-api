@@ -9,7 +9,7 @@ create schema petshop_api
             CONSTRAINT petshop_api_address_pkey PRIMARY KEY,
         street       VARCHAR(255) NOT NULL,
         number       VARCHAR(255) NOT NULL,
-        complement    VARCHAR(10),
+        complement    VARCHAR(100),
         block        VARCHAR(10),
         neighborhood VARCHAR(255) NOT NULL,
         zip_code      VARCHAR(20) NOT NULL,

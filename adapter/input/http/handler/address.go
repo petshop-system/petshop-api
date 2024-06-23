@@ -20,13 +20,6 @@ const (
 	ErrorToGetAddress      = "error to get and address by id"
 	AddressNotFound        = "address not found"
 	AddressNotFoundMessage = "the address with id %d wasn't found"
-	StreetIsRequired       = "street is required"
-	NumberIsRequired       = "number is required"
-	NeighborhoodIsRequired = "neighborhood is required"
-	ZipCodeIsRequired      = "zip code is required"
-	CityIsRequired         = "city is required"
-	StateIsRequired        = "state is required"
-	CountryIsRequired      = "country is required"
 )
 
 type Address struct {
@@ -74,57 +67,14 @@ func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(addressRequest.Street) == 0 {
-		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", StreetIsRequired)
-		response := objectResponse(ErrorToCreateAddress, StreetIsRequired)
-		responseReturn(w, http.StatusBadRequest, response.Bytes())
-		return
-	}
-
-	if len(addressRequest.Number) == 0 {
-		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", NumberIsRequired)
-		response := objectResponse(ErrorToCreateAddress, NumberIsRequired)
-		responseReturn(w, http.StatusBadRequest, response.Bytes())
-		return
-	}
-
-	if len(addressRequest.Neighborhood) == 0 {
-		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", NeighborhoodIsRequired)
-		response := objectResponse(ErrorToCreateAddress, NeighborhoodIsRequired)
-		responseReturn(w, http.StatusBadRequest, response.Bytes())
-		return
-	}
-
-	if len(addressRequest.ZipCode) == 0 {
-		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", ZipCodeIsRequired)
-		response := objectResponse(ErrorToCreateAddress, ZipCodeIsRequired)
-		responseReturn(w, http.StatusBadRequest, response.Bytes())
-		return
-	}
-
-	if len(addressRequest.City) == 0 {
-		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", CityIsRequired)
-		response := objectResponse(ErrorToCreateAddress, CityIsRequired)
-		responseReturn(w, http.StatusBadRequest, response.Bytes())
-		return
-	}
-
-	if len(addressRequest.State) == 0 {
-		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", StateIsRequired)
-		response := objectResponse(ErrorToCreateAddress, StateIsRequired)
-		responseReturn(w, http.StatusBadRequest, response.Bytes())
-		return
-	}
-
-	if len(addressRequest.Country) == 0 {
-		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", CountryIsRequired)
-		response := objectResponse(ErrorToCreateAddress, CountryIsRequired)
-		responseReturn(w, http.StatusBadRequest, response.Bytes())
-		return
-	}
-
 	var addressDomain domain.AddressDomain
-	copier.Copy(&addressDomain, &addressRequest)
+	err = copier.Copy(&addressDomain, &addressRequest)
+	if err != nil {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
+		response := objectResponse(ErrorToCreateAddress, err.Error())
+		responseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
 
 	addressDomain, err = c.AddressService.Create(contextControl, addressDomain)
 	if err != nil {
@@ -135,7 +85,14 @@ func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var addressResponse AddressResponse
-	copier.Copy(&addressResponse, &addressDomain)
+	err = copier.Copy(&addressResponse, &addressDomain)
+	if err != nil {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
+		response := objectResponse(ErrorToCreateAddress, err.Error())
+		responseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
+
 	response := objectResponse(addressResponse, SuccessToCreateAddress)
 	responseReturn(w, http.StatusCreated, response.Bytes())
 }
@@ -169,7 +126,13 @@ func (c *Address) GetByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var addressResponse AddressResponse
-	copier.Copy(&addressResponse, &addressDomain)
+	err = copier.Copy(&addressResponse, &addressDomain)
+	if err != nil {
+		c.LoggerSugar.Errorw(ErrorToGetAddress, "error", err.Error())
+		response := objectResponse(ErrorToGetAddress, err.Error())
+		responseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
 	response := objectResponse(addressResponse, SuccessToGetAddress)
 	responseReturn(w, http.StatusOK, response.Bytes())
 }

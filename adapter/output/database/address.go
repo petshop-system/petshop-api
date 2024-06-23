@@ -13,9 +13,8 @@ type AddressPostgresDB struct {
 }
 
 const (
-	AddressSaveDBError    = "error to save the address into postgres "
-	AddressGetByIdDBError = "error to get an address by id"
-	AddressNotFound       = "address not found"
+	AddressSaveDBError = "error to save the address into postgres "
+	AddressNotFound    = "address not found"
 )
 
 func NewAddressPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) AddressPostgresDB {
@@ -43,18 +42,11 @@ func (AddressDB) TableName() string {
 }
 
 func (c AddressDB) CopyToAddressDomain() domain.AddressDomain {
-	return domain.AddressDomain{
-		ID:           c.ID,
-		Street:       c.Street,
-		Number:       c.Number,
-		Complement:   c.Complement,
-		Block:        c.Block,
-		Neighborhood: c.Neighborhood,
-		ZipCode:      c.ZipCode,
-		City:         c.City,
-		State:        c.State,
-		Country:      c.Country,
-	}
+
+	var addressDomain domain.AddressDomain
+	copier.Copy(&addressDomain, &c)
+
+	return addressDomain
 }
 
 func (cp AddressPostgresDB) Save(contextControl domain.ContextControl, addressDomain domain.AddressDomain) (domain.AddressDomain, error) {
