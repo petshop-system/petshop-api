@@ -30,7 +30,6 @@ type AddressDB struct {
 	Street       string `gorm:"column:street"`
 	Number       string `gorm:"column:number"`
 	Complement   string `gorm:"column:complement"`
-	Block        string `gorm:"column:block"`
 	Neighborhood string `gorm:"column:neighborhood"`
 	ZipCode      string `gorm:"column:zip_code"`
 	City         string `gorm:"column:city"`

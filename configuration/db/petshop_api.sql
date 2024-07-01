@@ -10,7 +10,6 @@ create schema petshop_api
         street       VARCHAR(255) NOT NULL,
         number       VARCHAR(255) NOT NULL,
         complement    VARCHAR(100),
-        block        VARCHAR(10),
         neighborhood VARCHAR(255) NOT NULL,
         zip_code      VARCHAR(20) NOT NULL,
         city         VARCHAR(255) NOT NULL,
@@ -249,8 +248,8 @@ create schema petshop_api
 -- Create default inserts
 
 -- contract
-INSERT INTO petshop_api.address (street, number, complement, block, neighborhood, zip_code, city, state, country)
-VALUES ('Rua Jose Bonifácio', 1432, 403, 'B', 'Centro', '36025-200', 'Juiz de Fora', 'MG', 'Brasil');
+INSERT INTO petshop_api.address (street, number, complement, neighborhood, zip_code, city, state, country)
+VALUES ('Rua Jose Bonifácio', 1432, 403, 'Centro', '36025-200', 'Juiz de Fora', 'MG', 'Brasil');
 
 -- INSERT INTO petshop_api.contract (name, email, date_created, fk_id_address, document, person_type)
 -- VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 1, '38988657000181', 'legal');
@@ -262,8 +261,8 @@ INSERT INTO petshop_api.phone_user(fk_id_phone, fk_id_user, user_type)
 VALUES (1, 1, 'contract');
 
 -- first customer
-INSERT INTO petshop_api.address (street, number, complement, block, neighborhood, zip_code, city, state, country)
-VALUES ('Rua Lechitz', 11, 201, 'A', 'São Mateus', '36025-290', 'Juiz de Fora', 'MG', 'Brasil');
+INSERT INTO petshop_api.address (street, number, complement, neighborhood, zip_code, city, state, country)
+VALUES ('Rua Lechitz', 11, 201, 'São Mateus', '36025-290', 'Juiz de Fora', 'MG', 'Brasil');
 
 INSERT INTO petshop_api.customer (name, fk_id_address, email,  fk_id_contract, document, person_type)
 VALUES ('siclano', 2, 'siclano@gmail.com', 1, '22233344409', 'individual');
@@ -276,8 +275,8 @@ VALUES (2, 1, 'customer');
 
 -- second customer
 
-INSERT INTO petshop_api.address (street, number, complement, block, neighborhood, zip_code, city, state, country)
-VALUES ('Av. Juiz de Fora', 1001, null, null, 'Centro', '36025-100', 'Juiz de Fora', 'MG', 'Brasil')
+INSERT INTO petshop_api.address (street, number, complement, neighborhood, zip_code, city, state, country)
+VALUES ('Av. Juiz de Fora', 1001, null, 'Centro', '36025-100', 'Juiz de Fora', 'MG', 'Brasil')
 
 INSERT INTO petshop_api.customer (name, fk_id_address, email, fk_id_contract, document, person_type)
 VALUES ('testando cnpj', 3, 'company@gmail.com', 1, '38988657000182', 'legal');

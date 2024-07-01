@@ -32,7 +32,6 @@ type AddressRequest struct {
 	Street       string `json:"street"`
 	Number       string `json:"number"`
 	Complement   string `json:"complement"`
-	Block        string `json:"block"`
 	Neighborhood string `json:"neighborhood"`
 	ZipCode      string `json:"zip_code"`
 	City         string `json:"city"`
@@ -45,7 +44,6 @@ type AddressResponse struct {
 	Street       string `json:"street"`
 	Number       string `json:"number"`
 	Complement   string `json:"complement"`
-	Block        string `json:"block"`
 	Neighborhood string `json:"neighborhood"`
 	ZipCode      string `json:"zip_code"`
 	City         string `json:"city"`
@@ -59,8 +57,7 @@ func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var addressRequest AddressRequest
-	err := json.NewDecoder(r.Body).Decode(&addressRequest)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&addressRequest); err != nil {
 		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
 		response := objectResponse(ErrorToCreateAddress, err.Error())
 		responseReturn(w, http.StatusInternalServerError, response.Bytes())
@@ -68,16 +65,14 @@ func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var addressDomain domain.AddressDomain
-	err = copier.Copy(&addressDomain, &addressRequest)
-	if err != nil {
+	if err := copier.Copy(&addressDomain, &addressRequest); err != nil {
 		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
 		response := objectResponse(ErrorToCreateAddress, err.Error())
 		responseReturn(w, http.StatusInternalServerError, response.Bytes())
 		return
 	}
 
-	addressDomain, err = c.AddressService.Create(contextControl, addressDomain)
-	if err != nil {
+	if _, err := c.AddressService.Create(contextControl, addressDomain); err != nil {
 		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
 		response := objectResponse(ErrorToCreateAddress, err.Error())
 		responseReturn(w, http.StatusInternalServerError, response.Bytes())
@@ -85,8 +80,7 @@ func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var addressResponse AddressResponse
-	err = copier.Copy(&addressResponse, &addressDomain)
-	if err != nil {
+	if err := copier.Copy(&addressResponse, &addressDomain); err != nil {
 		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
 		response := objectResponse(ErrorToCreateAddress, err.Error())
 		responseReturn(w, http.StatusInternalServerError, response.Bytes())

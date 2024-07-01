@@ -8,6 +8,7 @@ import (
 	"github.com/petshop-system/petshop-api/application/port/output"
 	"go.uber.org/zap"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -44,8 +45,7 @@ func (service AddressService) getCacheKey(cacheKeyType string, value string) str
 
 func (service AddressService) Create(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
 
-	err := service.ValidateAddress(address)
-	if err != nil {
+	if err := service.ValidateAddress(address); err != nil {
 		return domain.AddressDomain{}, err
 	}
 
@@ -55,6 +55,7 @@ func (service AddressService) Create(contextControl domain.ContextControl, addre
 	}
 
 	hash, _ := json.Marshal(save)
+
 	if err = service.AddressDomainCacheRepository.Set(contextControl,
 		service.getCacheKey(AddressCacheKeyTypeID, strconv.FormatInt(save.ID, 10)),
 		string(hash), AddressCacheTTL); err != nil {
@@ -75,6 +76,7 @@ func (service AddressService) GetByID(contextControl domain.ContextControl, ID i
 		return domain.AddressDomain{}, exists, nil
 	}
 	hash, _ := json.Marshal(address)
+
 	if err = service.AddressDomainCacheRepository.Set(contextControl,
 		service.getCacheKey(AddressCacheKeyTypeID, strconv.FormatInt(address.ID, 10)),
 		string(hash), AddressCacheTTL); err != nil {
@@ -86,25 +88,25 @@ func (service AddressService) GetByID(contextControl domain.ContextControl, ID i
 }
 
 func (service AddressService) ValidateAddress(address domain.AddressDomain) error {
-	if address.Street == "" {
+	if len(strings.TrimSpace(address.Street)) == 0 {
 		return errors.New(StreetIsRequired)
 	}
-	if address.Number == "" {
+	if len(strings.TrimSpace(address.Number)) == 0 {
 		return errors.New(NumberIsRequired)
 	}
-	if address.Neighborhood == "" {
+	if len(strings.TrimSpace(address.Neighborhood)) == 0 {
 		return errors.New(NeighborhoodIsRequired)
 	}
-	if address.ZipCode == "" {
+	if len(strings.TrimSpace(address.ZipCode)) == 0 {
 		return errors.New(ZipCodeIsRequired)
 	}
-	if address.City == "" {
+	if len(strings.TrimSpace(address.City)) == 0 {
 		return errors.New(CityIsRequired)
 	}
-	if address.State == "" {
+	if len(strings.TrimSpace(address.State)) == 0 {
 		return errors.New(StateIsRequired)
 	}
-	if address.Country == "" {
+	if len(strings.TrimSpace(address.Country)) == 0 {
 		return errors.New(CountryIsRequired)
 	}
 	return nil

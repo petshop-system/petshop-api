@@ -41,7 +41,6 @@ const (
 	streetTest       = "Rua Conde de Bonfim"
 	numberTest       = "123"
 	complementTest   = "303"
-	blockTest        = "C"
 	neighborhoodTest = "Tijuca"
 	zipCodeTest      = "20520-050"
 	cityTest         = "Rio de Janeiro"
@@ -49,12 +48,11 @@ const (
 	countryTest      = "Brasil"
 )
 
-func testAddress() domain.AddressDomain {
+func getDefaultAddress() domain.AddressDomain {
 	return domain.AddressDomain{
 		Street:       streetTest,
 		Number:       numberTest,
 		Complement:   complementTest,
-		Block:        blockTest,
 		Neighborhood: neighborhoodTest,
 		ZipCode:      zipCodeTest,
 		City:         cityTest,
@@ -76,13 +74,13 @@ func TestAddressService_Create(t *testing.T) {
 		{
 			Name: "Test Successful - Address correctly saved to the database",
 			Address: func() domain.AddressDomain {
-				return testAddress()
+				return getDefaultAddress()
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return func() domain.AddressDomain {
-						return testAddress()
-					}(), nil
+					address = getDefaultAddress()
+					address.ID = 1
+					return address, nil
 				},
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
@@ -91,14 +89,16 @@ func TestAddressService_Create(t *testing.T) {
 				},
 			},
 			ExpectedResult: func() domain.AddressDomain {
-				return testAddress()
+				address := getDefaultAddress()
+				address.ID = 1
+				return address
 			}(),
 			ExpectedError: nil,
 		},
 		{
 			Name: "Test Failure - Error while validating address",
 			Address: func() domain.AddressDomain {
-				address := testAddress()
+				address := getDefaultAddress()
 				address.Street = ""
 				return address
 			}(),
@@ -110,7 +110,7 @@ func TestAddressService_Create(t *testing.T) {
 		{
 			Name: "Test Failure - Error while saving address to the database",
 			Address: func() domain.AddressDomain {
-				return testAddress()
+				return getDefaultAddress()
 
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
@@ -129,7 +129,7 @@ func TestAddressService_Create(t *testing.T) {
 		{
 			Name: "Test Failure - Error while saving address to the cache",
 			Address: func() domain.AddressDomain {
-				return testAddress()
+				return getDefaultAddress()
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
@@ -184,13 +184,13 @@ func TestAddressService_GetById(t *testing.T) {
 		{
 			Name: "Test Successful - Getting an address by id",
 			Address: func() domain.AddressDomain {
-				return testAddress()
+				return getDefaultAddress()
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
-					return func() domain.AddressDomain {
-						return testAddress()
-					}(), true, nil
+					address := getDefaultAddress()
+					address.ID = 1
+					return address, true, nil
 				},
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
@@ -199,7 +199,9 @@ func TestAddressService_GetById(t *testing.T) {
 				},
 			},
 			ExpectedResult: func() domain.AddressDomain {
-				return testAddress()
+				address := getDefaultAddress()
+				address.ID = 1
+				return address
 			}(),
 			ExpectedExists: true,
 			ExpectedError:  nil,
@@ -207,7 +209,7 @@ func TestAddressService_GetById(t *testing.T) {
 		{
 			Name: "Test Failure - Error to get an address by id",
 			Address: func() domain.AddressDomain {
-				return testAddress()
+				return getDefaultAddress()
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
@@ -226,7 +228,7 @@ func TestAddressService_GetById(t *testing.T) {
 		{
 			Name: "Test Failure - Error returned from repository",
 			Address: func() domain.AddressDomain {
-				return testAddress()
+				return getDefaultAddress()
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
@@ -245,11 +247,11 @@ func TestAddressService_GetById(t *testing.T) {
 		{
 			Name: "Test Failure - Error returned from cache repository",
 			Address: func() domain.AddressDomain {
-				return testAddress()
+				return getDefaultAddress()
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
-					return testAddress(), true, nil
+					return getDefaultAddress(), true, nil
 				},
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
@@ -296,14 +298,14 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 		{
 			Name: "Test Successful - Validating address",
 			Address: func() domain.AddressDomain {
-				return testAddress()
+				return getDefaultAddress()
 			}(),
 			ExpectedError: nil,
 		},
 		{
 			Name: "Test Failure - Error to validate address: street is required",
 			Address: func() domain.AddressDomain {
-				address := testAddress()
+				address := getDefaultAddress()
 				address.Street = ""
 				return address
 			}(),
@@ -313,7 +315,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 		{
 			Name: "Test Failure - Error to validate address: number is required",
 			Address: func() domain.AddressDomain {
-				address := testAddress()
+				address := getDefaultAddress()
 				address.Number = ""
 				return address
 			}(),
@@ -322,7 +324,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 		{
 			Name: "Test Failure - Error to validate address: neighborhood is required",
 			Address: func() domain.AddressDomain {
-				address := testAddress()
+				address := getDefaultAddress()
 				address.Neighborhood = ""
 				return address
 			}(),
@@ -331,7 +333,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 		{
 			Name: "Test Failure - Error to validate address: zip code is required",
 			Address: func() domain.AddressDomain {
-				address := testAddress()
+				address := getDefaultAddress()
 				address.ZipCode = ""
 				return address
 			}(),
@@ -340,7 +342,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 		{
 			Name: "Test Failure - Error to validate address: city is required",
 			Address: func() domain.AddressDomain {
-				address := testAddress()
+				address := getDefaultAddress()
 				address.City = ""
 				return address
 			}(),
@@ -349,7 +351,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 		{
 			Name: "Test Failure - Error to validate address: state is required",
 			Address: func() domain.AddressDomain {
-				address := testAddress()
+				address := getDefaultAddress()
 				address.State = ""
 				return address
 			}(),
@@ -358,7 +360,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 		{
 			Name: "Test Failure - Error to validate address: country is required",
 			Address: func() domain.AddressDomain {
-				address := testAddress()
+				address := getDefaultAddress()
 				address.Country = ""
 				return address
 			}(),

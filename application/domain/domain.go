@@ -32,7 +32,6 @@ type AddressDomain struct {
 	Street       string
 	Number       string
 	Complement   string
-	Block        string
 	Neighborhood string
 	ZipCode      string
 	City         string
