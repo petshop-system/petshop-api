@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"github.com/jinzhu/copier"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"go.uber.org/zap"
@@ -13,9 +14,8 @@ type AddressPostgresDB struct {
 }
 
 const (
-	AddressSaveDBError    = "error to save the address into postgres "
-	AddressGetByIdDBError = "error to get an address by id"
-	AddressNotFound       = "address not found"
+	AddressSaveDBError = "error to save the address into postgres"
+	AddressNotFound    = "address not found"
 )
 
 func NewAddressPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) AddressPostgresDB {
@@ -26,9 +26,15 @@ func NewAddressPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) Addre
 }
 
 type AddressDB struct {
-	ID     int64  `gorm:"primaryKey, column:id"`
-	Street string `gorm:"column:street"`
-	Number string `gorm:"column:number"`
+	ID           int64  `gorm:"primaryKey, column:id"`
+	Street       string `gorm:"column:street"`
+	Number       string `gorm:"column:number"`
+	Complement   string `gorm:"column:complement"`
+	Neighborhood string `gorm:"column:neighborhood"`
+	ZipCode      string `gorm:"column:zip_code"`
+	City         string `gorm:"column:city"`
+	State        string `gorm:"column:state"`
+	Country      string `gorm:"column:country"`
 }
 
 func (AddressDB) TableName() string {
@@ -36,11 +42,11 @@ func (AddressDB) TableName() string {
 }
 
 func (c AddressDB) CopyToAddressDomain() domain.AddressDomain {
-	return domain.AddressDomain{
-		ID:     c.ID,
-		Street: c.Street,
-		Number: c.Number,
-	}
+
+	var addressDomain domain.AddressDomain
+	copier.Copy(&addressDomain, &c)
+
+	return addressDomain
 }
 
 func (cp AddressPostgresDB) Save(contextControl domain.ContextControl, addressDomain domain.AddressDomain) (domain.AddressDomain, error) {
@@ -64,7 +70,7 @@ func (cp AddressPostgresDB) GetByID(contextControl domain.ContextControl, ID int
 	result := cp.DB.WithContext(contextControl.Context).First(&addressDB, ID)
 	if result.RowsAffected == 0 {
 		cp.LoggerSugar.Errorw(AddressNotFound)
-		return domain.AddressDomain{}, false, nil
+		return domain.AddressDomain{}, false, errors.New(AddressNotFound)
 	}
 
 	return addressDB.CopyToAddressDomain(), true, nil

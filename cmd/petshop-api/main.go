@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/kelseyhightower/envconfig"
 	adpterHttpInput "github.com/petshop-system/petshop-api/adapter/input/http"
 	"github.com/petshop-system/petshop-api/adapter/input/http/handler"
