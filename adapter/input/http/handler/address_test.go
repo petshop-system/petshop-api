@@ -3,9 +3,11 @@ package handler
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/output"
 	"github.com/petshop-system/petshop-api/application/service"
+	"github.com/petshop-system/petshop-api/application/utils"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"net/http"
@@ -27,27 +29,21 @@ func TestAddress_Create(t *testing.T) {
 		{
 			name: "Test Successful - Create",
 			addressRequest: AddressRequest{
-				Street:       "Rua do Mairon",
-				Number:       "5",
-				Complement:   "Casa 7",
-				Neighborhood: "Flamengo",
-				ZipCode:      "12345-678",
-				City:         "Rio de Janeiro",
-				State:        "RJ",
-				Country:      "Brasil",
+				Street:       utils.MockAddressStreet,
+				Number:       utils.MockAddressNumber,
+				Complement:   utils.MockAddressComplement,
+				Neighborhood: utils.MockAddressNeighborhood,
+				ZipCode:      utils.MockAddressZipCode,
+				City:         utils.MockAddressCity,
+				State:        utils.MockAddressState,
+				Country:      utils.MockAddressCountry,
 			},
 			mockRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					return domain.AddressDomain{
-						Street:       "Rua do Mairon",
-						Number:       "5",
-						Complement:   "Casa 7",
-						Neighborhood: "Flamengo",
-						ZipCode:      "12345-678",
-						City:         "Rio de Janeiro",
-						State:        "RJ",
-						Country:      "Brasil",
-					}, nil
+					address = utils.GetMockAddress()
+					address.ID = 0
+
+					return address, nil
 				},
 			},
 			cacheRepository: output.AddressDomainCacheRepositoryMock{
@@ -56,7 +52,8 @@ func TestAddress_Create(t *testing.T) {
 				},
 			},
 			expectedCode: http.StatusCreated,
-			expectedBody: `{"message":"address created with success","result":{"id":0,"street":"Rua do Mairon","number":"5","complement":"Casa 7","neighborhood":"Flamengo","zip_code":"12345-678","city":"Rio de Janeiro","state":"RJ","country":"Brasil"}}`,
+			expectedBody: fmt.Sprintf(`{"message":"address created with success","result":{"id":0,"street":"%s","number":"%s","complement":"%s","neighborhood":"%s","zip_code":"%s","city":"%s","state":"%s","country":"%s"}}`,
+				utils.MockAddressStreet, utils.MockAddressNumber, utils.MockAddressComplement, utils.MockAddressNeighborhood, utils.MockAddressZipCode, utils.MockAddressCity, utils.MockAddressState, utils.MockAddressCountry),
 		},
 	}
 

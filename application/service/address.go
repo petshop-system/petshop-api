@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/output"
@@ -88,26 +87,33 @@ func (service AddressService) GetByID(contextControl domain.ContextControl, ID i
 }
 
 func (service AddressService) ValidateAddress(address domain.AddressDomain) error {
+	var errors []error
+
 	if len(strings.TrimSpace(address.Street)) == 0 {
-		return errors.New(StreetIsRequired)
+		errors = append(errors, fmt.Errorf(StreetIsRequired))
 	}
 	if len(strings.TrimSpace(address.Number)) == 0 {
-		return errors.New(NumberIsRequired)
+		errors = append(errors, fmt.Errorf(NumberIsRequired))
 	}
 	if len(strings.TrimSpace(address.Neighborhood)) == 0 {
-		return errors.New(NeighborhoodIsRequired)
+		errors = append(errors, fmt.Errorf(NeighborhoodIsRequired))
 	}
 	if len(strings.TrimSpace(address.ZipCode)) == 0 {
-		return errors.New(ZipCodeIsRequired)
+		errors = append(errors, fmt.Errorf(ZipCodeIsRequired))
 	}
 	if len(strings.TrimSpace(address.City)) == 0 {
-		return errors.New(CityIsRequired)
+		errors = append(errors, fmt.Errorf(CityIsRequired))
 	}
 	if len(strings.TrimSpace(address.State)) == 0 {
-		return errors.New(StateIsRequired)
+		errors = append(errors, fmt.Errorf(StateIsRequired))
 	}
 	if len(strings.TrimSpace(address.Country)) == 0 {
-		return errors.New(CountryIsRequired)
+		errors = append(errors, fmt.Errorf(CountryIsRequired))
 	}
-	return nil
+
+	if len(errors) == 0 {
+		return nil
+	}
+
+	return fmt.Errorf("error to validate address: %v", errors)
 }

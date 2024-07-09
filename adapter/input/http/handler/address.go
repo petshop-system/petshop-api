@@ -120,8 +120,7 @@ func (c *Address) GetByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var addressResponse AddressResponse
-	err = copier.Copy(&addressResponse, &addressDomain)
-	if err != nil {
+	if err = copier.Copy(&addressResponse, &addressDomain); err != nil {
 		c.LoggerSugar.Errorw(ErrorToGetAddress, "error", err.Error())
 		response := objectResponse(ErrorToGetAddress, err.Error())
 		responseReturn(w, http.StatusInternalServerError, response.Bytes())
