@@ -115,5 +115,9 @@ func (service AddressService) ValidateAddress(address domain.AddressDomain) erro
 		return nil
 	}
 
-	return fmt.Errorf("error to validate address: %v", errors)
+	errorMessages := make([]string, len(errors))
+	for i, err := range errors {
+		errorMessages[i] = err.Error()
+	}
+	return fmt.Errorf("error to validate address: %s", strings.Join(errorMessages, ", "))
 }

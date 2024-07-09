@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/petshop-system/petshop-api/adapter/output/database"
 	"github.com/petshop-system/petshop-api/application/domain"
@@ -82,7 +83,7 @@ func TestAddressService_Create(t *testing.T) {
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{},
 			AddressDomainCacheRepository:    output.AddressDomainCacheRepositoryMock{},
 			ExpectedResult:                  domain.AddressDomain{},
-			ExpectedError:                   errors.New(StreetIsRequired),
+			ExpectedError:                   fmt.Errorf("error to validate address: %s", StreetIsRequired),
 		},
 		{
 			Name: "Test Failure - Error while saving address to the database",
@@ -286,7 +287,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 				address.Street = ""
 				return address
 			}(),
-			ExpectedError: errors.New(StreetIsRequired),
+			ExpectedError: fmt.Errorf("error to validate address: %s", StreetIsRequired),
 		},
 
 		{
@@ -296,7 +297,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 				address.Number = ""
 				return address
 			}(),
-			ExpectedError: errors.New(NumberIsRequired),
+			ExpectedError: fmt.Errorf("error to validate address: %s", NumberIsRequired),
 		},
 		{
 			Name: "Test Failure - Error to validate address: neighborhood is required",
@@ -305,7 +306,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 				address.Neighborhood = ""
 				return address
 			}(),
-			ExpectedError: errors.New(NeighborhoodIsRequired),
+			ExpectedError: fmt.Errorf("error to validate address: %s", NeighborhoodIsRequired),
 		},
 		{
 			Name: "Test Failure - Error to validate address: zip code is required",
@@ -314,7 +315,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 				address.ZipCode = ""
 				return address
 			}(),
-			ExpectedError: errors.New(ZipCodeIsRequired),
+			ExpectedError: fmt.Errorf("error to validate address: %s", ZipCodeIsRequired),
 		},
 		{
 			Name: "Test Failure - Error to validate address: city is required",
@@ -323,7 +324,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 				address.City = ""
 				return address
 			}(),
-			ExpectedError: errors.New(CityIsRequired),
+			ExpectedError: fmt.Errorf("error to validate address: %s", CityIsRequired),
 		},
 		{
 			Name: "Test Failure - Error to validate address: state is required",
@@ -332,7 +333,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 				address.State = ""
 				return address
 			}(),
-			ExpectedError: errors.New(StateIsRequired),
+			ExpectedError: fmt.Errorf("error to validate address: %s", StateIsRequired),
 		},
 		{
 			Name: "Test Failure - Error to validate address: country is required",
@@ -341,7 +342,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 				address.Country = ""
 				return address
 			}(),
-			ExpectedError: errors.New(CountryIsRequired),
+			ExpectedError: fmt.Errorf("error to validate address: %s", CountryIsRequired),
 		},
 	}
 
