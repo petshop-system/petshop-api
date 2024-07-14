@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/kelseyhightower/envconfig"
 	adpterHttpInput "github.com/petshop-system/petshop-api/adapter/input/http"
 	"github.com/petshop-system/petshop-api/adapter/input/http/handler"
@@ -99,13 +100,16 @@ func main() {
 
 	contextPath := environment.Setting.Server.Context
 	newRouter := adpterHttpInput.GetNewRouter(loggerSugar)
-	newRouter.GetChiRouter().Route(fmt.Sprintf("/%s", contextPath), func(r chi.Router) {
-		r.NotFound(genericHandler.NotFound)
-		r.Group(newRouter.AddGroupHandlerHealthCheck(genericHandler))
-		r.Group(newRouter.AddGroupHandlerCustomer(customerHandler))
-		r.Group(newRouter.AddGroupHandlerAddress(addressHandler))
-		r.Group(newRouter.AddGroupHandlerPhone(phoneHandler))
-	})
+	newRouter.GetChiRouter().With(middleware.RequestID).
+		Route(fmt.Sprintf("/%s", contextPath), func(r chi.Router) {
+
+			r.NotFound(genericHandler.NotFound)
+			r.Group(newRouter.AddGroupHandlerHealthCheck(genericHandler))
+			r.Group(newRouter.AddGroupHandlerCustomer(customerHandler))
+			r.Group(newRouter.AddGroupHandlerAddress(addressHandler))
+			r.Group(newRouter.AddGroupHandlerPhone(phoneHandler))
+
+		})
 
 	serverHttp := &http.Server{
 		Addr:           fmt.Sprintf(":%s", environment.Setting.Server.Port),
