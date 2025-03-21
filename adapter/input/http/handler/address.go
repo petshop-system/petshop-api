@@ -72,7 +72,8 @@ func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := c.AddressService.Create(contextControl, addressDomain); err != nil {
+	addressCreated, err := c.AddressService.Create(contextControl, addressDomain)
+	if err != nil {
 		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
 		response := objectResponse(ErrorToCreateAddress, err.Error())
 		responseReturn(w, http.StatusInternalServerError, response.Bytes())
@@ -80,7 +81,7 @@ func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var addressResponse AddressResponse
-	if err := copier.Copy(&addressResponse, &addressDomain); err != nil {
+	if err := copier.Copy(&addressResponse, &addressCreated); err != nil {
 		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
 		response := objectResponse(ErrorToCreateAddress, err.Error())
 		responseReturn(w, http.StatusInternalServerError, response.Bytes())

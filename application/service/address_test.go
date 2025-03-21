@@ -122,6 +122,15 @@ func TestAddressService_Create(t *testing.T) {
 			ExpectedResult: domain.AddressDomain{},
 			ExpectedError:  errors.New(AddressErrorToSaveInCache),
 		},
+		{
+			Name: "Test Failure - Multiple validation errors",
+			Address: func() domain.AddressDomain {
+				return domain.AddressDomain{} // Todos os campos vazios
+			}(),
+			ExpectedError: fmt.Errorf("error to validate address: %s, %s, %s, %s, %s, %s, %s",
+				StreetIsRequired, NumberIsRequired, NeighborhoodIsRequired,
+				ZipCodeIsRequired, CityIsRequired, StateIsRequired, CountryIsRequired),
+		},
 	}
 
 	for _, test := range tests {

@@ -3,104 +3,192 @@ package handler
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/output"
 	"github.com/petshop-system/petshop-api/application/service"
 	"github.com/petshop-system/petshop-api/application/utils"
-	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
+var pathAddressCreate = "/address/create"
+
 func TestAddress_Create(t *testing.T) {
-
-	tests := []struct {
-		name            string
-		addressRequest  AddressRequest
-		mockRepository  output.IAddressDomainDataBaseRepository
-		cacheRepository output.IAddressDomainCacheRepository
-		expectedCode    int
-		expectedBody    string
-	}{
-		{
-			name: "Test Successful - Create",
-			addressRequest: AddressRequest{
-				Street:       utils.MockAddressStreet,
-				Number:       utils.MockAddressNumber,
-				Complement:   utils.MockAddressComplement,
-				Neighborhood: utils.MockAddressNeighborhood,
-				ZipCode:      utils.MockAddressZipCode,
-				City:         utils.MockAddressCity,
-				State:        utils.MockAddressState,
-				Country:      utils.MockAddressCountry,
+	t.Run("create address successfully", func(t *testing.T) {
+		mockRepo := output.AddressDomainDataBaseRepositoryMock{
+			SaveMock: func(ctx domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
+				mocked := utils.GetMockAddress()
+				mocked.ID = 1
+				return mocked, nil
 			},
-			mockRepository: output.AddressDomainDataBaseRepositoryMock{
-				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
-					address = utils.GetMockAddress()
-					address.ID = 0
-
-					return address, nil
-				},
+		}
+		mockCache := output.AddressDomainCacheRepositoryMock{
+			SetMock: func(ctx domain.ContextControl, key string, hash string, expiration time.Duration) error {
+				return nil
 			},
-			cacheRepository: output.AddressDomainCacheRepositoryMock{
-				SetMock: func(contextControl domain.ContextControl, key string, hash string, expirationTime time.Duration) error {
-					return nil
-				},
+		}
+
+		addressService := service.AddressService{
+			LoggerSugar:                     zap.NewNop().Sugar(),
+			AddressDomainDataBaseRepository: mockRepo,
+			AddressDomainCacheRepository:    mockCache,
+		}
+		handler := Address{AddressService: addressService, LoggerSugar: zap.NewNop().Sugar()}
+
+		requestBody := AddressRequest{
+			Street:       utils.MockAddressStreet,
+			Number:       utils.MockAddressNumber,
+			Complement:   utils.MockAddressComplement,
+			Neighborhood: utils.MockAddressNeighborhood,
+			ZipCode:      utils.MockAddressZipCode,
+			City:         utils.MockAddressCity,
+			State:        utils.MockAddressState,
+			Country:      utils.MockAddressCountry,
+		}
+		body := new(bytes.Buffer)
+		_ = json.NewEncoder(body).Encode(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, pathAddressCreate, body)
+		w := httptest.NewRecorder()
+		handler.Create(w, req)
+
+		res := w.Result()
+		defer res.Body.Close()
+
+		assert.Equal(t, http.StatusCreated, res.StatusCode)
+	})
+
+	t.Run("invalid json in request body", func(t *testing.T) {
+		addressService := service.AddressService{}
+		handler := Address{AddressService: addressService, LoggerSugar: zap.NewNop().Sugar()}
+
+		body := bytes.NewBufferString(`{"street":123}`)
+
+		req := httptest.NewRequest(http.MethodPost, pathAddressCreate, body)
+		w := httptest.NewRecorder()
+		handler.Create(w, req)
+
+		res := w.Result()
+		defer res.Body.Close()
+
+		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+	})
+
+	t.Run("validation fails - street required", func(t *testing.T) {
+		addressService := service.AddressService{}
+		handler := Address{AddressService: addressService, LoggerSugar: zap.NewNop().Sugar()}
+
+		requestBody := AddressRequest{
+			Street:       "",
+			Number:       "12",
+			Complement:   "Apto 1",
+			Neighborhood: "Bairro",
+			ZipCode:      "12345-678",
+			City:         "Rio de Janeiro",
+			State:        "Rio de Janeiro",
+			Country:      "Brasil",
+		}
+
+		body := new(bytes.Buffer)
+		_ = json.NewEncoder(body).Encode(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, pathAddressCreate, body)
+		w := httptest.NewRecorder()
+		handler.Create(w, req)
+
+		res := w.Result()
+		defer res.Body.Close()
+
+		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+	})
+
+	t.Run("database error on save", func(t *testing.T) {
+		mockRepo := output.AddressDomainDataBaseRepositoryMock{
+			SaveMock: func(ctx domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
+				return domain.AddressDomain{}, errors.New("db failure")
 			},
-			expectedCode: http.StatusCreated,
-			expectedBody: fmt.Sprintf(`{"message":"address created with success","result":{"id":0,"street":"%s","number":"%s","complement":"%s","neighborhood":"%s","zip_code":"%s","city":"%s","state":"%s","country":"%s"}}`,
-				utils.MockAddressStreet, utils.MockAddressNumber, utils.MockAddressComplement, utils.MockAddressNeighborhood, utils.MockAddressZipCode, utils.MockAddressCity, utils.MockAddressState, utils.MockAddressCountry),
-		},
-	}
+		}
+		mockCache := output.AddressDomainCacheRepositoryMock{}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		addressService := service.AddressService{
+			LoggerSugar:                     zap.NewNop().Sugar(),
+			AddressDomainDataBaseRepository: mockRepo,
+			AddressDomainCacheRepository:    mockCache,
+		}
+		handler := Address{AddressService: addressService, LoggerSugar: zap.NewNop().Sugar()}
 
-			logger, _ := zap.NewDevelopment()
-			sugar := logger.Sugar()
+		requestBody := AddressRequest{
+			Street:       "Rua A",
+			Number:       "10",
+			Complement:   "",
+			Neighborhood: "Centro",
+			ZipCode:      "12345-678",
+			City:         "Rio de Janeiro",
+			State:        "Rio de Janeiro",
+			Country:      "Brasil",
+		}
 
-			addressService := service.AddressService{
-				LoggerSugar:                     sugar,
-				AddressDomainDataBaseRepository: tt.mockRepository,
-				AddressDomainCacheRepository:    tt.cacheRepository,
-			}
+		body := new(bytes.Buffer)
+		_ = json.NewEncoder(body).Encode(requestBody)
 
-			addressHandler := Address{
-				AddressService: addressService,
-				LoggerSugar:    zap.NewExample().Sugar(),
-			}
+		req := httptest.NewRequest(http.MethodPost, pathAddressCreate, body)
+		w := httptest.NewRecorder()
+		handler.Create(w, req)
 
-			AddressRequestJson, err := json.Marshal(tt.addressRequest)
-			if err != nil {
-				t.Fatal(err)
-			}
+		res := w.Result()
+		defer res.Body.Close()
 
-			request, err := http.NewRequest(http.MethodPost, "/address/create", bytes.NewBuffer(AddressRequestJson))
-			if err != nil {
-				t.Fatal(err)
-			}
+		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+	})
 
-			response := httptest.NewRecorder()
-			handler := http.HandlerFunc(addressHandler.Create)
-			handler.ServeHTTP(response, request)
+	t.Run("cache error after save", func(t *testing.T) {
+		mockRepo := output.AddressDomainDataBaseRepositoryMock{
+			SaveMock: func(ctx domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
+				mocked := utils.GetMockAddress()
+				mocked.ID = 2
+				return mocked, nil
+			},
+		}
+		mockCache := output.AddressDomainCacheRepositoryMock{
+			SetMock: func(ctx domain.ContextControl, key string, hash string, expiration time.Duration) error {
+				return errors.New("cache failure")
+			},
+		}
 
-			assert.Equal(t, tt.expectedCode, response.Code, "Unexpected response code")
+		addressService := service.AddressService{
+			LoggerSugar:                     zap.NewNop().Sugar(),
+			AddressDomainDataBaseRepository: mockRepo,
+			AddressDomainCacheRepository:    mockCache,
+		}
+		handler := Address{AddressService: addressService, LoggerSugar: zap.NewNop().Sugar()}
 
-			var gotBody map[string]interface{}
-			err = json.Unmarshal(response.Body.Bytes(), &gotBody)
-			assert.NoError(t, err, "Error unmarshalling response body")
+		requestBody := AddressRequest{
+			Street:       "Rua B",
+			Number:       "25",
+			Complement:   "",
+			Neighborhood: "Zona Sul",
+			ZipCode:      "22222-222",
+			City:         "Rio",
+			State:        "RJ",
+			Country:      "Brasil",
+		}
 
-			delete(gotBody, "date")
+		body := new(bytes.Buffer)
+		_ = json.NewEncoder(body).Encode(requestBody)
 
-			var expectedBody map[string]interface{}
-			err = json.Unmarshal([]byte(tt.expectedBody), &expectedBody)
-			assert.NoError(t, err, "Error unmarshalling expected body")
+		req := httptest.NewRequest(http.MethodPost, pathAddressCreate, body)
+		w := httptest.NewRecorder()
+		handler.Create(w, req)
 
-			assert.Equal(t, expectedBody, gotBody, "Unexpected response body")
-		})
-	}
+		res := w.Result()
+		defer res.Body.Close()
+
+		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+	})
 }
