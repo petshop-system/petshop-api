@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -84,7 +85,7 @@ func (service *PhoneService) ValidatePhone(phone domain.PhoneDomain) error {
 	clearPhone := utils.RemoveNonAlphaNumericCharacters(phone.Number)
 	verification := func(phoneLen int, phoneTypeVerification, ErrorMessageVerification string) error {
 		if len(clearPhone) != phoneLen {
-			return fmt.Errorf(ErrorMessageVerification)
+			return errors.New(ErrorMessageVerification)
 		}
 		return nil
 	}
@@ -101,7 +102,7 @@ func (service *PhoneService) ValidatePhone(phone domain.PhoneDomain) error {
 			return err
 		}
 	default:
-		return fmt.Errorf(InvalidTypeOfPhone)
+		return errors.New(InvalidTypeOfPhone)
 	}
 	return nil
 }

@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"fmt"
+	"errors"
 	"regexp"
 	"strconv"
 	"strings"
@@ -40,7 +40,7 @@ func ValidateCodeAreaNumber(areaCode string) (string, error) {
 	}
 
 	if !dddList[clearAreaCode] {
-		return "", fmt.Errorf(ErrorAreaCodeVerification)
+		return "", errors.New(ErrorAreaCodeVerification)
 	}
 
 	return clearAreaCode, nil
@@ -51,11 +51,11 @@ func ValidateCpf(cpf string) error {
 
 	cpfLen := 11
 	if len(cleanedCpf) != cpfLen {
-		return fmt.Errorf(ErrorInvalidCPFLength)
+		return errors.New(ErrorInvalidCPFLength)
 	}
 
 	if allDigitsEqual := strings.Count(cleanedCpf, string(cleanedCpf[0])) == cpfLen; allDigitsEqual {
-		return fmt.Errorf(ErrorAllDigitsEqualCPF)
+		return errors.New(ErrorAllDigitsEqualCPF)
 	}
 
 	characters := strings.Split(cleanedCpf, "")
@@ -78,7 +78,7 @@ func ValidateCpf(cpf string) error {
 		for i := 0; i < positionVerification; i++ {
 			num, err := strconv.Atoi(characters[i])
 			if err != nil {
-				return fmt.Errorf(ErrorInvalidCPFLength)
+				return errors.New(ErrorInvalidCPFLength)
 			}
 			status += num * ((positionVerification + 1) - i)
 		}
@@ -90,7 +90,7 @@ func ValidateCpf(cpf string) error {
 		}
 
 		if checkCharacter != charVerification {
-			return fmt.Errorf(errorMessageVerification)
+			return errors.New(errorMessageVerification)
 		}
 
 		return nil
@@ -112,11 +112,11 @@ func ValidateCnpj(cnpj string) error {
 
 	cnpjLen := 14
 	if len(cleanedCnpj) != cnpjLen {
-		return fmt.Errorf(ErrorInvalidCNPJLength)
+		return errors.New(ErrorInvalidCNPJLength)
 	}
 
 	if allDigitsEqual := strings.Count(cleanedCnpj, string(cleanedCnpj[0])) == cnpjLen; allDigitsEqual {
-		return fmt.Errorf(ErrorAllDigitsEqualCNPJ)
+		return errors.New(ErrorAllDigitsEqualCNPJ)
 	}
 
 	characters := strings.Split(cleanedCnpj, "")
@@ -131,7 +131,7 @@ func ValidateCnpj(cnpj string) error {
 		for i := 0; i < positionVerification; i++ {
 			num, err := strconv.Atoi(characters[i])
 			if err != nil {
-				return fmt.Errorf(ErrorInvalidCNPJLength)
+				return errors.New(ErrorInvalidCNPJLength)
 			}
 			status += num * multipliers[i]
 		}
@@ -143,11 +143,11 @@ func ValidateCnpj(cnpj string) error {
 		checkCharacter := status % cnpjCalculationFactor
 
 		if (checkCharacter == 0 || checkCharacter == 1) && charVerification != 0 { //Calculation Rule for CNPJ. If the remainder of the division is 0 or 1, the penultimate digit should be 0.
-			return fmt.Errorf(errorMessageVerification)
+			return errors.New(errorMessageVerification)
 		}
 
 		if (checkCharacter >= minValueVerification && checkCharacter <= maxValueVerification) && (charVerification != cnpjCalculationFactor-checkCharacter) { //from min to max: Calculation Rule for CNPJ
-			return fmt.Errorf(errorMessageVerification)
+			return errors.New(errorMessageVerification)
 		}
 		return nil
 	}
