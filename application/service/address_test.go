@@ -32,9 +32,11 @@ func init() {
 	core := zapcore.NewTee(
 		zapcore.NewCore(jsonEncoder, zapcore.AddSync(os.Stdout), zapcore.DebugLevel),
 	)
-	//logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+
 	logger := zap.New(core, zap.AddCaller())
-	defer logger.Sync() // flushes buffer, if any
+	defer func() {
+		_ = logger.Sync()
+	}()
 	loggerSugar = logger.Sugar()
 	loggerSugar.Infow("testing address services")
 

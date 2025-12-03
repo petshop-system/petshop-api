@@ -60,7 +60,7 @@ func TestAddress_Create(t *testing.T) {
 		handler.Create(w, req)
 
 		res := w.Result()
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 
 		assert.Equal(t, http.StatusCreated, res.StatusCode)
 	})
@@ -76,7 +76,7 @@ func TestAddress_Create(t *testing.T) {
 		handler.Create(w, req)
 
 		res := w.Result()
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 
 		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
 	})
@@ -104,7 +104,7 @@ func TestAddress_Create(t *testing.T) {
 		handler.Create(w, req)
 
 		res := w.Result()
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 
 		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
 	})
@@ -143,7 +143,7 @@ func TestAddress_Create(t *testing.T) {
 		handler.Create(w, req)
 
 		res := w.Result()
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 
 		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
 	})
@@ -188,7 +188,7 @@ func TestAddress_Create(t *testing.T) {
 		handler.Create(w, req)
 
 		res := w.Result()
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 
 		// Cache failure is non-fatal; address creation should succeed
 		assert.Equal(t, http.StatusCreated, res.StatusCode)
