@@ -355,7 +355,16 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 			ExpectedError: fmt.Errorf("error to validate address: %s", StateIsRequired),
 		},
 		{
-			Name: "WithInvalidStateLength_ReturnsError",
+			Name: "WithInvalidStateLength_OneCharacter_ReturnsError",
+			Address: func() domain.AddressDomain {
+				address := utils.GetMockAddress()
+				address.State = "R" // 1 character instead of 2
+				return address
+			}(),
+			ExpectedError: fmt.Errorf("error to validate address: state must be exactly 2 characters"),
+		},
+		{
+			Name: "WithInvalidStateLength_ThreeCharacters_ReturnsError",
 			Address: func() domain.AddressDomain {
 				address := utils.GetMockAddress()
 				address.State = "RJJ" // 3 characters instead of 2

@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -74,6 +75,7 @@ func (service AddressService) GetByID(contextControl domain.ContextControl, ID i
 	if !exists {
 		return domain.AddressDomain{}, exists, nil
 	}
+
 	hash, err := json.Marshal(address)
 	if err != nil {
 		service.LoggerSugar.Warnw("failed to marshal address for cache", "address_id", address.ID, "error", err)
@@ -90,41 +92,41 @@ func (service AddressService) GetByID(contextControl domain.ContextControl, ID i
 
 // ValidateAddress checks that all required address fields are present and non-empty.
 func (service AddressService) ValidateAddress(address domain.AddressDomain) error {
-	var errors []error
+	var errs []error
 
 	if len(strings.TrimSpace(address.Street)) == 0 {
-		errors = append(errors, fmt.Errorf(StreetIsRequired))
+		errs = append(errs, errors.New(StreetIsRequired))
 	}
 	if len(strings.TrimSpace(address.Number)) == 0 {
-		errors = append(errors, fmt.Errorf(NumberIsRequired))
+		errs = append(errs, errors.New(NumberIsRequired))
 	}
 	if len(strings.TrimSpace(address.Neighborhood)) == 0 {
-		errors = append(errors, fmt.Errorf(NeighborhoodIsRequired))
+		errs = append(errs, errors.New(NeighborhoodIsRequired))
 	}
 	if len(strings.TrimSpace(address.ZipCode)) == 0 {
-		errors = append(errors, fmt.Errorf(ZipCodeIsRequired))
+		errs = append(errs, errors.New(ZipCodeIsRequired))
 	}
 	if len(strings.TrimSpace(address.City)) == 0 {
-		errors = append(errors, fmt.Errorf(CityIsRequired))
+		errs = append(errs, errors.New(CityIsRequired))
 	}
 
 	trimmedState := strings.TrimSpace(address.State)
 	if len(trimmedState) == 0 {
-		errors = append(errors, fmt.Errorf(StateIsRequired))
+		errs = append(errs, errors.New(StateIsRequired))
 	} else if len(trimmedState) != 2 {
-		errors = append(errors, fmt.Errorf("state must be exactly 2 characters"))
+		errs = append(errs, errors.New("state must be exactly 2 characters"))
 	}
 
 	if len(strings.TrimSpace(address.Country)) == 0 {
-		errors = append(errors, fmt.Errorf(CountryIsRequired))
+		errs = append(errs, errors.New(CountryIsRequired))
 	}
 
-	if len(errors) == 0 {
+	if len(errs) == 0 {
 		return nil
 	}
 
-	errorMessages := make([]string, len(errors))
-	for i, err := range errors {
+	errorMessages := make([]string, len(errs))
+	for i, err := range errs {
 		errorMessages[i] = err.Error()
 	}
 	return fmt.Errorf("error to validate address: %s", strings.Join(errorMessages, ", "))
