@@ -28,9 +28,15 @@ type BreedDomain struct {
 }
 
 type AddressDomain struct {
-	ID     int64
-	Street string
-	Number string
+	ID           int64
+	Street       string
+	Number       string
+	Complement   string
+	Neighborhood string
+	ZipCode      string
+	City         string
+	State        string
+	Country      string
 }
 
 type ScheduleMessage struct {

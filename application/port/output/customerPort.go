@@ -1,8 +1,9 @@
 package output
 
 import (
-	"github.com/petshop-system/petshop-api/application/domain"
 	"time"
+
+	"github.com/petshop-system/petshop-api/application/domain"
 )
 
 type ICustomerDomainDataBaseRepository interface {

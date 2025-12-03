@@ -3,9 +3,10 @@ package repository
 import (
 	//glog "bitbucket.org/maironmscosta/golang-log/v1"
 	"context"
+	"time"
+
 	redis "github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
-	"time"
 )
 
 var ctx = context.Background()

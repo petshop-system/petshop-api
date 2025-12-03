@@ -2,12 +2,13 @@ package repository
 
 import (
 	"fmt"
+	"log"
+	"time"
+
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
-	"time"
 )
 
 func NewPostgresDB(DBUser, DBPassword, DBName, DBHost, DBPort string, loggerSugar *zap.SugaredLogger) *gorm.DB {

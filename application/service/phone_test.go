@@ -3,6 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/kelseyhightower/envconfig"
 	"github.com/petshop-system/petshop-api/adapter/output/database"
 	"github.com/petshop-system/petshop-api/application/domain"
@@ -12,9 +16,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
-	"testing"
-	"time"
 )
 
 func init() {
@@ -49,7 +50,7 @@ func TestPhoneService_Create(t *testing.T) {
 	}{
 		//Mobile Phone
 		{
-			Name: "success saving mobile phone",
+			Name: "WithValidMobilePhone_SavesSuccessfully",
 			Phone: domain.PhoneDomain{
 				Number:    "99999-9999",
 				CodeArea:  "32",
@@ -79,7 +80,7 @@ func TestPhoneService_Create(t *testing.T) {
 			ExpectedError: nil,
 		},
 		{
-			Name: "error saving mobile phone",
+			Name: "WithInvalidMobilePhoneLength_ReturnsError",
 			Phone: domain.PhoneDomain{
 				Number:    "33333399999-9999",
 				CodeArea:  "32",
@@ -101,7 +102,7 @@ func TestPhoneService_Create(t *testing.T) {
 
 		//Landline Phone
 		{
-			Name: "success saving landline phone",
+			Name: "WithValidLandlinePhone_SavesSuccessfully",
 			Phone: domain.PhoneDomain{
 				Number:    "3212-2222",
 				CodeArea:  "32",
@@ -131,7 +132,7 @@ func TestPhoneService_Create(t *testing.T) {
 			ExpectedError: nil,
 		},
 		{
-			Name: "error saving landline phone",
+			Name: "WithInvalidLandlinePhoneLength_ReturnsError",
 			Phone: domain.PhoneDomain{
 				Number:    "00003211-0544",
 				CodeArea:  "32",
@@ -153,7 +154,7 @@ func TestPhoneService_Create(t *testing.T) {
 
 		//Code Area
 		{
-			Name: "success saving code area phone",
+			Name: "WithValidCodeArea_SavesSuccessfully",
 			Phone: domain.PhoneDomain{
 				Number:    "99999-9999",
 				CodeArea:  "96",
@@ -183,7 +184,7 @@ func TestPhoneService_Create(t *testing.T) {
 			ExpectedError: nil,
 		},
 		{
-			Name: "error saving code area phone",
+			Name: "WithInvalidCodeArea_ReturnsError",
 			Phone: domain.PhoneDomain{
 				Number:    "99999-9999",
 				CodeArea:  "39", //Invalid DDD

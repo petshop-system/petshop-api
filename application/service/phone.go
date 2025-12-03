@@ -2,13 +2,15 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/output"
 	"github.com/petshop-system/petshop-api/application/utils"
 	"go.uber.org/zap"
-	"strconv"
-	"time"
 )
 
 type PhoneService struct {
@@ -49,7 +51,11 @@ func (service *PhoneService) Create(contextControl domain.ContextControl, phone 
 		return domain.PhoneDomain{}, err
 	}
 
-	hash, _ := json.Marshal(save)
+	hash, err := json.Marshal(save)
+	if err != nil {
+		service.LoggerSugar.Warnw("failed to marshal phone for cache", "phone_id", save.ID, "error", err)
+	}
+
 	if err = service.PhoneDomainCacheRepository.Set(contextControl, service.getCacheKey(PhoneCacheKeyTypeID, strconv.FormatInt(phone.ID, 10)),
 		string(hash), PhoneCacheTTL); err != nil {
 		service.LoggerSugar.Infow(PhoneErrorToSaveInCache, "phone_id", phone.ID)
@@ -66,7 +72,12 @@ func (service *PhoneService) GetByID(contextControl domain.ContextControl, ID in
 	if !exists {
 		return domain.PhoneDomain{}, exists, nil
 	}
-	hash, _ := json.Marshal(phone)
+
+	hash, err := json.Marshal(phone)
+	if err != nil {
+		service.LoggerSugar.Warnw("failed to marshal phone for cache", "phone_id", phone.ID, "error", err)
+	}
+
 	if err = service.PhoneDomainCacheRepository.Set(contextControl,
 		service.getCacheKey(AddressCacheKeyTypeID, strconv.FormatInt(phone.ID, 10)),
 		string(hash), PhoneCacheTTL); err != nil {
@@ -83,7 +94,7 @@ func (service *PhoneService) ValidatePhone(phone domain.PhoneDomain) error {
 	clearPhone := utils.RemoveNonAlphaNumericCharacters(phone.Number)
 	verification := func(phoneLen int, phoneTypeVerification, ErrorMessageVerification string) error {
 		if len(clearPhone) != phoneLen {
-			return fmt.Errorf(ErrorMessageVerification)
+			return errors.New(ErrorMessageVerification)
 		}
 		return nil
 	}
@@ -100,7 +111,7 @@ func (service *PhoneService) ValidatePhone(phone domain.PhoneDomain) error {
 			return err
 		}
 	default:
-		return fmt.Errorf(InvalidTypeOfPhone)
+		return errors.New(InvalidTypeOfPhone)
 	}
 	return nil
 }
