@@ -288,7 +288,7 @@ The project includes comprehensive test coverage:
 Tests follow the pattern: `TestFunction_Scenario_ExpectedBehavior`
 
 Examples:
-```go
+```
 TestAddressService_Create/WithValidAddress_SavesSuccessfully
 TestAddressService_Create/WithInvalidAddress_ValidationFails
 TestAddressService_ValidateAddress/WithInvalidStateLength_ReturnsError
