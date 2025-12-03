@@ -15,7 +15,7 @@ type AddressPostgresDB struct {
 }
 
 const (
-	AddressSaveDBError = "error to save the address into postgres"
+	AddressSaveDBError = "failed to save address to postgres"
 	AddressNotFound    = "address not found"
 )
 
@@ -87,11 +87,6 @@ func (cp AddressPostgresDB) GetByID(contextControl domain.ContextControl, ID int
 		}
 		cp.LoggerSugar.Errorw("error getting address by ID from DB", "address_id", ID, "error", result.Error.Error())
 		return domain.AddressDomain{}, false, result.Error
-	}
-
-	if result.RowsAffected == 0 {
-		cp.LoggerSugar.Infow(AddressNotFound, "address_id", ID)
-		return domain.AddressDomain{}, false, nil
 	}
 
 	addressResult, err := addressDB.CopyToAddressDomain()

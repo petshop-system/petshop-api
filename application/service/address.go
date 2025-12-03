@@ -26,7 +26,7 @@ const (
 
 const (
 	AddressErrorToSaveInCache    = "error to save an address in cache"
-	AddressErrorToGetByIDInCache = "error to get an address in cache"
+	AddressErrorToGetByIDInCache = "error to getting an address in cache"
 )
 
 const (
@@ -85,6 +85,7 @@ func (service AddressService) GetByID(contextControl domain.ContextControl, ID i
 	return address, exists, nil
 }
 
+// ValidateAddress checks that all required address fields are present and non-empty.
 func (service AddressService) ValidateAddress(address domain.AddressDomain) error {
 	var errors []error
 
@@ -103,9 +104,14 @@ func (service AddressService) ValidateAddress(address domain.AddressDomain) erro
 	if len(strings.TrimSpace(address.City)) == 0 {
 		errors = append(errors, fmt.Errorf(CityIsRequired))
 	}
-	if len(strings.TrimSpace(address.State)) == 0 {
+
+	trimmedState := strings.TrimSpace(address.State)
+	if len(trimmedState) == 0 {
 		errors = append(errors, fmt.Errorf(StateIsRequired))
+	} else if len(trimmedState) != 2 {
+		errors = append(errors, fmt.Errorf("state must be exactly 2 characters"))
 	}
+
 	if len(strings.TrimSpace(address.Country)) == 0 {
 		errors = append(errors, fmt.Errorf(CountryIsRequired))
 	}

@@ -13,6 +13,7 @@ const (
 	MockAddressCountry      = "Brasil"
 )
 
+// GetMockAddress returns a pre-configured AddressDomain instance with valid test data for use in unit tests.
 func GetMockAddress() domain.AddressDomain {
 	return domain.AddressDomain{
 		Street:       MockAddressStreet,

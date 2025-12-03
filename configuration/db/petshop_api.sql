@@ -251,8 +251,8 @@ create schema petshop_api
 INSERT INTO petshop_api.address (street, number, complement, neighborhood, zip_code, city, state, country)
 VALUES ('Rua Jose Bonifácio', 1432, '403', 'Centro', '36025-200', 'Juiz de Fora', 'MG', 'Brasil');
 
--- INSERT INTO petshop_api.contract (name, email, date_created, fk_id_address, document, person_type)
--- VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 1, '38988657000181', 'legal');
+INSERT INTO petshop_api.contract (name, email, date_created, fk_id_address, document, person_type)
+VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 1, '38988657000181', 'legal');
 
 INSERT INTO petshop_api.phone (number, code_area, phone_type)
 VALUES ('912345674', '72', 'celular');
