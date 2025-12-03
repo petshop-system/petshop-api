@@ -106,9 +106,11 @@ func TestAddressService_Create(t *testing.T) {
 			ExpectedError:  errors.New(database.AddressSaveDBError),
 		},
 		{
-			Name: "WithCacheError_ReturnsCacheError",
+			Name: "WithCacheError_SucceedsWithLog",
 			Address: func() domain.AddressDomain {
-				return utils.GetMockAddress()
+				addr := utils.GetMockAddress()
+				addr.ID = 3
+				return addr
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				SaveMock: func(contextControl domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
@@ -120,8 +122,12 @@ func TestAddressService_Create(t *testing.T) {
 					return errors.New(AddressErrorToSaveInCache)
 				},
 			},
-			ExpectedResult: domain.AddressDomain{},
-			ExpectedError:  errors.New(AddressErrorToSaveInCache),
+			ExpectedResult: func() domain.AddressDomain {
+				addr := utils.GetMockAddress()
+				addr.ID = 3
+				return addr
+			}(),
+			ExpectedError: nil, // Cache failure is non-fatal
 		},
 		{
 			Name: "WithMultipleValidationErrors_ReturnsAllErrors",

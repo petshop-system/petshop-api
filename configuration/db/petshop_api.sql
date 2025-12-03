@@ -249,7 +249,7 @@ create schema petshop_api
 
 -- contract
 INSERT INTO petshop_api.address (street, number, complement, neighborhood, zip_code, city, state, country)
-VALUES ('Rua Jose Bonifácio', 1432, 403, 'Centro', '36025-200', 'Juiz de Fora', 'MG', 'Brasil');
+VALUES ('Rua Jose Bonifácio', 1432, '403', 'Centro', '36025-200', 'Juiz de Fora', 'MG', 'Brasil');
 
 -- INSERT INTO petshop_api.contract (name, email, date_created, fk_id_address, document, person_type)
 -- VALUES ('petshop juiz de fora', 'pet_jf@gmail.com', now(), 1, '38988657000181', 'legal');
@@ -262,7 +262,7 @@ VALUES (1, 1, 'contract');
 
 -- first customer
 INSERT INTO petshop_api.address (street, number, complement, neighborhood, zip_code, city, state, country)
-VALUES ('Rua Lechitz', 11, 201, 'São Mateus', '36025-290', 'Juiz de Fora', 'MG', 'Brasil');
+VALUES ('Rua Lechitz', 11, '201', 'São Mateus', '36025-290', 'Juiz de Fora', 'MG', 'Brasil');
 
 INSERT INTO petshop_api.customer (name, fk_id_address, email,  fk_id_contract, document, person_type)
 VALUES ('siclano', 2, 'siclano@gmail.com', 1, '22233344409', 'individual');

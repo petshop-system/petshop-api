@@ -148,7 +148,7 @@ func TestAddress_Create(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
 	})
 
-	t.Run("WithCacheError_ReturnsInternalServerError", func(t *testing.T) {
+	t.Run("WithCacheError_SucceedsButLogsError", func(t *testing.T) {
 		mockRepo := output.AddressDomainDataBaseRepositoryMock{
 			SaveMock: func(ctx domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
 				mocked := utils.GetMockAddress()
@@ -190,6 +190,7 @@ func TestAddress_Create(t *testing.T) {
 		res := w.Result()
 		defer res.Body.Close()
 
-		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+		// Cache failure is non-fatal; address creation should succeed
+		assert.Equal(t, http.StatusCreated, res.StatusCode)
 	})
 }

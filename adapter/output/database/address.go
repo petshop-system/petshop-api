@@ -1,6 +1,8 @@
 package database
 
 import (
+	"errors"
+
 	"github.com/jinzhu/copier"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"go.uber.org/zap"
@@ -79,6 +81,10 @@ func (cp AddressPostgresDB) GetByID(contextControl domain.ContextControl, ID int
 
 	result := cp.DB.WithContext(contextControl.Context).First(&addressDB, ID)
 	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			cp.LoggerSugar.Infow(AddressNotFound, "address_id", ID)
+			return domain.AddressDomain{}, false, nil
+		}
 		cp.LoggerSugar.Errorw("error getting address by ID from DB", "address_id", ID, "error", result.Error.Error())
 		return domain.AddressDomain{}, false, result.Error
 	}

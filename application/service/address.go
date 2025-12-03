@@ -59,8 +59,7 @@ func (service AddressService) Create(contextControl domain.ContextControl, addre
 	if err = service.AddressDomainCacheRepository.Set(contextControl,
 		service.getCacheKey(AddressCacheKeyTypeID, strconv.FormatInt(save.ID, 10)),
 		string(hash), AddressCacheTTL); err != nil {
-		service.LoggerSugar.Infow(AddressErrorToSaveInCache, "address_id", save.ID)
-		return domain.AddressDomain{}, err
+		service.LoggerSugar.Infow(AddressErrorToSaveInCache, "address_id", save.ID, "error", err)
 	}
 
 	return save, nil
