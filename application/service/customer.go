@@ -52,7 +52,10 @@ func (service *CustomerService) Create(contextControl domain.ContextControl, cus
 		return domain.CustomerDomain{}, err
 	}
 
-	hash, _ := json.Marshal(save)
+	hash, err := json.Marshal(save)
+	if err != nil {
+		service.LoggerSugar.Warnw("failed to marshal customer for cache", "customer_id", save.ID, "error", err)
+	}
 	if err = service.CustomerDomainCacheRepository.Set(contextControl,
 		service.getCacheKey(CustomerCacheKeyTypeID, strconv.FormatInt(save.ID, 10)),
 		string(hash), ClientCacheTTL); err != nil {

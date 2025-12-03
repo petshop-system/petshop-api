@@ -51,7 +51,11 @@ func (service *PhoneService) Create(contextControl domain.ContextControl, phone 
 		return domain.PhoneDomain{}, err
 	}
 
-	hash, _ := json.Marshal(save)
+	hash, err := json.Marshal(save)
+	if err != nil {
+		service.LoggerSugar.Warnw("failed to marshal phone for cache", "phone_id", save.ID, "error", err)
+	}
+
 	if err = service.PhoneDomainCacheRepository.Set(contextControl, service.getCacheKey(PhoneCacheKeyTypeID, strconv.FormatInt(phone.ID, 10)),
 		string(hash), PhoneCacheTTL); err != nil {
 		service.LoggerSugar.Infow(PhoneErrorToSaveInCache, "phone_id", phone.ID)
@@ -68,7 +72,12 @@ func (service *PhoneService) GetByID(contextControl domain.ContextControl, ID in
 	if !exists {
 		return domain.PhoneDomain{}, exists, nil
 	}
-	hash, _ := json.Marshal(phone)
+
+	hash, err := json.Marshal(phone)
+	if err != nil {
+		service.LoggerSugar.Warnw("failed to marshal phone for cache", "phone_id", phone.ID, "error", err)
+	}
+
 	if err = service.PhoneDomainCacheRepository.Set(contextControl,
 		service.getCacheKey(AddressCacheKeyTypeID, strconv.FormatInt(phone.ID, 10)),
 		string(hash), PhoneCacheTTL); err != nil {
