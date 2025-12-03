@@ -3,6 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/kelseyhightower/envconfig"
 	"github.com/petshop-system/petshop-api/adapter/output/database"
 	"github.com/petshop-system/petshop-api/application/domain"
@@ -11,9 +15,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
-	"testing"
-	"time"
 )
 
 var loggerSugar *zap.SugaredLogger
@@ -50,7 +51,7 @@ func TestCustomerService_Create(t *testing.T) {
 		ExpectedError                    error
 	}{
 		{
-			Name: "success saving an individual customer",
+			Name: "WithValidIndividualCustomer_SavesSuccessfully",
 			Customer: domain.CustomerDomain{
 				Name:       "Fulano",
 				Document:   "296.230.570-91",
@@ -87,7 +88,7 @@ func TestCustomerService_Create(t *testing.T) {
 			ExpectedError: nil,
 		},
 		{
-			Name: "error to save an individual customer into DB",
+			Name: "WithDatabaseError_ReturnsSaveError",
 			Customer: domain.CustomerDomain{
 				Name:       "Fulano",
 				Document:   "296.230.570-91",

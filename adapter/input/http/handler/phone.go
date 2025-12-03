@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-chi/chi"
+	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 	"github.com/jinzhu/copier"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/input"
 	"go.uber.org/zap"
-	"net/http"
-	"strconv"
 )
 
 const (

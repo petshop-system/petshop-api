@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-chi/chi"
+	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 	"github.com/jinzhu/copier"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/application/port/input"
 	"go.uber.org/zap"
-	"net/http"
-	"strconv"
 )
 
 const (
@@ -28,30 +29,51 @@ type Address struct {
 }
 
 type AddressRequest struct {
-	ID     int64  `json:"id"`
-	Street string `json:"street"`
-	Number string `json:"number"`
+	ID           int64  `json:"id"`
+	Street       string `json:"street"`
+	Number       string `json:"number"`
+	Complement   string `json:"complement"`
+	Neighborhood string `json:"neighborhood"`
+	ZipCode      string `json:"zip_code"`
+	City         string `json:"city"`
+	State        string `json:"state"`
+	Country      string `json:"country"`
 }
 
 type AddressResponse struct {
-	ID     int64  `json:"id"`
-	Street string `json:"street"`
-	Number string `json:"number"`
+	ID           int64  `json:"id"`
+	Street       string `json:"street"`
+	Number       string `json:"number"`
+	Complement   string `json:"complement"`
+	Neighborhood string `json:"neighborhood"`
+	ZipCode      string `json:"zip_code"`
+	City         string `json:"city"`
+	State        string `json:"state"`
+	Country      string `json:"country"`
 }
 
 func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
-
 	contextControl := domain.ContextControl{
 		Context: context.Background(),
 	}
 
 	var addressRequest AddressRequest
-	json.NewDecoder(r.Body).Decode(&addressRequest)
+	if err := json.NewDecoder(r.Body).Decode(&addressRequest); err != nil {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
+		response := objectResponse(ErrorToCreateAddress, err.Error())
+		responseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
 
 	var addressDomain domain.AddressDomain
-	copier.Copy(&addressDomain, &addressRequest)
+	if err := copier.Copy(&addressDomain, &addressRequest); err != nil {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
+		response := objectResponse(ErrorToCreateAddress, err.Error())
+		responseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
 
-	addressDomain, err := c.AddressService.Create(contextControl, addressDomain)
+	addressCreated, err := c.AddressService.Create(contextControl, addressDomain)
 	if err != nil {
 		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
 		response := objectResponse(ErrorToCreateAddress, err.Error())
@@ -60,7 +82,13 @@ func (c *Address) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var addressResponse AddressResponse
-	copier.Copy(&addressResponse, &addressDomain)
+	if err := copier.Copy(&addressResponse, &addressCreated); err != nil {
+		c.LoggerSugar.Errorw(ErrorToCreateAddress, "error", err.Error())
+		response := objectResponse(ErrorToCreateAddress, err.Error())
+		responseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
+
 	response := objectResponse(addressResponse, SuccessToCreateAddress)
 	responseReturn(w, http.StatusCreated, response.Bytes())
 }
@@ -94,7 +122,12 @@ func (c *Address) GetByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var addressResponse AddressResponse
-	copier.Copy(&addressResponse, &addressDomain)
+	if err = copier.Copy(&addressResponse, &addressDomain); err != nil {
+		c.LoggerSugar.Errorw(ErrorToGetAddress, "error", err.Error())
+		response := objectResponse(ErrorToGetAddress, err.Error())
+		responseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
 	response := objectResponse(addressResponse, SuccessToGetAddress)
 	responseReturn(w, http.StatusOK, response.Bytes())
 }

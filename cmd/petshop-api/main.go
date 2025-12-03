@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
-	"github.com/kelseyhightower/envconfig"
+
+	"net/http"
+	"os"
+
+	"github.com/go-chi/chi/v5"
+  "github.com/go-chi/chi/v5/middleware"
+  "github.com/kelseyhightower/envconfig"
 	adpterHttpInput "github.com/petshop-system/petshop-api/adapter/input/http"
 	"github.com/petshop-system/petshop-api/adapter/input/http/handler"
 	"github.com/petshop-system/petshop-api/adapter/input/message/stream"
@@ -15,8 +19,6 @@ import (
 	"github.com/petshop-system/petshop-api/configuration/repository"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"net/http"
-	"os"
 )
 
 var loggerSugar *zap.SugaredLogger

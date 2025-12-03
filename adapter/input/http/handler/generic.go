@@ -1,8 +1,9 @@
 package handler
 
 import (
-	"go.uber.org/zap"
 	"net/http"
+
+	"go.uber.org/zap"
 )
 
 type Generic struct {
