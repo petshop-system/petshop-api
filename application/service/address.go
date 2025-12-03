@@ -25,8 +25,8 @@ const (
 )
 
 const (
-	AddressErrorToSaveInCache    = "error to save address in cache"
-	AddressErrorToGetByIDInCache = "error to save and address in cache"
+	AddressErrorToSaveInCache    = "error to save an address in cache"
+	AddressErrorToGetByIDInCache = "error to get an address in cache"
 )
 
 const (
@@ -80,8 +80,7 @@ func (service AddressService) GetByID(contextControl domain.ContextControl, ID i
 	if err = service.AddressDomainCacheRepository.Set(contextControl,
 		service.getCacheKey(AddressCacheKeyTypeID, strconv.FormatInt(address.ID, 10)),
 		string(hash), AddressCacheTTL); err != nil {
-		service.LoggerSugar.Infow(AddressErrorToGetByIDInCache, "address_id", address.ID)
-		return domain.AddressDomain{}, exists, err
+		service.LoggerSugar.Infow(AddressErrorToGetByIDInCache, "address_id", address.ID, "error", err)
 	}
 
 	return address, exists, nil

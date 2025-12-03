@@ -124,9 +124,9 @@ func TestAddressService_Create(t *testing.T) {
 			ExpectedError:  errors.New(AddressErrorToSaveInCache),
 		},
 		{
-			Name: "Test Failure - Multiple validation errors",
+			Name: "failure - multiple validation errors",
 			Address: func() domain.AddressDomain {
-				return domain.AddressDomain{} // Todos os campos vazios
+				return domain.AddressDomain{}
 			}(),
 			ExpectedError: fmt.Errorf("error to validate address: %s, %s, %s, %s, %s, %s, %s",
 				StreetIsRequired, NumberIsRequired, NeighborhoodIsRequired,
@@ -233,13 +233,14 @@ func TestAddressService_GetById(t *testing.T) {
 			ExpectedError:  errors.New(database.AddressNotFound),
 		},
 		{
-			Name: "Test Failure - Error returned from cache repository",
+			Name: "success - cache error but address retrieved successfully",
 			Address: func() domain.AddressDomain {
 				return utils.GetMockAddress()
 			}(),
 			AddressDomainDataBaseRepository: output.AddressDomainDataBaseRepositoryMock{
 				GetByIDMock: func(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
-					return utils.GetMockAddress(), true, nil
+					address := utils.GetMockAddress()
+					return address, true, nil
 				},
 			},
 			AddressDomainCacheRepository: output.AddressDomainCacheRepositoryMock{
@@ -247,9 +248,9 @@ func TestAddressService_GetById(t *testing.T) {
 					return errors.New(CacheError)
 				},
 			},
-			ExpectedResult: domain.AddressDomain{},
+			ExpectedResult: utils.GetMockAddress(),
 			ExpectedExists: true,
-			ExpectedError:  errors.New(CacheError),
+			ExpectedError:  nil,
 		},
 	}
 

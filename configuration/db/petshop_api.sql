@@ -276,7 +276,7 @@ VALUES (2, 1, 'customer');
 -- second customer
 
 INSERT INTO petshop_api.address (street, number, complement, neighborhood, zip_code, city, state, country)
-VALUES ('Av. Juiz de Fora', 1001, null, 'Centro', '36025-100', 'Juiz de Fora', 'MG', 'Brasil')
+VALUES ('Av. Juiz de Fora', 1001, null, 'Centro', '36025-100', 'Juiz de Fora', 'MG', 'Brasil');
 
 INSERT INTO petshop_api.customer (name, fk_id_address, email, fk_id_contract, document, person_type)
 VALUES ('testando cnpj', 3, 'company@gmail.com', 1, '38988657000182', 'legal');

@@ -89,10 +89,10 @@ func TestAddress_Create(t *testing.T) {
 			Street:       "",
 			Number:       "12",
 			Complement:   "Apto 1",
-			Neighborhood: "Bairro",
+			Neighborhood: "Copacabana",
 			ZipCode:      "12345-678",
 			City:         "Rio de Janeiro",
-			State:        "Rio de Janeiro",
+			State:        "RJ",
 			Country:      "Brasil",
 		}
 
@@ -131,7 +131,7 @@ func TestAddress_Create(t *testing.T) {
 			Neighborhood: "Centro",
 			ZipCode:      "12345-678",
 			City:         "Rio de Janeiro",
-			State:        "Rio de Janeiro",
+			State:        "RJ",
 			Country:      "Brasil",
 		}
 

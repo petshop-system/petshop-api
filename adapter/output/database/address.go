@@ -1,8 +1,6 @@
 package database
 
 import (
-	"errors"
-
 	"github.com/jinzhu/copier"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"go.uber.org/zap"
@@ -42,18 +40,23 @@ func (AddressDB) TableName() string {
 	return "petshop_api.address"
 }
 
-func (c AddressDB) CopyToAddressDomain() domain.AddressDomain {
+func (c AddressDB) CopyToAddressDomain() (domain.AddressDomain, error) {
 
 	var addressDomain domain.AddressDomain
-	copier.Copy(&addressDomain, &c)
+	if err := copier.Copy(&addressDomain, &c); err != nil {
+		return domain.AddressDomain{}, err
+	}
 
-	return addressDomain
+	return addressDomain, nil
 }
 
 func (cp AddressPostgresDB) Save(contextControl domain.ContextControl, addressDomain domain.AddressDomain) (domain.AddressDomain, error) {
 
 	var addressDB AddressDB
-	copier.Copy(&addressDB, &addressDomain)
+	if err := copier.Copy(&addressDB, &addressDomain); err != nil {
+		cp.LoggerSugar.Errorw("error copying address domain to DB struct", "error", err.Error())
+		return domain.AddressDomain{}, err
+	}
 
 	if err := cp.DB.WithContext(contextControl.Context).
 		Create(&addressDB).Error; err != nil {
@@ -62,7 +65,13 @@ func (cp AddressPostgresDB) Save(contextControl domain.ContextControl, addressDo
 		return domain.AddressDomain{}, err
 	}
 
-	return addressDB.CopyToAddressDomain(), nil
+	addressResult, err := addressDB.CopyToAddressDomain()
+	if err != nil {
+		cp.LoggerSugar.Errorw("error copying DB struct to address domain", "error", err.Error())
+		return domain.AddressDomain{}, err
+	}
+
+	return addressResult, nil
 }
 
 func (cp AddressPostgresDB) GetByID(contextControl domain.ContextControl, ID int64) (domain.AddressDomain, bool, error) {
@@ -70,9 +79,15 @@ func (cp AddressPostgresDB) GetByID(contextControl domain.ContextControl, ID int
 
 	result := cp.DB.WithContext(contextControl.Context).First(&addressDB, ID)
 	if result.RowsAffected == 0 {
-		cp.LoggerSugar.Errorw(AddressNotFound)
-		return domain.AddressDomain{}, false, errors.New(AddressNotFound)
+		cp.LoggerSugar.Infow(AddressNotFound, "address_id", ID)
+		return domain.AddressDomain{}, false, nil
 	}
 
-	return addressDB.CopyToAddressDomain(), true, nil
+	addressResult, err := addressDB.CopyToAddressDomain()
+	if err != nil {
+		cp.LoggerSugar.Errorw("error copying DB struct to address domain", "error", err.Error())
+		return domain.AddressDomain{}, false, err
+	}
+
+	return addressResult, true, nil
 }
