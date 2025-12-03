@@ -74,7 +74,10 @@ func (service AddressService) GetByID(contextControl domain.ContextControl, ID i
 	if !exists {
 		return domain.AddressDomain{}, exists, nil
 	}
-	hash, _ := json.Marshal(address)
+	hash, err := json.Marshal(address)
+	if err != nil {
+		service.LoggerSugar.Warnw("failed to marshal address for cache", "address_id", address.ID, "error", err)
+	}
 
 	if err = service.AddressDomainCacheRepository.Set(contextControl,
 		service.getCacheKey(AddressCacheKeyTypeID, strconv.FormatInt(address.ID, 10)),
