@@ -3,7 +3,7 @@ module github.com/petshop-system/petshop-api
 go 1.20
 
 require (
-	github.com/go-chi/chi/v5 v5.0.14
+	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/jinzhu/copier v0.4.0
 	github.com/jinzhu/gorm v1.9.16

@@ -2,6 +2,7 @@ package database
 
 import (
 	"errors"
+
 	"github.com/jinzhu/copier"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"go.uber.org/zap"

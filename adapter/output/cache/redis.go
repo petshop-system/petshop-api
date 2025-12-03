@@ -1,12 +1,13 @@
 package cache
 
 import (
+	"time"
+
 	"github.com/go-redis/redis/v8"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/configuration/environment"
 	"github.com/petshop-system/petshop-api/configuration/repository"
 	"go.uber.org/zap"
-	"time"
 )
 
 const (
