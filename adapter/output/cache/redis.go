@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	ErrorToInsertValueInRedis = "It was not possible insert value in redis"
-	ErrorToGetInRedis         = "It was not possible get value in redis"
-	ErrorToDeleteInRedis      = "It was not possible delete value in redis"
+	ErrorToInsertValueInRedis = "It was not possible to insert value in redis"
+	ErrorToGetInRedis         = "It was not possible to get value in redis"
+	ErrorToDeleteInRedis      = "It was not possible to delete value in redis"
 )
 
 type Redis struct {

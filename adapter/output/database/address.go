@@ -78,6 +78,11 @@ func (cp AddressPostgresDB) GetByID(contextControl domain.ContextControl, ID int
 	var addressDB AddressDB
 
 	result := cp.DB.WithContext(contextControl.Context).First(&addressDB, ID)
+	if result.Error != nil {
+		cp.LoggerSugar.Errorw("error getting address by ID from DB", "address_id", ID, "error", result.Error.Error())
+		return domain.AddressDomain{}, false, result.Error
+	}
+
 	if result.RowsAffected == 0 {
 		cp.LoggerSugar.Infow(AddressNotFound, "address_id", ID)
 		return domain.AddressDomain{}, false, nil
