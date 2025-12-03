@@ -16,37 +16,37 @@ func TestValidateCpf(t *testing.T) {
 		ExpectedError error
 	}{
 		{
-			Name:          "valid CPF format",
+			Name:          "WithValidCPF_ReturnsNoError",
 			InputCpf:      "013.405.400-88",
 			ExpectedError: nil,
 		},
 		{
-			Name:          "invalid CPF format",
+			Name:          "WithInvalidCPFLength_ReturnsError",
 			InputCpf:      "0.45.40-8",
 			ExpectedError: errors.New(ErrorInvalidCPFLength),
 		},
 		{
-			Name:          "invalid CPF with all digits equal",
+			Name:          "WithAllDigitsEqual_ReturnsError",
 			InputCpf:      "111.111.111-11",
 			ExpectedError: errors.New(ErrorAllDigitsEqualCPF),
 		},
 		{
-			Name:          "valid CPF with extra characters",
+			Name:          "WithExtraCharacters_ReturnsError",
 			InputCpf:      "123.456.789-09-X",
 			ExpectedError: errors.New(ErrorInvalidCPFLength),
 		},
 		{
-			Name:          "invalid CPF with incorrect first verification digit",
+			Name:          "WithIncorrectFirstVerificationDigit_ReturnsError",
 			InputCpf:      "076.164.346-16",
 			ExpectedError: errors.New(ErrorFirstVerificationCPF),
 		},
 		{
-			Name:          "invalid CPF with incorrect second verification digits",
+			Name:          "WithIncorrectSecondVerificationDigit_ReturnsError",
 			InputCpf:      "529.982.247-27",
 			ExpectedError: errors.New(ErrorSecondVerificationCPF),
 		},
 		{
-			Name:          "invalid CPF with incorrect character conversion",
+			Name:          "WithInvalidCharacter_ReturnsError",
 			InputCpf:      "12A.345.678-90",
 			ExpectedError: errors.New(ErrorInvalidCPFLength),
 		},
@@ -67,37 +67,37 @@ func TestValidateCnpj(t *testing.T) {
 		ExpectedError error
 	}{
 		{
-			Name:          "valid CNPJ format",
+			Name:          "WithValidCNPJ_ReturnsNoError",
 			InputCnpj:     "79.626.068/0001-30",
 			ExpectedError: nil,
 		},
 		{
-			Name:          "invalid CNPJ format",
+			Name:          "WithInvalidCNPJLength_ReturnsError",
 			InputCnpj:     "79626",
 			ExpectedError: errors.New(ErrorInvalidCNPJLength),
 		},
 		{
-			Name:          "invalid CNPJ with all digits equal",
+			Name:          "WithAllDigitsEqual_ReturnsError",
 			InputCnpj:     "11.111.111/1111-11",
 			ExpectedError: errors.New(ErrorAllDigitsEqualCNPJ),
 		},
 		{
-			Name:          "invalid CNPJ with extra characters",
+			Name:          "WithExtraCharacters_ReturnsError",
 			InputCnpj:     "123.456.789-09-X",
 			ExpectedError: errors.New(ErrorInvalidCNPJLength),
 		},
 		{
-			Name:          "invalid CNPJ with incorrect first verification digit",
+			Name:          "WithIncorrectFirstVerificationDigit_ReturnsError",
 			InputCnpj:     "79.626.068/0001-00",
 			ExpectedError: errors.New(ErrorFirstVerificationCNPJ),
 		},
 		{
-			Name:          "invalid CNPJ with incorrect second verification digits",
+			Name:          "WithIncorrectSecondVerificationDigit_ReturnsError",
 			InputCnpj:     "79.626.068/0001-39",
 			ExpectedError: errors.New(ErrorSecondVerificationCNPJ),
 		},
 		{
-			Name:          "invalid CNPJ with incorrect character conversion",
+			Name:          "WithInvalidCharacter_ReturnsError",
 			InputCnpj:     "7K.626.068/0001-30",
 			ExpectedError: errors.New(ErrorInvalidCNPJLength),
 		},
@@ -118,22 +118,22 @@ func TestRemoveNonAlphaNumericCharacters(t *testing.T) {
 		ExpectedResult string
 	}{
 		{
-			Name:           "given a cnpj with mask must remove non Characters",
+			Name:           "WithCNPJMask_RemovesNonAlphanumeric",
 			InputDocument:  "123.456-789/0001-23",
 			ExpectedResult: "123456789000123",
 		},
 		{
-			Name:           "given a string with latter and number must remove non alpha Characters",
+			Name:           "WithMixedLettersAndNumbers_RemovesSpecialChars",
 			InputDocument:  "abc.123",
 			ExpectedResult: "abc123",
 		},
 		{
-			Name:           "given a string of numbers must return only the given numbers",
+			Name:           "WithOnlyNumbers_ReturnsUnchanged",
 			InputDocument:  "4567",
 			ExpectedResult: "4567",
 		},
 		{
-			Name:           "given a string of special chars must return an empty string",
+			Name:           "WithOnlySpecialChars_ReturnsEmpty",
 			InputDocument:  "!@#$%^&*()_-+=/\\|?",
 			ExpectedResult: "",
 		},
@@ -155,13 +155,13 @@ func TestValidateCodeAreaNumber(t *testing.T) {
 		ExpectedError  error
 	}{
 		{
-			Name:           "valid area code format",
+			Name:           "WithValidAreaCode_ReturnsNoError",
 			AreaCode:       "32",
 			ExpectedResult: "32",
 			ExpectedError:  nil,
 		},
 		{
-			Name:           "invalid area code format",
+			Name:           "WithInvalidAreaCode_ReturnsError",
 			AreaCode:       "293",
 			ExpectedResult: "",
 			ExpectedError:  fmt.Errorf(ErrorAreaCodeVerification),

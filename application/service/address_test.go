@@ -51,7 +51,7 @@ func TestAddressService_Create(t *testing.T) {
 		ExpectedError                   error
 	}{
 		{
-			Name: "Test Successful - Address correctly saved to the database",
+			Name: "WithValidAddress_SavesSuccessfully",
 			Address: func() domain.AddressDomain {
 				return utils.GetMockAddress()
 			}(),
@@ -75,7 +75,7 @@ func TestAddressService_Create(t *testing.T) {
 			ExpectedError: nil,
 		},
 		{
-			Name: "Test Failure - Error while validating address",
+			Name: "WithInvalidAddress_ValidationFails",
 			Address: func() domain.AddressDomain {
 				address := utils.GetMockAddress()
 				address.Street = ""
@@ -87,7 +87,7 @@ func TestAddressService_Create(t *testing.T) {
 			ExpectedError:                   fmt.Errorf("error to validate address: %s", StreetIsRequired),
 		},
 		{
-			Name: "Test Failure - Error while saving address to the database",
+			Name: "WithDatabaseError_ReturnsSaveError",
 			Address: func() domain.AddressDomain {
 				return utils.GetMockAddress()
 
@@ -106,7 +106,7 @@ func TestAddressService_Create(t *testing.T) {
 			ExpectedError:  errors.New(database.AddressSaveDBError),
 		},
 		{
-			Name: "Test Failure - Error while saving address to the cache",
+			Name: "WithCacheError_ReturnsCacheError",
 			Address: func() domain.AddressDomain {
 				return utils.GetMockAddress()
 			}(),
@@ -124,7 +124,7 @@ func TestAddressService_Create(t *testing.T) {
 			ExpectedError:  errors.New(AddressErrorToSaveInCache),
 		},
 		{
-			Name: "failure - multiple validation errors",
+			Name: "WithMultipleValidationErrors_ReturnsAllErrors",
 			Address: func() domain.AddressDomain {
 				return domain.AddressDomain{}
 			}(),
@@ -170,7 +170,7 @@ func TestAddressService_GetById(t *testing.T) {
 		ExpectedError                   error
 	}{
 		{
-			Name: "Test Successful - Getting an address by id",
+			Name: "WithValidID_ReturnsAddress",
 			Address: func() domain.AddressDomain {
 				return utils.GetMockAddress()
 			}(),
@@ -195,7 +195,7 @@ func TestAddressService_GetById(t *testing.T) {
 			ExpectedError:  nil,
 		},
 		{
-			Name: "Test Failure - Error to get an address by id",
+			Name: "WithNonExistentID_ReturnsNotFound",
 			Address: func() domain.AddressDomain {
 				return utils.GetMockAddress()
 			}(),
@@ -214,7 +214,7 @@ func TestAddressService_GetById(t *testing.T) {
 			ExpectedError:  nil,
 		},
 		{
-			Name: "Test Failure - Error returned from repository",
+			Name: "WithRepositoryError_ReturnsError",
 			Address: func() domain.AddressDomain {
 				return utils.GetMockAddress()
 			}(),
@@ -233,7 +233,7 @@ func TestAddressService_GetById(t *testing.T) {
 			ExpectedError:  errors.New(database.AddressNotFound),
 		},
 		{
-			Name: "success - cache error but address retrieved successfully",
+			Name: "WithCacheError_ReturnsAddressSuccessfully",
 			Address: func() domain.AddressDomain {
 				return utils.GetMockAddress()
 			}(),
@@ -285,14 +285,14 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 		ExpectedError error
 	}{
 		{
-			Name: "Test Successful - Validating address",
+			Name: "WithValidAddress_ReturnsNoError",
 			Address: func() domain.AddressDomain {
 				return utils.GetMockAddress()
 			}(),
 			ExpectedError: nil,
 		},
 		{
-			Name: "Test Failure - Error to validate address: street is required",
+			Name: "WithEmptyStreet_ReturnsError",
 			Address: func() domain.AddressDomain {
 				address := utils.GetMockAddress()
 				address.Street = ""
@@ -302,7 +302,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 		},
 
 		{
-			Name: "Test Failure - Error to validate address: number is required",
+			Name: "WithEmptyNumber_ReturnsError",
 			Address: func() domain.AddressDomain {
 				address := utils.GetMockAddress()
 				address.Number = ""
@@ -311,7 +311,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 			ExpectedError: fmt.Errorf("error to validate address: %s", NumberIsRequired),
 		},
 		{
-			Name: "Test Failure - Error to validate address: neighborhood is required",
+			Name: "WithEmptyNeighborhood_ReturnsError",
 			Address: func() domain.AddressDomain {
 				address := utils.GetMockAddress()
 				address.Neighborhood = ""
@@ -320,7 +320,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 			ExpectedError: fmt.Errorf("error to validate address: %s", NeighborhoodIsRequired),
 		},
 		{
-			Name: "Test Failure - Error to validate address: zip code is required",
+			Name: "WithEmptyZipCode_ReturnsError",
 			Address: func() domain.AddressDomain {
 				address := utils.GetMockAddress()
 				address.ZipCode = ""
@@ -329,7 +329,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 			ExpectedError: fmt.Errorf("error to validate address: %s", ZipCodeIsRequired),
 		},
 		{
-			Name: "Test Failure - Error to validate address: city is required",
+			Name: "WithEmptyCity_ReturnsError",
 			Address: func() domain.AddressDomain {
 				address := utils.GetMockAddress()
 				address.City = ""
@@ -338,7 +338,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 			ExpectedError: fmt.Errorf("error to validate address: %s", CityIsRequired),
 		},
 		{
-			Name: "Test Failure - Error to validate address: state is required",
+			Name: "WithEmptyState_ReturnsError",
 			Address: func() domain.AddressDomain {
 				address := utils.GetMockAddress()
 				address.State = ""
@@ -347,7 +347,7 @@ func TestAddressService_ValidateAddress(t *testing.T) {
 			ExpectedError: fmt.Errorf("error to validate address: %s", StateIsRequired),
 		},
 		{
-			Name: "Test Failure - Error to validate address: country is required",
+			Name: "WithEmptyCountry_ReturnsError",
 			Address: func() domain.AddressDomain {
 				address := utils.GetMockAddress()
 				address.Country = ""

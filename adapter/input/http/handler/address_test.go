@@ -21,7 +21,7 @@ import (
 var pathAddressCreate = "/address/create"
 
 func TestAddress_Create(t *testing.T) {
-	t.Run("create address successfully", func(t *testing.T) {
+	t.Run("WithValidRequest_CreatesSuccessfully", func(t *testing.T) {
 		mockRepo := output.AddressDomainDataBaseRepositoryMock{
 			SaveMock: func(ctx domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
 				mocked := utils.GetMockAddress()
@@ -65,7 +65,7 @@ func TestAddress_Create(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, res.StatusCode)
 	})
 
-	t.Run("invalid json in request body", func(t *testing.T) {
+	t.Run("WithInvalidJSON_ReturnsInternalServerError", func(t *testing.T) {
 		addressService := service.AddressService{}
 		handler := Address{AddressService: addressService, LoggerSugar: zap.NewNop().Sugar()}
 
@@ -81,7 +81,7 @@ func TestAddress_Create(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
 	})
 
-	t.Run("validation fails - street required", func(t *testing.T) {
+	t.Run("WithEmptyStreet_ValidationFails", func(t *testing.T) {
 		addressService := service.AddressService{}
 		handler := Address{AddressService: addressService, LoggerSugar: zap.NewNop().Sugar()}
 
@@ -109,7 +109,7 @@ func TestAddress_Create(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
 	})
 
-	t.Run("database error on save", func(t *testing.T) {
+	t.Run("WithDatabaseError_ReturnsInternalServerError", func(t *testing.T) {
 		mockRepo := output.AddressDomainDataBaseRepositoryMock{
 			SaveMock: func(ctx domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
 				return domain.AddressDomain{}, errors.New("db failure")
@@ -148,7 +148,7 @@ func TestAddress_Create(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
 	})
 
-	t.Run("cache error after save", func(t *testing.T) {
+	t.Run("WithCacheError_ReturnsInternalServerError", func(t *testing.T) {
 		mockRepo := output.AddressDomainDataBaseRepositoryMock{
 			SaveMock: func(ctx domain.ContextControl, address domain.AddressDomain) (domain.AddressDomain, error) {
 				mocked := utils.GetMockAddress()
