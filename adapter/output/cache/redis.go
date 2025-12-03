@@ -1,12 +1,19 @@
 package cache
 
 import (
+	"time"
+
 	"github.com/go-redis/redis/v8"
 	"github.com/petshop-system/petshop-api/application/domain"
 	"github.com/petshop-system/petshop-api/configuration/environment"
 	"github.com/petshop-system/petshop-api/configuration/repository"
 	"go.uber.org/zap"
-	"time"
+)
+
+const (
+	ErrorToInsertValueInRedis = "Failed to insert value in Redis"
+	ErrorToGetInRedis         = "Failed to get value from Redis"
+	ErrorToDeleteInRedis      = "Failed to delete value in Redis"
 )
 
 type Redis struct {
@@ -29,7 +36,7 @@ func NewRedis(loggerSugar *zap.SugaredLogger) Redis {
 func (r *Redis) Set(ctx domain.ContextControl, key string, payload string, expirationTime time.Duration) error {
 
 	if _, err := r.RedisClient.Set(ctx.Context, key, payload, expirationTime).Result(); err != nil {
-		r.LoggerSugar.Errorw("It was not possible insert value in redis", "err", err.Error())
+		r.LoggerSugar.Errorw(ErrorToInsertValueInRedis, "err", err.Error())
 		return err
 	}
 
@@ -40,7 +47,7 @@ func (r *Redis) Get(ctx domain.ContextControl, key string) (string, error) {
 
 	value, err := r.RedisClient.Get(ctx.Context, key).Result()
 	if err != nil {
-		r.LoggerSugar.Warnw("It was not possible get value in redis", "err", err.Error())
+		r.LoggerSugar.Warnw(ErrorToGetInRedis, "err", err.Error())
 		return "", err
 	}
 
@@ -50,7 +57,7 @@ func (r *Redis) Get(ctx domain.ContextControl, key string) (string, error) {
 func (r *Redis) Delete(ctx domain.ContextControl, key string) error {
 
 	if _, err := r.RedisClient.Del(ctx.Context, key).Result(); err != nil {
-		r.LoggerSugar.Warnw("It was not possible delete value in redis", "err", err.Error())
+		r.LoggerSugar.Warnw(ErrorToDeleteInRedis, "err", err.Error())
 		return err
 	}
 
